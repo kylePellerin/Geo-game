@@ -6,7 +6,15 @@ build-backend = "setuptools.build_meta"
 name = "geo-rarity-pipeline"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "requests>=2.31",
+    "pandas>=2.2",
+    "pyarrow>=15",
+    "psycopg[binary]>=3.1",
+    "pyyaml>=6.0",
+    "cairosvg>=2.7",
+    "pillow>=10",
+]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]

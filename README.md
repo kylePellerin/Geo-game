@@ -40,3 +40,17 @@ The web app is available at `http://localhost:3000`. To stop PostgreSQL, run `ma
 Add new files as `db/migrations/NNN_description.sql`. `make db` / `make migrate` applies any not yet
 recorded in `schema_migrations`, each in its own transaction. Never edit a migration that has
 already been applied; add a new one.
+
+## Data pipeline (Phase 1: countries, cities, airports, flags)
+
+```sh
+make ingest       # countries -> cities -> airports into pipeline/out/*.parquet (cached in pipeline/raw/)
+make popularity   # popularity per entity (sitelinks estimate for now; see PLAN.md §12)
+make flags        # regenerate pipeline/flags_tags.yaml (draft flag tags, needs human review)
+make load LOAD_ARGS="--allow-unreviewed-flags --prune"   # upsert into Postgres
+make report       # data-quality report -> pipeline/out/quality_report.md
+```
+
+Pass `ARGS=--refresh` to `make ingest` to re-download sources. A cold run takes ~30–40 min, mostly
+Wikidata SPARQL; cached runs take a couple of minutes. Inside the devcontainer the pipeline reaches
+Postgres at `host.docker.internal`; set `DATABASE_URL` to override.

@@ -1,4 +1,4 @@
-.PHONY: db db-down db-reset migrate psql test lint
+.PHONY: db db-down db-reset migrate psql test lint data ingest popularity flags load report
 
 db:
 	docker compose up -d --wait db
@@ -25,3 +25,26 @@ test:
 lint:
 	python -m ruff check pipeline
 	npm --prefix app run lint
+
+# ---- data pipeline (each step is cached and re-runnable; pass ARGS=--refresh to re-download)
+PY := cd pipeline && python -m
+
+ingest:
+	$(PY) geo_pipeline.ingest.countries $(ARGS)
+	$(PY) geo_pipeline.ingest.cities $(ARGS)
+	$(PY) geo_pipeline.ingest.airports $(ARGS)
+
+popularity:
+	$(PY) geo_pipeline.popularity
+
+flags:
+	$(PY) geo_pipeline.flags
+
+# Until flags_tags.yaml is reviewed, load with: make load LOAD_ARGS=--allow-unreviewed-flags
+load:
+	$(PY) geo_pipeline.load $(LOAD_ARGS)
+
+report:
+	$(PY) geo_pipeline.report
+
+data: ingest popularity load report

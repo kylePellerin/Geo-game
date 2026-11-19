@@ -1,0 +1,4507 @@
+# Flag tags, one entry per country (keyed by ISO alpha-2).
+# colors / colors_minor are measured from the flag-icons SVGs (>=2% / >=0.3% of area);
+# boolean tags and stripes are AI-drafted from data/flag_features_draft.yaml.
+# REVIEW: correct any entry in place, then set `reviewed: true`.
+# Regenerating (python -m geo_pipeline.flags) refuses to overwrite a reviewed file.
+reviewed: false
+flags:
+  AF:
+    name: Afghanistan
+    colors:
+    - black
+    - green
+    - red
+    colors_minor:
+    - maroon
+    - orange
+    - white
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AL:
+    name: Albania
+    colors:
+    - black
+    - red
+    colors_minor:
+    - maroon
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  DZ:
+    name: Algeria
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AD:
+    name: Andorra
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  AO:
+    name: Angola
+    colors:
+    - black
+    - red
+    - yellow
+    colors_minor:
+    - brown
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: true
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AG:
+    name: Antigua and Barbuda
+    colors:
+    - black
+    - blue
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - brown
+    - maroon
+    stripes: none
+    n_colors: 5
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AR:
+    name: Argentina
+    colors:
+    - blue
+    - white
+    colors_minor:
+    - orange
+    - yellow
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AM:
+    name: Armenia
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AU:
+    name: Australia
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: true
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AT:
+    name: Austria
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AZ:
+    name: Azerbaijan
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BS:
+    name: Bahamas
+    colors:
+    - black
+    - blue
+    - yellow
+    colors_minor:
+    - green
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BH:
+    name: Bahrain
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BD:
+    name: Bangladesh
+    colors:
+    - green
+    - red
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BB:
+    name: Barbados
+    colors:
+    - black
+    - blue
+    - yellow
+    colors_minor:
+    - brown
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: true
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BY:
+    name: Belarus
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BE:
+    name: Belgium
+    colors:
+    - black
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BZ:
+    name: Belize
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    colors_minor:
+    - brown
+    - grey
+    - maroon
+    - orange
+    - purple
+    - yellow
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: true
+  BJ:
+    name: Benin
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - brown
+    stripes: both
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BT:
+    name: Bhutan
+    colors:
+    - orange
+    - white
+    - yellow
+    colors_minor:
+    - red
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BO:
+    name: Bolivia
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - blue
+    - orange
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  BA:
+    name: Bosnia and Herzegovina
+    colors:
+    - blue
+    - white
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BW:
+    name: Botswana
+    colors:
+    - black
+    - blue
+    - white
+    colors_minor:
+    - grey
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BR:
+    name: Brazil
+    colors:
+    - blue
+    - green
+    - yellow
+    colors_minor:
+    - white
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: false
+  BN:
+    name: Brunei
+    colors:
+    - black
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - maroon
+    - orange
+    stripes: none
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BG:
+    name: Bulgaria
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BF:
+    name: Burkina Faso
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  BI:
+    name: Burundi
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  KH:
+    name: Cambodia
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - grey
+    - maroon
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CM:
+    name: Cameroon
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: vertical
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CA:
+    name: Canada
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CV:
+    name: Cape Verde
+    colors:
+    - blue
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - brown
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CF:
+    name: Central African Republic
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 5
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TD:
+    name: Chad
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CL:
+    name: Chile
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CN:
+    name: China
+    colors:
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: none
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CO:
+    name: Colombia
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  KM:
+    name: Comoros
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 5
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CG:
+    name: Congo
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CR:
+    name: Costa Rica
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  HR:
+    name: Croatia
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - yellow
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CU:
+    name: Cuba
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CY:
+    name: Cyprus
+    colors:
+    - orange
+    - white
+    colors_minor:
+    - green
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: true
+    has_coat_of_arms: false
+  CZ:
+    name: Czechia
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CD:
+    name: DR Congo
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor:
+    - green
+    - orange
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  DK:
+    name: Denmark
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: true
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  DJ:
+    name: Djibouti
+    colors:
+    - blue
+    - green
+    - white
+    colors_minor:
+    - red
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  DM:
+    name: Dominica
+    colors:
+    - black
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - blue
+    - brown
+    - orange
+    stripes: none
+    n_colors: 5
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  DO:
+    name: Dominican Republic
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - green
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: true
+  EC:
+    name: Ecuador
+    colors:
+    - blue
+    - brown
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - black
+    - grey
+    - maroon
+    - orange
+    - purple
+    - white
+    stripes: horizontal
+    n_colors: 5
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  EG:
+    name: Egypt
+    colors:
+    - black
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SV:
+    name: El Salvador
+    colors:
+    - blue
+    - white
+    colors_minor:
+    - green
+    - yellow
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: true
+  GQ:
+    name: Equatorial Guinea
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ER:
+    name: Eritrea
+    colors:
+    - blue
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    - purple
+    stripes: none
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  EE:
+    name: Estonia
+    colors:
+    - black
+    - blue
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SZ:
+    name: Eswatini
+    colors:
+    - black
+    - blue
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - brown
+    - grey
+    - maroon
+    stripes: none
+    n_colors: 5
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: true
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ET:
+    name: Ethiopia
+    colors:
+    - blue
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  FJ:
+    name: Fiji
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - green
+    - maroon
+    - yellow
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: true
+    has_animal: true
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  FI:
+    name: Finland
+    colors:
+    - blue
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: true
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  FR:
+    name: France
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GA:
+    name: Gabon
+    colors:
+    - blue
+    - green
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GM:
+    name: Gambia
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GE:
+    name: Georgia
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  DE:
+    name: Germany
+    colors:
+    - black
+    - red
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GH:
+    name: Ghana
+    colors:
+    - black
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - brown
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GR:
+    name: Greece
+    colors:
+    - blue
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GD:
+    name: Grenada
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GT:
+    name: Guatemala
+    colors:
+    - blue
+    - green
+    - white
+    colors_minor:
+    - yellow
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: true
+    has_weapon: true
+    has_text: true
+    has_map: false
+    has_coat_of_arms: true
+  GN:
+    name: Guinea
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GW:
+    name: Guinea-Bissau
+    colors:
+    - black
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: both
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GY:
+    name: Guyana
+    colors:
+    - black
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - maroon
+    stripes: none
+    n_colors: 5
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  HT:
+    name: Haiti
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - green
+    - yellow
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: true
+    has_text: true
+    has_map: false
+    has_coat_of_arms: true
+  HN:
+    name: Honduras
+    colors:
+    - blue
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  HU:
+    name: Hungary
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  IS:
+    name: Iceland
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: true
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  IN:
+    name: India
+    colors:
+    - blue
+    - green
+    - orange
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ID:
+    name: Indonesia
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  IR:
+    name: Iran
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: false
+  IQ:
+    name: Iraq
+    colors:
+    - black
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: false
+  IE:
+    name: Ireland
+    colors:
+    - green
+    - orange
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  IL:
+    name: Israel
+    colors:
+    - blue
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  IT:
+    name: Italy
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CI:
+    name: Ivory Coast
+    colors:
+    - green
+    - orange
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  JM:
+    name: Jamaica
+    colors:
+    - black
+    - green
+    - yellow
+    colors_minor:
+    - brown
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  JP:
+    name: Japan
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  JO:
+    name: Jordan
+    colors:
+    - black
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  KZ:
+    name: Kazakhstan
+    colors:
+    - blue
+    - green
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  KE:
+    name: Kenya
+    colors:
+    - black
+    - green
+    - red
+    - white
+    colors_minor:
+    - maroon
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: true
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  KI:
+    name: Kiribati
+    colors:
+    - blue
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - orange
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  XK:
+    name: Kosovo
+    colors:
+    - blue
+    - yellow
+    colors_minor:
+    - white
+    stripes: none
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: true
+    has_coat_of_arms: false
+  KW:
+    name: Kuwait
+    colors:
+    - black
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  KG:
+    name: Kyrgyzstan
+    colors:
+    - orange
+    - red
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LA:
+    name: Laos
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LV:
+    name: Latvia
+    colors:
+    - maroon
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LB:
+    name: Lebanon
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LS:
+    name: Lesotho
+    colors:
+    - black
+    - blue
+    - green
+    - white
+    colors_minor:
+    - grey
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LR:
+    name: Liberia
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LY:
+    name: Libya
+    colors:
+    - black
+    - green
+    - red
+    colors_minor:
+    - white
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LI:
+    name: Liechtenstein
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor:
+    - black
+    - brown
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LT:
+    name: Lithuania
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LU:
+    name: Luxembourg
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MG:
+    name: Madagascar
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: both
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MW:
+    name: Malawi
+    colors:
+    - black
+    - green
+    - red
+    colors_minor:
+    - maroon
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MY:
+    name: Malaysia
+    colors:
+    - blue
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - brown
+    - purple
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MV:
+    name: Maldives
+    colors:
+    - green
+    - red
+    colors_minor:
+    - white
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ML:
+    name: Mali
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MT:
+    name: Malta
+    colors:
+    - red
+    - white
+    colors_minor:
+    - grey
+    stripes: vertical
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MH:
+    name: Marshall Islands
+    colors:
+    - blue
+    - white
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MR:
+    name: Mauritania
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MU:
+    name: Mauritius
+    colors:
+    - blue
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MX:
+    name: Mexico
+    colors:
+    - green
+    - red
+    - white
+    colors_minor:
+    - blue
+    - brown
+    - orange
+    - yellow
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  FM:
+    name: Micronesia
+    colors:
+    - blue
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MD:
+    name: Moldova
+    colors:
+    - blue
+    - brown
+    - red
+    - yellow
+    colors_minor:
+    - green
+    - orange
+    stripes: vertical
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  MC:
+    name: Monaco
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MN:
+    name: Mongolia
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ME:
+    name: Montenegro
+    colors:
+    - orange
+    - red
+    - yellow
+    colors_minor:
+    - blue
+    - green
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  MA:
+    name: Morocco
+    colors:
+    - red
+    colors_minor:
+    - green
+    stripes: none
+    n_colors: 1
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MZ:
+    name: Mozambique
+    colors:
+    - black
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - orange
+    stripes: horizontal
+    n_colors: 5
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: true
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MM:
+    name: Myanmar
+    colors:
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  NA:
+    name: Namibia
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 5
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  NR:
+    name: Nauru
+    colors:
+    - blue
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  NP:
+    name: Nepal
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - maroon
+    - purple
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  NL:
+    name: Netherlands
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  NZ:
+    name: New Zealand
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: true
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  NI:
+    name: Nicaragua
+    colors:
+    - blue
+    - white
+    colors_minor:
+    - green
+    - yellow
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: true
+  NE:
+    name: Niger
+    colors:
+    - green
+    - orange
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  NG:
+    name: Nigeria
+    colors:
+    - green
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  KP:
+    name: North Korea
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  MK:
+    name: North Macedonia
+    colors:
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  'NO':
+    name: Norway
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: true
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  OM:
+    name: Oman
+    colors:
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: both
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: true
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  PK:
+    name: Pakistan
+    colors:
+    - green
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  PW:
+    name: Palau
+    colors:
+    - blue
+    - yellow
+    colors_minor:
+    - green
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  PS:
+    name: Palestine
+    colors:
+    - black
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  PA:
+    name: Panama
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  PG:
+    name: Papua New Guinea
+    colors:
+    - black
+    - red
+    - yellow
+    colors_minor:
+    - maroon
+    - orange
+    - white
+    stripes: none
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  PY:
+    name: Paraguay
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - green
+    - grey
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: true
+  PE:
+    name: Peru
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: vertical
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  PH:
+    name: Philippines
+    colors:
+    - blue
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  PL:
+    name: Poland
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  PT:
+    name: Portugal
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - blue
+    - orange
+    - white
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  QA:
+    name: Qatar
+    colors:
+    - maroon
+    - white
+    colors_minor:
+    - red
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  RO:
+    name: Romania
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  RU:
+    name: Russia
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  RW:
+    name: Rwanda
+    colors:
+    - blue
+    - green
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  KN:
+    name: Saint Kitts and Nevis
+    colors:
+    - black
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - brown
+    stripes: none
+    n_colors: 5
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  LC:
+    name: Saint Lucia
+    colors:
+    - black
+    - blue
+    - white
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  VC:
+    name: Saint Vincent and the Grenadines
+    colors:
+    - blue
+    - green
+    - yellow
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  WS:
+    name: Samoa
+    colors:
+    - blue
+    - red
+    colors_minor:
+    - white
+    stripes: none
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SM:
+    name: San Marino
+    colors:
+    - blue
+    - green
+    - white
+    - yellow
+    colors_minor:
+    - red
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  SA:
+    name: Saudi Arabia
+    colors:
+    - green
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: true
+    has_text: true
+    has_map: false
+    has_coat_of_arms: false
+  SN:
+    name: Senegal
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor: []
+    stripes: vertical
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  RS:
+    name: Serbia
+    colors:
+    - blue
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - orange
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  SC:
+    name: Seychelles
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - orange
+    stripes: none
+    n_colors: 5
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SL:
+    name: Sierra Leone
+    colors:
+    - blue
+    - green
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SG:
+    name: Singapore
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SK:
+    name: Slovakia
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  SI:
+    name: Slovenia
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - purple
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SB:
+    name: Solomon Islands
+    colors:
+    - blue
+    - green
+    - white
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SO:
+    name: Somalia
+    colors:
+    - blue
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ZA:
+    name: South Africa
+    colors:
+    - black
+    - blue
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 6
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  KR:
+    name: South Korea
+    colors:
+    - black
+    - blue
+    - red
+    - white
+    colors_minor:
+    - grey
+    stripes: none
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SS:
+    name: South Sudan
+    colors:
+    - black
+    - blue
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 6
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ES:
+    name: Spain
+    colors:
+    - red
+    - yellow
+    colors_minor:
+    - brown
+    - orange
+    - white
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: true
+    has_map: false
+    has_coat_of_arms: true
+  LK:
+    name: Sri Lanka
+    colors:
+    - green
+    - maroon
+    - orange
+    - yellow
+    colors_minor:
+    - black
+    - brown
+    stripes: none
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: false
+    has_plant: false
+    has_weapon: true
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SD:
+    name: Sudan
+    colors:
+    - black
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SR:
+    name: Suriname
+    colors:
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SE:
+    name: Sweden
+    colors:
+    - blue
+    - yellow
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: true
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  CH:
+    name: Switzerland
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  SY:
+    name: Syria
+    colors:
+    - black
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ST:
+    name: São Tomé and Príncipe
+    colors:
+    - black
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - brown
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TW:
+    name: Taiwan
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TJ:
+    name: Tajikistan
+    colors:
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TZ:
+    name: Tanzania
+    colors:
+    - black
+    - blue
+    - green
+    - yellow
+    colors_minor:
+    - brown
+    stripes: none
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TH:
+    name: Thailand
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - grey
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TL:
+    name: Timor-Leste
+    colors:
+    - black
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - brown
+    - orange
+    stripes: none
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TG:
+    name: Togo
+    colors:
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - white
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TO:
+    name: Tonga
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TT:
+    name: Trinidad and Tobago
+    colors:
+    - black
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TN:
+    name: Tunisia
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TM:
+    name: Turkmenistan
+    colors:
+    - green
+    - orange
+    - red
+    - yellow
+    colors_minor:
+    - brown
+    - maroon
+    - white
+    stripes: none
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TV:
+    name: Tuvalu
+    colors:
+    - blue
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - green
+    stripes: none
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: true
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  TR:
+    name: Türkiye
+    colors:
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  UG:
+    name: Uganda
+    colors:
+    - black
+    - red
+    - white
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  UA:
+    name: Ukraine
+    colors:
+    - blue
+    - yellow
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  AE:
+    name: United Arab Emirates
+    colors:
+    - black
+    - green
+    - red
+    - white
+    colors_minor: []
+    stripes: both
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  GB:
+    name: United Kingdom
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor: []
+    stripes: none
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: true
+    has_nordic_cross: false
+    has_union_jack: true
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  US:
+    name: United States
+    colors:
+    - blue
+    - red
+    - white
+    colors_minor:
+    - purple
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  UY:
+    name: Uruguay
+    colors:
+    - blue
+    - white
+    - yellow
+    colors_minor:
+    - brown
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: true
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  UZ:
+    name: Uzbekistan
+    colors:
+    - blue
+    - green
+    - red
+    - white
+    colors_minor:
+    - brown
+    - purple
+    stripes: horizontal
+    n_colors: 4
+    has_star: true
+    has_sun: false
+    has_crescent: true
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  VU:
+    name: Vanuatu
+    colors:
+    - black
+    - green
+    - red
+    - yellow
+    colors_minor:
+    - brown
+    stripes: horizontal
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: true
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  VA:
+    name: Vatican City
+    colors:
+    - white
+    - yellow
+    colors_minor:
+    - red
+    stripes: vertical
+    n_colors: 2
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  VE:
+    name: Venezuela
+    colors:
+    - blue
+    - red
+    - yellow
+    colors_minor:
+    - white
+    stripes: horizontal
+    n_colors: 3
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  VN:
+    name: Vietnam
+    colors:
+    - red
+    - yellow
+    colors_minor:
+    - orange
+    stripes: none
+    n_colors: 2
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  YE:
+    name: Yemen
+    colors:
+    - black
+    - red
+    - white
+    colors_minor: []
+    stripes: horizontal
+    n_colors: 3
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: false
+    has_bird: false
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false
+  ZM:
+    name: Zambia
+    colors:
+    - black
+    - green
+    - orange
+    - red
+    colors_minor:
+    - brown
+    stripes: vertical
+    n_colors: 4
+    has_star: false
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: true
+  ZW:
+    name: Zimbabwe
+    colors:
+    - black
+    - green
+    - red
+    - white
+    - yellow
+    colors_minor:
+    - brown
+    - maroon
+    - orange
+    stripes: horizontal
+    n_colors: 5
+    has_star: true
+    has_sun: false
+    has_crescent: false
+    has_cross: false
+    has_nordic_cross: false
+    has_union_jack: false
+    has_animal: true
+    has_bird: true
+    has_plant: false
+    has_weapon: false
+    has_text: false
+    has_map: false
+    has_coat_of_arms: false

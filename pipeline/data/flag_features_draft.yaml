@@ -1,0 +1,62 @@
+# AI-drafted flag feature lists (ISO 3166-1 alpha-2), one list per tag. NOT yet human-reviewed.
+# geo_pipeline.flags merges these with colours measured from the flag-icons SVGs and writes
+# pipeline/flags_tags.yaml (one entry per country) for review. Review edits go in flags_tags.yaml.
+#
+# Conventions for the draft:
+# - Features count if visible on the national flag as rendered by flag-icons (including coats of
+#   arms/emblems on the flag), because that is the image players see in the reveal.
+# - has_cross includes saltires and Union Jack crosses; has_nordic_cross is the off-centre cross only.
+# - has_sun includes plain discs that officially represent the sun (Japan, Bangladesh, Niger).
+# - has_crescent includes full/crescent moons (Laos, Palau, Nepal).
+# - Items marked "# check" are uncertain and need a look during review.
+
+has_star: [
+  DZ, AO, BF, BI, CV, CM, CF, KM, CD, DJ, ET, GH, GW, LR, LY, MR, MA, MZ, ST, SN, SO, SS, TG, TN,
+  ZW, GQ,  # check GQ: six small stars above the tree
+  CN, VN, KP, TR, AZ, UZ, TM, TJ, MY, SG, PK, MM, JO, SY, IL, TL, PH,
+  BA, XK,
+  US, CU, CL, PA, HN, VE, BR, SR, DM, GD, KN, PY,
+  AU, NZ, PG, SB, TV, MH, FM, NR, WS,
+]
+has_sun: [
+  AR, UY, JP, BD, KZ, KG, MK, MW, NA, RW, NE, NP, PH, TW, KI, AG, MN,
+]
+has_crescent: [
+  DZ, TN, LY, MR, KM, TR, AZ, UZ, TM, PK, MY, SG, MV, NP, PW, LA, MN, BN,
+]
+has_cross: [
+  GB, CH, DK, SE, "NO", FI, IS, GR, GE, MT, TO, DO, DM, SK, BI, JM, AU, NZ, FJ, TV,
+]
+has_nordic_cross: [DK, SE, "NO", FI, IS]  # "NO" quoted: bare NO is boolean in YAML
+has_union_jack: [GB, AU, NZ, FJ, TV]
+has_animal: [
+  AL, ME, RS, ZM, UG, PG, KI, DM, ZW, MX, EG, MD, KZ, EC, GT,  # birds
+  LK, BT, AD, FJ, ES,  # lion, dragon, cows, lion, lions  # check ES/FJ (small, in arms)
+]
+has_bird: [AL, ME, RS, ZM, UG, PG, KI, DM, ZW, MX, EG, MD, KZ, EC, GT]
+has_plant: [
+  CA, LB, CY, ER, GQ, HT, BZ, GD, MX, FJ, VU, GT, TM,  # check TM: olive branches
+]
+has_weapon: [MZ, AO, KE, SZ, OM, SA, GT, HT, BB, LK]
+has_text: [SA, IQ, IR, BR, SV, NI, GT, PY, BZ, DO, HT, ES]  # check ES: "Plus Ultra" in arms
+has_map: [CY, XK]
+has_coat_of_arms: [
+  AD, AL, BO, BZ, CR, DM, DO, EC, ES, FJ, GT, HT, MD, ME, MX, NI, PE, PT, PY, RS, SK, SM, SV, VA,
+  KZ, ZM,  # check: emblem vs coat of arms
+]
+# Stripe orientation. Countries in both lists get stripes: both.
+stripes_horizontal: [
+  DE, NL, RU, AT, HU, BG, LU, EE, LT, LV, UA, PL, MC, ES, HR, SI, SK, RS, BY, CZ, GR, SM, LI,
+  ID, YE, EG, SY, IQ, SD, IR, IN, AM, AZ, TJ, UZ, TH, KH, LA, MM, SG, PH, KP, LB, IL, JO, PS, OM,
+  AE, KW, MY,
+  NE, GA, SL, GH, ET, MW, RW, SS, UG, BW, GM, LS, CF, LY, MU, BJ, BF, TG, CV, ZW, ST, MZ, DJ, KM,
+  MG, AO, KE, LR, GW,
+  CO, VE, EC, BO, AR, UY, CR, NI, HN, SV, CU, US, PY, HT, BS, SR, BZ,
+  NR, KI, VU,
+]
+stripes_vertical: [
+  FR, IT, IE, BE, RO, MD, AD, PT, MT, VA,
+  TD, ML, GN, CI, NG, SN, CM, DZ, ZM, BJ, MG, GW,
+  PE, MX, GT, CA, BB, VC,
+  MN, PK, AE, OM,
+]

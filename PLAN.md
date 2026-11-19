@@ -293,3 +293,16 @@ today's percentile.
   recent year, or fall back to OurAirports `large_airport` type.
 - Forest data is inconsistent; avoid narrow forest questions.
 - Wikidata SPARQL timeouts — split queries by country/type, cache aggressively.
+
+## 12. TODO — deferred work
+
+- [ ] **Popularity from real pageviews (deferred 2026-11-19, revisit before launch / before tuning
+  rarity priors).** The Wikimedia pageviews API throttles our client to ~20 requests then a ~30 s
+  `Retry-After` (the MediaWiki `prop=pageviews` API too), so ~19k titles would take 4+ hours.
+  For now `popularity` is a **sitelinks-based estimate** (`attrs.popularity_source =
+  "sitelinks_estimate"`, fixed mapping `DEFAULT_FIT` in `geo_pipeline/popularity.py`). Good enough
+  for within-type ranking (easy-floor / tail checks) but not calibrated for the §6 cold-start prior.
+  To finish: decide on a contact email/URL for the User-Agent (Wikimedia gives identified clients
+  more headroom), then run `cd pipeline && python -m geo_pipeline.popularity --max-minutes 240`
+  repeatedly (resumable, cached in `raw/pageviews/`) until complete, then `make load`. Once ≥30
+  entities per type have views, the estimate is re-fitted per type automatically.
