@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+pipeline/raw/
+pipeline/out/
+app/node_modules/
+app/.next/
+app/coverage/
+*.py[cod]
+*.egg-info/
+*.tsbuildinfo

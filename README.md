@@ -1,0 +1,42 @@
+# Geo-rarity
+
+## Open the development environment
+
+Install VS Code, Docker Desktop (Windows/macOS) or Docker Engine with Compose (Linux), and the
+**Dev Containers** VS Code extension. Clone this repository, open its folder in VS Code, then run
+**Dev Containers: Reopen in Container** from the Command Palette.
+
+The container provides Python 3.12 and Node.js 22, installs the pipeline and app dependencies, and
+starts the local PostgreSQL database when the container opens. The database includes `pg_trgm` and
+`unaccent`; its development credentials are defined in `compose.yaml` and must not be used in a
+deployed environment.
+
+The first open needs internet access to download the container image and dependencies. Docker is
+still required on each computer to run the Dev Container and database; Python and Node do not need
+to be installed on the host.
+
+To move to another computer, commit and push this repository to a Git remote, then clone it there
+and use **Dev Containers: Reopen in Container**. The Dev Container configuration lives in the
+repository so the toolchain setup travels with the code.
+
+## Common commands
+
+Run these in the VS Code terminal inside the container:
+
+```sh
+make db        # start Postgres and apply any new migrations
+make migrate   # apply new migrations only
+make db-reset  # wipe local data and rebuild the schema
+make psql      # open a psql shell
+make test
+make lint
+npm --prefix app run dev
+```
+
+The web app is available at `http://localhost:3000`. To stop PostgreSQL, run `make db-down`.
+
+## Database migrations
+
+Add new files as `db/migrations/NNN_description.sql`. `make db` / `make migrate` applies any not yet
+recorded in `schema_migrations`, each in its own transaction. Never edit a migration that has
+already been applied; add a new one.
