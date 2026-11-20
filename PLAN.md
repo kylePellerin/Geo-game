@@ -161,7 +161,7 @@ players is a core goal: every question needs well-known answers as well as rare 
 - Generator (`pipeline/generate_puzzles.py --from DATE --days N`):
   1. Sample candidate (template, params).
     2. Run filter → answer set; reject if outside min/max, or if it fails the easy-floor / tail
-      checks in QUESTIONS.md §2 (≥5 answers in top-20% popularity, ≥5 in bottom-50%).
+      checks in QUESTIONS.md §2 (≥5 famous/well-known answers, ≥5 not famous).
     3. Assemble 6 questions using the daily mix in QUESTIONS.md §2 (slots 1–3 easy, 4–5 medium,
        6 hard), different families except flags. A flag question every day, a second (harder) one
        on ~1 day in 5; airports at most 2 per 7 days; a matching round (§1) on ~60% of days in
