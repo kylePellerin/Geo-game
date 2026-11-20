@@ -105,6 +105,35 @@ VARIANTS = [
                      AND e.attrs->>'elevation_m' IS NOT NULL""",
     ),
     OrderVariant(
+        id="order_mountain_height",
+        text="Order these mountains by height, highest first",
+        entity_type="mountain", unit="m", min_ratio=None, min_abs=300,
+        pool_sql="""SELECT id, name, (attrs->>'elevation_m')::float, coalesce(popularity, 0), NULL, NULL
+                    FROM entities WHERE type = 'mountain' AND (attrs->>'elevation_m')::float > 500""",
+    ),
+    OrderVariant(
+        id="order_river_length",
+        text="Order these rivers by length, longest first",
+        entity_type="river", unit="km", min_ratio=1.15,
+        pool_sql="""SELECT id, name, (attrs->>'length_km')::float, coalesce(popularity, 0), NULL, NULL
+                    FROM entities WHERE type = 'river' AND (attrs->>'length_km')::float > 300""",
+    ),
+    OrderVariant(
+        id="order_island_area",
+        text="Order these islands by area, largest first",
+        entity_type="island", unit="km²", min_ratio=1.3,
+        pool_sql="""SELECT id, name, (attrs->>'area_km2')::float, coalesce(popularity, 0), NULL, NULL
+                    FROM entities WHERE type = 'island' AND (attrs->>'area_km2')::float > 100""",
+    ),
+    OrderVariant(
+        id="order_building_height",
+        text="Order these buildings and towers by height, tallest first",
+        entity_type="landmark", unit="m", min_ratio=None, min_abs=40, weight=0.7,
+        pool_sql="""SELECT id, name, (attrs->>'height_m')::float, coalesce(popularity, 0), NULL, NULL
+                    FROM entities WHERE type = 'landmark' AND (attrs->>'height_m')::float > 50
+                    AND attrs->>'kind' IN ('skyscraper', 'tower', 'famous')""",
+    ),
+    OrderVariant(
         id="order_airport_passengers",
         text="Order these airports by passengers a year, busiest first",
         entity_type="airport", unit="passengers", min_ratio=1.3, weight=0.3,

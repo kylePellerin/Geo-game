@@ -1,0 +1,47 @@
+# Map surprises from country shapes (QUESTIONS.md §3.6, Phase 6). Data: attrs.shape from
+# geo_pipeline.ingest.shapes (Natural Earth): crosses = lines that cross the country's land;
+# north/south/east/west = extent of the mainland group (overseas territories left out).
+
+- id: country_crossed_by_line
+  family: map_surprises
+  kind: membership
+  entity_type: country
+  difficulty: 2
+  min_answers: 8
+  text: "Name a country that the {line.text} passes through"
+  params:
+    line:
+      - {key: equator, text: "Equator"}
+      - {key: tropic_of_cancer, text: "Tropic of Cancer"}
+      - {key: tropic_of_capricorn, text: "Tropic of Capricorn", difficulty: 3}
+      - {key: prime_meridian, text: "Greenwich (prime) meridian", difficulty: 3}
+  filter: "e.attrs->'shape'->'crosses' ? :line.key"
+
+- id: country_entirely_hemisphere
+  family: map_surprises
+  kind: membership
+  entity_type: country
+  difficulty: 2
+  text: "Name {h.text}"
+  params:
+    h:
+      - {key: south, text: "a country entirely in the Southern Hemisphere"}
+      - {key: north_africa, text: "an African country entirely north of the Equator", difficulty: 3}
+      - {key: south_africa, text: "an African country entirely south of the Equator"}
+  filter: >-
+    CASE :h.key
+      WHEN 'south' THEN (e.attrs->'shape'->>'north')::float < 0
+      WHEN 'north_africa' THEN (e.attrs->'shape'->>'south')::float > 0 AND e.attrs->>'continent' = 'Africa'
+      WHEN 'south_africa' THEN (e.attrs->'shape'->>'north')::float < 0 AND e.attrs->>'continent' = 'Africa'
+    END
+
+- id: country_further_north_than
+  family: map_surprises
+  kind: threshold
+  entity_type: country
+  difficulty: 3
+  text: "Name a country whose mainland reaches further north than {ref.text}"
+  params:
+    ref:
+      - {lat: 60.0, text: "Oslo / Helsinki (60°N)"}
+  filter: "(e.attrs->'shape'->>'north')::float > :ref.lat"

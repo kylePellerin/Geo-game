@@ -62,7 +62,8 @@ export interface PublicQuestion {
 export const FAMILY_LABELS: Record<string, string> = {
   flags: "Flags", countries: "Countries", cities: "Cities", names: "Names", borders: "Borders",
   map_surprises: "Map surprises", airports: "Airports", nature: "Nature", olympics: "Olympics",
-  matching: "Matching", ordering: "Ordering",
+  matching: "Matching", ordering: "Ordering", mountains: "Mountains", water: "Rivers & lakes",
+  islands: "Islands", landmarks: "Landmarks", regions: "Regions", symbols: "National symbols",
 };
 
 export function utcToday(now = new Date()): string {
@@ -139,11 +140,12 @@ export async function publicQuestions(db: Pool, puzzle: PuzzleQuestion[]): Promi
     if (q.kind === "order") return { ...base, items: q.items.map((it, pos) => ({ pos, label: it.label })) };
     if (q.kind !== "match") return base;
     const labelOf = new Map(q.pairs.map((p) => [p.right, p.right_label]));
-    const isFlag = q.variant === "match_flag_country";
+    const imageRoute = q.variant === "match_flag_country" ? "flag"
+      : q.variant === "match_outline_country" ? "outline" : null;
     return {
       ...base,
-      left: q.pairs.map((p, pos) => isFlag
-        ? { pos, image: `/api/flag/${q.date}/${q.idx}/${pos}` }
+      left: q.pairs.map((p, pos) => imageRoute
+        ? { pos, image: `/api/${imageRoute}/${q.date}/${q.idx}/${pos}` }
         : { pos, label: names.get(p.left) ?? p.left }),
       right: q.rightOrder.map((r, pos) => ({ pos, label: labelOf.get(r) ?? r })),
     };

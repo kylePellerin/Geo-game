@@ -170,7 +170,8 @@ def main(allow_unreviewed_flags: bool = False, prune: bool = False) -> None:
         ) as cp:
             for r in ents.itertuples(index=False):
                 cp.write_row([
-                    r.id, r.type, r.name, r.country_id,
+                    r.id, r.type, r.name,
+                    r.country_id if isinstance(r.country_id, str) else None,  # NaN after concat
                     None if r.lat != r.lat else r.lat, None if r.lon != r.lon else r.lon,
                     r.attrs, None if r.popularity is None or r.popularity != r.popularity
                     else float(r.popularity),

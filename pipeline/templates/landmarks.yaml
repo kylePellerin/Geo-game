@@ -1,0 +1,179 @@
+# Landmarks, UNESCO sites and national parks (QUESTIONS.md §3.5, Phase 6). Answer type: landmark
+# (one broad type: attrs.kind = famous | national_park | waterfall | desert | castle | ...;
+# attrs.unesco for World Heritage Sites). Universe = the same kind, so a park is ranked against
+# parks, not against the Eiffel Tower.
+
+- id: park_in_country
+  family: landmarks
+  kind: membership
+  entity_type: landmark
+  universe: "e.attrs->>'kind' = 'national_park'"
+  difficulty: 2
+  text: "Name a national park in {country.text}"
+  params:
+    country:
+      - {name: United States, text: the United States, difficulty: 1}
+      - {name: Canada, text: Canada}
+      - {name: Kenya, text: Kenya}
+      - {name: Tanzania, text: Tanzania}
+      - {name: South Africa, text: South Africa}
+      - {name: Australia, text: Australia}
+      - {name: New Zealand, text: New Zealand}
+      - {name: United Kingdom, text: the United Kingdom}
+      - {name: Italy, text: Italy, difficulty: 3}
+      - {name: Spain, text: Spain, difficulty: 3}
+      - {name: India, text: India, difficulty: 3}
+      - {name: Argentina, text: Argentina, difficulty: 3}
+      - {name: Croatia, text: Croatia, difficulty: 3}
+      - {name: Poland, text: Poland, difficulty: 3}
+  filter: >-
+    e.attrs->>'kind' = 'national_park'
+    AND e.attrs->'countries' ? (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+
+- id: park_in_continent
+  family: landmarks
+  kind: membership
+  entity_type: landmark
+  universe: "e.attrs->>'kind' = 'national_park'"
+  difficulty: 2
+  text: "Name a national park in {continent.name}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Europe}
+      - {name: South America, difficulty: 3}
+  filter: >-
+    e.attrs->>'kind' = 'national_park' AND c.attrs->>'continent' = :continent.name
+
+- id: unesco_in_country
+  family: landmarks
+  kind: membership
+  entity_type: landmark
+  universe: "coalesce((e.attrs->>'unesco')::boolean, false)"
+  difficulty: 2
+  text: "Name a UNESCO World Heritage Site in {country.text}"
+  params:
+    country:
+      - {name: Italy, text: Italy}
+      - {name: China, text: China}
+      - {name: Spain, text: Spain}
+      - {name: France, text: France}
+      - {name: Germany, text: Germany}
+      - {name: India, text: India}
+      - {name: Mexico, text: Mexico}
+      - {name: United Kingdom, text: the United Kingdom}
+      - {name: Japan, text: Japan}
+      - {name: United States, text: the United States}
+      - {name: Peru, text: Peru, difficulty: 3}
+      - {name: Egypt, text: Egypt}
+      - {name: Greece, text: Greece}
+      - {name: Türkiye, text: Türkiye}
+      - {name: Iran, text: Iran, difficulty: 3}
+      - {name: Brazil, text: Brazil, difficulty: 3}
+  filter: >-
+    coalesce((e.attrs->>'unesco')::boolean, false)
+    AND e.attrs->'countries' ? (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+
+- id: famous_landmark_in_continent
+  family: landmarks
+  kind: membership
+  entity_type: landmark
+  universe: "coalesce((e.attrs->>'famous')::boolean, false) OR coalesce((e.attrs->>'unesco')::boolean, false)"
+  difficulty: 1
+  text: "Name a famous landmark in {continent.name}"
+  params:
+    continent:
+      - {name: Europe}
+      - {name: Asia}
+      - {name: Africa, difficulty: 2}
+      - {name: North America}
+      - {name: South America, difficulty: 2}
+  filter: >-
+    (coalesce((e.attrs->>'famous')::boolean, false) OR coalesce((e.attrs->>'unesco')::boolean, false))
+    AND c.attrs->>'continent' = :continent.name
+
+- id: landmark_kind
+  family: landmarks
+  kind: membership
+  entity_type: landmark
+  difficulty: 2
+  text: "Name a famous {k.text}"
+  params:
+    k:
+      - {kind: desert, text: desert, difficulty: 1}
+      - {kind: waterfall, text: waterfall, difficulty: 1}
+      - {kind: castle, text: castle}
+      - {kind: palace, text: palace}
+      - {kind: tower, text: tower}
+      - {kind: bridge, text: bridge}
+      - {kind: skyscraper, text: skyscraper}
+      - {kind: cave, text: cave, difficulty: 3}
+      - {kind: canyon, text: canyon or gorge, difficulty: 3}
+      - {kind: archaeological_site, text: archaeological site}
+      - {kind: mosque, text: mosque, difficulty: 3}
+      - {kind: temple, text: temple}
+  universe: "TRUE"
+  filter: >-
+    e.attrs->>'kind' = :k.kind
+    OR (coalesce((e.attrs->>'famous')::boolean, false) AND e.attrs->>'class' ILIKE '%' || :k.kind || '%')
+
+- id: waterfall_in_continent
+  family: landmarks
+  kind: membership
+  entity_type: landmark
+  universe: "e.attrs->>'kind' = 'waterfall'"
+  difficulty: 3
+  text: "Name a waterfall in {continent.name}"
+  params:
+    continent:
+      - {name: South America}
+      - {name: Africa}
+      - {name: Europe}
+      - {name: North America}
+  filter: "e.attrs->>'kind' = 'waterfall' AND c.attrs->>'continent' = :continent.name"
+
+- id: desert_in_continent
+  family: landmarks
+  kind: membership
+  entity_type: landmark
+  universe: "e.attrs->>'kind' = 'desert'"
+  difficulty: 2
+  text: "Name a desert in {continent.name}"
+  params:
+    continent:
+      - {name: Asia}
+      - {name: Africa}
+      - {name: North America, difficulty: 3}
+  filter: "e.attrs->>'kind' = 'desert' AND c.attrs->>'continent' = :continent.name"
+
+- id: castle_in_country
+  family: landmarks
+  kind: membership
+  entity_type: landmark
+  universe: "e.attrs->>'kind' IN ('castle', 'palace', 'fortification', 'famous')"
+  difficulty: 3
+  text: "Name a castle or palace in {country.name}"
+  params:
+    country:
+      - {name: Germany}
+      - {name: United Kingdom}
+      - {name: France}
+      - {name: Spain}
+      - {name: Italy}
+  filter: >-
+    (e.attrs->>'kind' IN ('castle', 'palace', 'fortification') OR e.attrs->>'class' ILIKE '%castle%'
+     OR e.attrs->>'class' ILIKE '%palace%')
+    AND e.attrs->'countries' ? (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+
+- id: skyscraper_taller
+  family: landmarks
+  kind: threshold
+  entity_type: landmark
+  universe: "e.attrs->>'kind' = 'skyscraper'"
+  difficulty: 3
+  min_answers: 8
+  text: "Name a building taller than {h.text}"
+  params:
+    h:
+      - {value: 400, text: "400 m (1,300 ft)"}
+  filter: "(e.attrs->>'height_m')::float > :h.value AND e.attrs->>'kind' IN ('skyscraper', 'famous', 'tower')"

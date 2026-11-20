@@ -339,6 +339,39 @@ climate) and forests last. Also: fact cards (`entity_facts`) and per-question st
 (% scoring > 0, median points) for difficulty calibration. Each = ingest + aliases + templates + fixtures.
 Admin page: review upcoming puzzles, replace a question, browse `unmatched_log` and add aliases.
 
+Implemented (Phase 6, 2026-11-20):
+- **Data** (`make ingest` → `shapes`, `features`, `symbols`; sources in `pipeline/SOURCES.md`):
+  - `geo_pipeline/ingest/features.py`: Wikidata mountains (+ volcanoes, `attrs.volcano`), rivers,
+    lakes, islands, landmarks (one broad `landmark` type with `attrs.kind`: famous, national_park,
+    waterfall, desert, castle, tower, heritage_site…, plus `attrs.unesco`), first-level regions.
+    Classes include subclasses two levels down (Lake Geneva is a "glacial lake"); notability =
+    Wikidata sitelinks threshold per kind; ~130 curated icons in `data/landmarks.yaml`.
+    City-states that are also regions (Berlin, Hamburg) get a second id `Q…#region` so both
+    "Name a German state" and city questions accept them (deviation from "QID is the id":
+    one QID, two answer facets).
+  - `geo_pipeline/ingest/shapes.py`: Natural Earth (public domain) country outlines →
+    `app/data/outlines.json` (outline matching rounds, served by position only) and
+    `attrs.shape` (lines crossing the country's land; mainland extent).
+  - `geo_pipeline/ingest/symbols.py` + `data/national_animals.yaml`: national animals of 69
+    countries at the level players type ("eagle", not "bald eagle" — both exist), official flag.
+- **Templates:** `templates/nature.yaml` (mountains, volcanoes, rivers, lakes, islands),
+  `landmarks.yaml` (parks, UNESCO, famous landmarks, deserts, waterfalls…), `regions.yaml`,
+  `symbols.yaml`, `map.yaml` (Equator/tropics/meridian, hemispheres). A template's `universe`
+  may now use the question's parameters (US states ranked against US states). Pool: 387
+  passing questions (116 easy / 225 medium / 46 hard), up from ~240; slot 6 no longer falls back.
+- **Rounds:** matching adds outlines ↔ countries, regions ↔ countries, landmarks ↔ countries
+  (hard: well-known/UNESCO only, no name giveaways), countries ↔ national animals. Ordering adds
+  mountains by height, rivers by length, islands by area, buildings by height.
+- **Fact cards:** `geo_pipeline/facts.py` (`make facts`) writes one data-built sentence per
+  entity into `entity_facts` (reviewed ones are never overwritten); the question summary shows
+  the card of the rarest valid answer anyone gave. Deviation: generated from our data instead of
+  AI-drafted, so they're exactly as accurate as the answers.
+- **Per-question stats:** the nightly finalise writes `stats.played` (players, % who scored,
+  median points, mean answers) to each question, shown on the admin page.
+- **Admin:** `/admin` (ADMIN_TOKEN; open in dev without one): upcoming 14 days with answer
+  samples and stats, mark reviewed, **Replace** (runs `geo_pipeline.replace_question`, also
+  `make replace DATE= IDX=`), unrecognised answers with search → add manual alias.
+
 **Phase 7 — Retention.** Stats page, transfer code and optional account upgrade (§10), daily
 leaderboard, endless/practice mode, deploy (Vercel + Supabase).
 
@@ -420,7 +453,7 @@ today's percentile.
   more headroom), then run `cd pipeline && python -m geo_pipeline.popularity --max-minutes 240`
   repeatedly (resumable, cached in `raw/pageviews/`) until complete, then `make load`. Once ≥30
   entities per type have views, the estimate is re-fitted per type automatically.
-- [ ] **Grow the question pool before launch (Phase 6).** With 7 families and the rules in §4
+- [x] **Grow the question pool before launch (Phase 6, done 2026-11-20: 387 passing).** With 7 families and the rules in §4
   (6 families/day, no repeat within 60 days), 30 days needs ~180 distinct questions; the Phase 2
   templates yield ~220 that pass, so late days fall back (harder/easier slot, repeated family, or
   even the same template twice). The generator logs every fallback. Hard (slot 6) questions are

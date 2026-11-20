@@ -9,7 +9,8 @@ import { TimerDisplay, useCountdown } from "./Timer";
 export function LeftItem({ item, n }: { item: { label?: string; image?: string }; n: number }) {
   return item.image
     // eslint-disable-next-line @next/next/no-img-element
-    ? <img src={item.image} alt={`Flag ${n}`} width={96} height={72} style={{ border: "1px solid #999" }} />
+    ? <img src={item.image} alt={`Picture ${n}`} width={96} height={item.image.includes("/outline/") ? 96 : 72}
+           style={{ border: "1px solid #999", objectFit: "contain" }} />
     : <>{item.label}</>;
 }
 
@@ -51,7 +52,7 @@ export function MatchPlay({ date, question, deadline, seconds, offsetMs, onDone 
               <td><LeftItem item={l} n={i + 1} /></td>
               <td>→</td>
               <td>
-                <select aria-label={l.label ? `Match for ${l.label}` : `Match for flag ${i + 1}`}
+                <select aria-label={l.label ? `Match for ${l.label}` : `Match for picture ${i + 1}`}
                         value={pairs[i] ?? ""} disabled={ms <= 0}
                         onChange={(e) => setPairs(assignPair(pairs, i, e.target.value === "" ? null : Number(e.target.value)))}>
                   <option value="">— choose —</option>

@@ -284,3 +284,71 @@
 - {in: "Munich airport", type: airport, expect: Munich Airport}
 - {in: "Zurich Airport", type: airport, expect: Zürich Airport}
 - {in: "Heathroe", type: airport, expect: London Heathrow Airport, status: [valid, did_you_mean]}
+
+# ---------------- Phase 6: natural features, landmarks, regions, national animals ----------------
+- {in: "everest", type: mountain, expect: Mount Everest}
+- {in: "Mt. Everest", type: mountain, expect: Mount Everest}
+- {in: "mount everst", type: mountain, expect: Mount Everest}
+- {in: "mt fuji", type: mountain, expect: Mount Fuji}
+- {in: "Kilimanjaro", type: mountain, expect: Mount Kilimanjaro}
+- {in: "matterhorn", type: mountain, expect: Matterhorn}
+- {in: "mont blanc", type: mountain, expect: Mont Blanc}
+- {in: "Monte Bianco", type: mountain, expect: Mont Blanc}
+- {in: "ben nevis", type: mountain, expect: Ben Nevis}
+- {in: "etna", type: mountain, expect: Mount Etna}
+- {in: "vesuvius", type: mountain, expect: Mount Vesuvius}
+- {in: "K2", type: mountain, expect: K2}
+- {in: "rhine", type: river, expect: Rhine}
+- {in: "Rhein", type: river, expect: Rhine}
+- {in: "the nile", type: river, expect: Nile}
+- {in: "danube", type: river, expect: Danube}
+- {in: "Donau", type: river, expect: Danube}
+- {in: "amazon", type: river, expect: Amazon River}
+- {in: "thames", type: river, expect: River Thames}
+- {in: "mississipi", type: river, expect: Mississippi River}
+- {in: "yangtze", type: river, expect: Yangtze River}
+- {in: "lake geneva", type: lake, expect: Lake Geneva}
+- {in: "titicaca", type: lake, expect: Titicaca}
+- {in: "loch ness", type: lake, expect: Loch Ness}
+- {in: "baikal", type: lake, expect: Lake Baikal}
+- {in: "lake victoria", type: lake, expect: Lake Victoria}
+- {in: "crete", type: island, expect: Crete}
+- {in: "sicily", type: island, expect: Sicily}
+- {in: "Sicilia", type: island, expect: Sicily}
+- {in: "greenland", type: island, expect: Greenland}
+- {in: "borneo", type: island, expect: Borneo}
+- {in: "eiffel tower", type: landmark, expect: Eiffel Tower}
+- {in: "Tour Eiffel", type: landmark, expect: Eiffel Tower}
+- {in: "eifel tower", type: landmark, expect: Eiffel Tower}
+- {in: "yellowstone", type: landmark, expect: Yellowstone National Park}
+- {in: "colosseum", type: landmark, expect: Colosseum}
+- {in: "coliseum", type: landmark, expect: Colosseum}
+- {in: "taj mahal", type: landmark, expect: Taj Mahal}
+- {in: "sahara", type: landmark, expect: Sahara}
+- {in: "victoria falls", type: landmark, expect: Victoria Falls}
+- {in: "machu pichu", type: landmark, expect: Machu Picchu}
+- {in: "big ben", type: landmark, expect: Big Ben}
+- {in: "grand canyon", type: landmark, expect: Grand Canyon}
+- {in: "kruger", type: landmark, expect: Kruger National Park}
+- {in: "serengeti", type: landmark, expect: Serengeti National Park}
+- {in: "statue of liberty", type: landmark, expect: Statue of Liberty}
+- {in: "bavaria", type: region, expect: Bavaria}
+- {in: "Bayern", type: region, expect: Bavaria}
+- {in: "texas", type: region, expect: Texas}
+- {in: "california", type: region, expect: California}
+- {in: "ontario", type: region, expect: Ontario}
+- {in: "arizona", type: region, expect: Arizona}
+- {in: "tuscany", type: region, expect: Tuscany}
+- {in: "quebec", type: region, expect: Quebec}
+- {in: "berlin", type: region, expect: Berlin}
+- {in: "lion", type: animal, expect: Lion}
+- {in: "lions", type: animal, expect: Lion}
+- {in: "bald eagle", type: animal, expect: Bald eagle}
+- {in: "panda", type: animal, expect: Giant panda}
+- {in: "kangaroo", type: animal, expect: Kangaroo}
+- {in: "kiwi", type: animal, expect: Kiwi}
+- {in: "andean condor", type: animal, expect: Condor}
+- {in: "Paris", type: landmark, expect: Eiffel Tower, valid: [Eiffel Tower], status: unrecognised, wrong: true, other_type: city}
+- {in: "Everest", type: river, expect: Rhine, valid: [Rhine], status: unrecognised, wrong: true, other_type: mountain}
+- {in: "Danube", type: lake, expect: Lake Geneva, valid: [Lake Geneva], status: unrecognised, wrong: true, other_type: river}
+- {in: "Bavarian", type: region, expect: Bavaria, valid: [Texas]}

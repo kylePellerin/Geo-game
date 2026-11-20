@@ -17,6 +17,9 @@ Raw downloads are cached in `pipeline/raw/` (gitignored); re-download with `--re
 | [World Bank API](https://data.worldbank.org/indicator/AG.LND.FRST.ZS) `AG.LND.FRST.ZS` | Forest cover % of land (latest year) | CC BY 4.0 | **Yes** | 2026-11-20 |
 | Wikidata (enrichment) | King Charles realms (P35), highest points (P610/P2044), countries named after people (P138), rivers cities are on (P206), city districts (P131), small Olympic host towns | CC0 | No | 2026-11-20 |
 | Curated lists (`pipeline/data/`) | Monarchies, Olympic host cities, flag feature drafts | Own work from public knowledge | No | 2026-11-20 |
+| Wikidata (Phase 6 features) | Mountains & volcanoes, rivers, lakes, islands, landmarks (national parks, waterfalls, deserts, castles, towers…, UNESCO P1435=Q9259), first-level regions; elevation/length/area/height (P2044/P2043/P2046/P2048), countries (P17), coordinates (P625); notability = sitelinks threshold | CC0 | No | 2026-11-20 |
+| [Natural Earth](https://www.naturalearthdata.com/) 1:50m admin-0 countries (GeoJSON from nvkelso/natural-earth-vector) | Country outlines (outline matching rounds), lines crossing a country (Equator, tropics, Arctic Circle, prime meridian), mainland extent | Public domain | No (courtesy credit) | 2026-11-20 |
+| Curated `data/national_animals.yaml`, `data/landmarks.yaml` | National animals (69 countries, official flag), famous landmark list (Wikipedia titles → QIDs) | Own work from public knowledge (Wikipedia "List of national animals" as a guide) | No | 2026-11-20 |
 | [flag-icons](https://github.com/lipis/flag-icons) v7.6.0 (npm) | Flag SVGs for display and for measuring flag colours | MIT | Keep licence notice | 2026-11-19 |
 
 Notes:

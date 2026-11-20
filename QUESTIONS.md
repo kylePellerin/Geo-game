@@ -199,6 +199,20 @@ Monarchies, King Charles III realms, countries named after a person, native-name
 highest mountain over N m / highest point under N m, forest cover, Olympic host countries and
 cities (curated list in `pipeline/data/olympics.yaml`), cities on famous rivers.
 
+### 3.14 Phase 6 families as built (2026-11-20)
+| Family | Answer type | Examples |
+|---|---|---|
+| mountains | mountain | a mountain in Japan; over 8,000 m; over 5,000 m not in Asia; a volcano in Iceland |
+| water | river / lake | a river in Germany; through 3+ countries; a lake shared by two countries |
+| islands | island | an island that belongs to Greece |
+| landmarks | landmark | a national park in Kenya; a UNESCO site in Italy; a famous landmark in Asia; a desert |
+| regions | region | a US state; a Canadian province; a Japanese prefecture |
+| symbols | country / animal | a country whose national animal is a big cat; any national animal |
+| map_surprises | country | a country the Equator passes through; entirely in the Southern Hemisphere |
+
+New rounds: outlines ↔ countries, regions ↔ countries, landmarks ↔ countries, countries ↔
+national animals; ordering by mountain height, river length, island area, building height.
+
 ### 3.13 Parked (too niche for the daily game — endless/expert mode only)
 - Sister cities, tripoints of specific minor countries, runway surfaces, volcano types,
   second-level administrative regions.

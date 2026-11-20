@@ -1,0 +1,268 @@
+# Natural features (QUESTIONS.md §3.7, Phase 6): mountains, rivers, lakes, islands.
+# Data: geo_pipeline.ingest.features (Wikidata, items with enough sitelinks to be notable).
+# attrs.countries = list of country QIDs; continents come from those countries.
+
+- id: mountain_in_country
+  family: mountains
+  kind: membership
+  entity_type: mountain
+  difficulty: 2
+  text: "Name a mountain in {country.text}"
+  params:
+    country:
+      - {name: Italy, text: Italy}
+      - {name: Switzerland, text: Switzerland}
+      - {name: France, text: France}
+      - {name: Austria, text: Austria}
+      - {name: United States, text: the United States}
+      - {name: Japan, text: Japan}
+      - {name: New Zealand, text: New Zealand}
+      - {name: Nepal, text: Nepal}
+      - {name: Canada, text: Canada}
+      - {name: Chile, text: Chile}
+      - {name: Argentina, text: Argentina}
+      - {name: Spain, text: Spain}
+      - {name: Greece, text: Greece}
+      - {name: Mexico, text: Mexico}
+      - {name: Peru, text: Peru}
+      - {name: Indonesia, text: Indonesia}
+      - {name: United Kingdom, difficulty: 3, text: the United Kingdom}
+      - {name: Norway, difficulty: 3, text: Norway}
+  filter: >-
+    e.attrs->'countries' ? (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+
+- id: mountain_over
+  family: mountains
+  kind: threshold
+  entity_type: mountain
+  difficulty: 2
+  text: "Name a mountain over {h.text}"
+  params:
+    h:
+      - {value: 8000, text: "8,000 m (26,000 ft)"}
+      - {value: 7000, text: "7,000 m (23,000 ft)", difficulty: 3}
+  filter: "(e.attrs->>'elevation_m')::float > :h.value"
+
+- id: mountain_over_outside_asia
+  family: mountains
+  kind: threshold
+  entity_type: mountain
+  difficulty: 3
+  text: "Name a mountain over {h.text} that is not in Asia"
+  params:
+    h:
+      - {value: 5000, text: "5,000 m (16,400 ft)"}
+      - {value: 4000, text: "4,000 m (13,100 ft)", difficulty: 2}
+  filter: >-
+    (e.attrs->>'elevation_m')::float > :h.value
+    AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements_text(e.attrs->'countries') x
+                    JOIN entities k ON k.id = x WHERE k.attrs->>'continent' = 'Asia')
+    AND jsonb_array_length(e.attrs->'countries') > 0
+
+- id: mountain_in_continent_over
+  family: mountains
+  kind: intersection
+  entity_type: mountain
+  difficulty: 2
+  text: "Name a mountain in {continent.name} over {continent.text}"
+  params:
+    continent:
+      - {name: Europe, value: 4000, text: "4,000 m (13,100 ft)"}
+      - {name: Africa, value: 3000, text: "3,000 m (9,800 ft)", difficulty: 3}
+      - {name: South America, value: 5000, text: "5,000 m (16,400 ft)", difficulty: 3}
+      - {name: North America, value: 4000, text: "4,000 m (13,100 ft)"}
+  filter: >-
+    (e.attrs->>'elevation_m')::float > :continent.value
+    AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(e.attrs->'countries') x
+                JOIN entities k ON k.id = x WHERE k.attrs->>'continent' = :continent.name)
+
+- id: volcano_in
+  family: mountains
+  kind: membership
+  entity_type: mountain
+  difficulty: 2
+  text: "Name a volcano in {place.text}"
+  params:
+    place:
+      - {name: Italy, text: "Italy"}
+      - {name: Japan, text: "Japan"}
+      - {name: Indonesia, text: "Indonesia"}
+      - {name: United States, text: "the United States"}
+      - {name: Iceland, text: "Iceland", difficulty: 3}
+      - {name: Mexico, text: "Mexico", difficulty: 3}
+      - {name: Chile, text: "Chile", difficulty: 3}
+      - {name: Ecuador, text: "Ecuador", difficulty: 3}
+  filter: >-
+    coalesce((e.attrs->>'volcano')::boolean, false)
+    AND e.attrs->'countries' ? (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :place.name)
+
+- id: volcano_in_continent
+  family: mountains
+  kind: membership
+  entity_type: mountain
+  difficulty: 2
+  text: "Name a volcano in {continent.name}"
+  params:
+    continent:
+      - {name: Europe}
+      - {name: Africa, difficulty: 3}
+      - {name: South America}
+      - {name: North America}
+  filter: >-
+    coalesce((e.attrs->>'volcano')::boolean, false)
+    AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(e.attrs->'countries') x
+                JOIN entities k ON k.id = x WHERE k.attrs->>'continent' = :continent.name)
+
+# ---- rivers & lakes
+
+- id: river_in_country
+  family: water
+  kind: membership
+  entity_type: river
+  difficulty: 2
+  text: "Name a river in {country.text}"
+  params:
+    country:
+      - {name: Germany, difficulty: 1, text: Germany}
+      - {name: France, difficulty: 1, text: France}
+      - {name: United Kingdom, text: the United Kingdom}
+      - {name: Italy, text: Italy}
+      - {name: Spain, text: Spain}
+      - {name: Russia, text: Russia}
+      - {name: China, text: China}
+      - {name: India, text: India}
+      - {name: United States, difficulty: 1, text: the United States}
+      - {name: Brazil, text: Brazil}
+      - {name: Canada, text: Canada}
+      - {name: Australia, text: Australia}
+      - {name: Poland, text: Poland}
+      - {name: Egypt, difficulty: 3, text: Egypt}
+  filter: >-
+    e.attrs->'countries' ? (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+
+- id: river_many_countries
+  family: water
+  kind: threshold
+  entity_type: river
+  difficulty: 2
+  text: "Name a river that flows through {n.text} or more countries"
+  params:
+    n:
+      - {value: 3, text: "three"}
+      - {value: 4, text: "four", difficulty: 3}
+  filter: "jsonb_array_length(e.attrs->'countries') >= :n.value"
+
+- id: river_longer_than
+  family: water
+  kind: threshold
+  entity_type: river
+  difficulty: 2
+  text: "Name a river longer than {km.text}"
+  params:
+    km:
+      - {value: 3000, text: "3,000 km (1,860 miles)"}
+      - {value: 5000, text: "5,000 km (3,100 miles)", difficulty: 3}
+  filter: "(e.attrs->>'length_km')::float > :km.value"
+
+- id: river_in_continent_longer
+  family: water
+  kind: intersection
+  entity_type: river
+  difficulty: 2
+  text: "Name a river in {continent.name} longer than 1,000 km (620 miles)"
+  params:
+    continent:
+      - {name: Europe}
+      - {name: Africa}
+      - {name: South America, difficulty: 3}
+      - {name: North America}
+      - {name: Asia}
+  filter: >-
+    (e.attrs->>'length_km')::float > 1000
+    AND EXISTS (SELECT 1 FROM jsonb_array_elements_text(e.attrs->'countries') x
+                JOIN entities k ON k.id = x WHERE k.attrs->>'continent' = :continent.name)
+
+- id: lake_in_country
+  family: water
+  kind: membership
+  entity_type: lake
+  difficulty: 2
+  text: "Name a lake in {country.text}"
+  params:
+    country:
+      - {name: Canada, text: Canada}
+      - {name: United States, text: the United States}
+      - {name: Switzerland, text: Switzerland}
+      - {name: Italy, text: Italy}
+      - {name: Russia, text: Russia}
+      - {name: Finland, difficulty: 3, text: Finland}
+      - {name: Germany, text: Germany}
+      - {name: Sweden, difficulty: 3, text: Sweden}
+      - {name: Austria, difficulty: 3, text: Austria}
+      - {name: China, difficulty: 3, text: China}
+      - {name: United Kingdom, text: the United Kingdom}
+      - {name: Ireland, difficulty: 3, text: Ireland}
+  filter: >-
+    e.attrs->'countries' ? (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+
+- id: lake_shared
+  family: water
+  kind: threshold
+  entity_type: lake
+  difficulty: 2
+  text: "Name a lake shared by two or more countries"
+  filter: "jsonb_array_length(e.attrs->'countries') >= 2"
+
+- id: lake_in_continent
+  family: water
+  kind: membership
+  entity_type: lake
+  difficulty: 2
+  text: "Name a lake in {continent.name}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: South America, difficulty: 3}
+      - {name: Asia}
+  filter: >-
+    EXISTS (SELECT 1 FROM jsonb_array_elements_text(e.attrs->'countries') x
+            JOIN entities k ON k.id = x WHERE k.attrs->>'continent' = :continent.name)
+
+# ---- islands
+
+- id: island_in_country
+  family: islands
+  kind: membership
+  entity_type: island
+  difficulty: 2
+  text: "Name an island that belongs to {country.text}"
+  params:
+    country:
+      - {name: Greece, text: Greece, difficulty: 1}
+      - {name: Italy, text: Italy}
+      - {name: Spain, text: Spain}
+      - {name: Indonesia, text: Indonesia}
+      - {name: Philippines, text: the Philippines}
+      - {name: Japan, text: Japan}
+      - {name: United Kingdom, text: the United Kingdom}
+      - {name: Canada, text: Canada}
+      - {name: Croatia, text: Croatia}
+      - {name: Denmark, text: Denmark, difficulty: 3}
+      - {name: France, text: France}
+      - {name: United States, text: the United States}
+      - {name: Australia, text: Australia}
+      - {name: Norway, text: Norway, difficulty: 3}
+  filter: >-
+    e.attrs->'countries' ? (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+
+- id: island_bigger_than
+  family: islands
+  kind: threshold
+  entity_type: island
+  difficulty: 3
+  text: "Name an island bigger than {ref.text}"
+  min_answers: 8
+  params:
+    ref:
+      - {value: 100000, text: "100,000 km² (39,000 square miles)"}
+  filter: "(e.attrs->>'area_km2')::float > :ref.value"

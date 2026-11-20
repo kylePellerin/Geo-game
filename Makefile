@@ -1,4 +1,4 @@
-.PHONY: db db-down db-reset migrate psql test lint data ingest popularity flags load report generate finalize rebuild-stats dev
+.PHONY: db db-down db-reset migrate psql test lint e2e data ingest popularity flags load facts report generate replace finalize rebuild-stats dev play
 
 db:
 	docker compose up -d --wait db
@@ -39,6 +39,9 @@ ingest:
 	$(PY) geo_pipeline.ingest.cities $(ARGS)
 	$(PY) geo_pipeline.ingest.airports $(ARGS)
 	$(PY) geo_pipeline.ingest.enrich $(ARGS)
+	$(PY) geo_pipeline.ingest.shapes $(ARGS)
+	$(PY) geo_pipeline.ingest.features $(ARGS)
+	$(PY) geo_pipeline.ingest.symbols $(ARGS)
 
 popularity:
 	$(PY) geo_pipeline.popularity
@@ -53,7 +56,15 @@ load:
 report:
 	$(PY) geo_pipeline.report
 
-data: ingest popularity load report
+# Fact cards from the loaded data (reviewed ones are never overwritten)
+facts:
+	$(PY) geo_pipeline.facts
+
+# Replace one question of an upcoming day: make replace DATE=2026-12-01 IDX=2 (0-based)
+replace:
+	$(PY) geo_pipeline.replace_question --date $(DATE) --idx $(IDX)
+
+data: ingest popularity load facts report
 
 # Generate puzzles (FROM defaults to tomorrow UTC). Add GEN_ARGS="--print" to see them,
 # "--dry-run" to not write, "--replace" to regenerate unreviewed, unanswered future dates.

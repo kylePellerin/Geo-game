@@ -20,7 +20,8 @@ import yaml
 from geo_pipeline.common import PIPELINE_DIR
 
 TEMPLATE_DIR = PIPELINE_DIR / "templates"
-ENTITY_TYPES = {"country", "city", "airport"}
+ENTITY_TYPES = {"country", "city", "airport", "mountain", "river", "lake", "island", "landmark",
+                "region", "animal"}
 KINDS = {"membership", "superlative_per_group", "intersection", "threshold", "relational",
          "name_twist"}
 # Rarity categories (QUESTIONS.md §2): each valid answer is placed by its popularity percentile
@@ -49,6 +50,14 @@ DEFAULT_UNIVERSE = {
     "country": "TRUE",
     "city": "(e.attrs->>'population')::float >= 100000 OR (e.attrs->>'is_capital')::boolean",
     "airport": "e.attrs->>'airport_type' = 'large'",
+    "mountain": "TRUE",
+    "river": "TRUE",
+    "lake": "TRUE",
+    "island": "TRUE",
+    # landmarks: rank within the same kind (a park against parks, not against the Eiffel Tower)
+    "landmark": "TRUE",
+    "region": "TRUE",
+    "animal": "TRUE",
 }
 
 _PARAM_REF = re.compile(r"(?<![:\w]):([a-z_]\w*)\.([a-z_]\w*)")
@@ -192,18 +201,24 @@ DISTRICT_FILTER = (
     "AND NOT (e.type = 'city' AND (e.attrs ? 'part_of_city' OR e.id LIKE 'geonames:%%'))"
 )
 
-_universe_cache: dict[tuple[str, str], list[float]] = {}
+_universe_cache: dict[tuple[str, str, str], list[float]] = {}
 
 
-def universe_popularity(cur, t: Template) -> list[float]:
-    """Sorted popularity values of the template's universe (cached per type + universe)."""
-    key = (t.entity_type, t.universe_sql)
+def universe_popularity(cur, t: Template, params: dict | None = None) -> list[float]:
+    """Sorted popularity values of the template's universe (cached per type + universe + params).
+
+    A universe may reference the question's parameters (:name.field), e.g. "regions of the same
+    country", so US states are ranked against US states, not against every region in the world.
+    """
+    uni_sql, binds = compile_filter(Template(**{**t.__dict__, "filter": t.universe_sql}), params or {})
+    key = (t.entity_type, uni_sql, json.dumps(binds, sort_keys=True, default=str))
     if key not in _universe_cache:
+        binds["etype"] = t.entity_type
         cur.execute(
             f"""SELECT coalesce(e.popularity, 0) FROM entities e
                 LEFT JOIN entities c ON c.id = e.country_id
-                WHERE e.type = %(etype)s AND ({t.universe_sql}) {DISTRICT_FILTER}""",
-            {"etype": t.entity_type},
+                WHERE e.type = %(etype)s AND ({uni_sql}) {DISTRICT_FILTER}""",
+            binds,
         )
         _universe_cache[key] = sorted(r[0] for r in cur.fetchall())
     return _universe_cache[key]
@@ -223,7 +238,7 @@ def evaluate(cur, cand: Candidate) -> Candidate:
         binds,
     )
     rows = cur.fetchall()
-    uni = universe_popularity(cur, cand.template)
+    uni = universe_popularity(cur, cand.template, cand.params)
     cand.answers = [r[0] for r in rows]
     cand.categories = {
         eid: rarity_category(bisect.bisect_left(uni, pop) / len(uni) if uni else 0.0)

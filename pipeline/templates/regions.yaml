@@ -1,0 +1,55 @@
+# Regions: first-level divisions (US states, Canadian provinces, German Länder...), Phase 6.
+# Answer type: region. Data: geo_pipeline.ingest.features (Wikidata, P31 subclass of
+# "first-level administrative division", not dissolved). attrs.region_kinds = all class labels;
+# each question lists the kinds that count (Wikidata also files atolls, cultural regions and
+# stray cities under some countries). Kinds are separated by "|".
+# Small fixed sets (13 Canadian provinces) are all well known by nature: tail_min 2.
+
+- id: region_of_country
+  family: regions
+  kind: membership
+  entity_type: region
+  difficulty: 1
+  min_answers: 8
+  tail_min: 2
+  # rank against the same country's regions (all US states are famous next to Bihar's districts)
+  universe: >-
+    e.country_id = (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+  text: "Name {country.text}"
+  params:
+    country:
+      - {name: United States, kinds: "U.S. state", text: "a US state"}
+      - {name: Canada, kinds: "province of Canada|territory of Canada", text: "a Canadian province or territory"}
+      - {name: Germany, kinds: "federated state of Germany", text: "a German state (Bundesland)", difficulty: 2}
+      - {name: Australia, kinds: "state of Australia|mainland territory of Australia", text: "an Australian state or territory"}
+      - {name: Mexico, kinds: "state of Mexico", text: "a Mexican state", difficulty: 2}
+      - {name: Brazil, kinds: "state of Brazil|federative unit of Brazil", text: "a Brazilian state", difficulty: 2}
+      - {name: India, kinds: "state of India|union territory of India", text: "an Indian state or union territory", difficulty: 2}
+      - {name: Italy, kinds: "region of Italy|autonomous region with special statute", text: "a region of Italy", difficulty: 2}
+      - {name: Spain, kinds: "autonomous community of Spain", text: "an autonomous community of Spain", difficulty: 2}
+      - {name: France, kinds: "region of France|overseas department and region of France", text: "a region of France", difficulty: 2}
+      - {name: China, kinds: "province of China|autonomous region of China", text: "a Chinese province or autonomous region", difficulty: 3}
+      - {name: Japan, kinds: "prefecture of Japan|metropolitan prefecture|fu", text: "a Japanese prefecture", difficulty: 3}
+      - {name: Switzerland, kinds: "canton of Switzerland|half-canton", text: "a Swiss canton", difficulty: 3}
+      - {name: Argentina, kinds: "province of Argentina", text: "an Argentine province", difficulty: 3}
+      - {name: Austria, kinds: "federal state of Austria", text: "an Austrian state", difficulty: 2}
+  filter: >-
+    e.country_id = (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
+    AND e.attrs->'region_kinds' ?| string_to_array(:country.kinds, '|')
+
+- id: us_state_starts_with
+  family: regions
+  kind: name_twist
+  entity_type: region
+  difficulty: 1
+  min_answers: 8
+  tail_min: 2
+  universe: "e.attrs->'region_kinds' ? 'U.S. state'"
+  text: "Name a US state that starts with the letter {l.l}"
+  params:
+    l:
+      - {l: M}
+      - {l: N}
+  filter: >-
+    e.country_id = (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = 'United States')
+    AND e.attrs->'region_kinds' ? 'U.S. state' AND upper(left(e.name, 1)) = :l.l

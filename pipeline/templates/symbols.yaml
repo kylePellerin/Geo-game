@@ -1,0 +1,44 @@
+# National symbols (QUESTIONS.md §3.4, Phase 6). Data: data/national_animals.yaml (curated),
+# country attrs.national_animals = [animal keys]; animal entities carry attrs.groups.
+
+- id: country_national_animal_group
+  family: symbols
+  kind: relational
+  entity_type: country
+  difficulty: 2
+  text: "Name a country whose national animal is {g.text}"
+  min_answers: 8
+  params:
+    g:
+      - {group: big_cat, text: "a big cat (lion, tiger, jaguar…)"}
+      - {group: bird, text: "a bird", difficulty: 1}
+      - {group: bird_of_prey, text: "a bird of prey (eagle, falcon, condor…)"}
+      - {group: antelope, text: "an antelope or oryx", difficulty: 3}
+  filter: >-
+    EXISTS (SELECT 1 FROM relations r JOIN entities an ON an.id = r.b
+            WHERE r.a = e.id AND r.rel = 'has_national_animal' AND an.attrs->'groups' ? :g.group)
+
+- id: national_animal_any
+  family: symbols
+  kind: membership
+  entity_type: animal
+  difficulty: 1
+  text: "Name an animal that is a country's national animal or national bird"
+  filter: "EXISTS (SELECT 1 FROM relations r WHERE r.b = e.id AND r.rel = 'has_national_animal')"
+
+- id: national_animal_of_continent
+  family: symbols
+  kind: membership
+  entity_type: animal
+  difficulty: 2
+  min_answers: 8
+  text: "Name the national animal of a country in {continent.name}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+      - {name: South America, difficulty: 3}
+  filter: >-
+    EXISTS (SELECT 1 FROM relations r JOIN entities k ON k.id = r.a
+            WHERE r.b = e.id AND r.rel = 'has_national_animal' AND k.attrs->>'continent' = :continent.name)

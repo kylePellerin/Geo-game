@@ -24,6 +24,11 @@ function TextSummary({ summary }: { summary: Summary }) {
         <p>Most common answers: {summary.commonAnswers.map((a) => a.name).join(", ")}</p>}
       {!!summary.rareAnswers?.length &&
         <p>Some rare answers: {summary.rareAnswers.map((a) => a.name).join(", ")}</p>}
+      {summary.fact && (
+        <aside style={{ borderLeft: "3px solid #999", paddingLeft: "0.75em" }}>
+          <p><strong>Rare find: {summary.fact.name}</strong><br />{summary.fact.text}</p>
+        </aside>
+      )}
     </>
   );
 }

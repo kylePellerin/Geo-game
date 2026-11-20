@@ -1,0 +1,152 @@
+# Famous landmarks (Phase 6): English Wikipedia titles, resolved to Wikidata QIDs by
+# geo_pipeline.ingest.features. Class-based queries miss many icons (the Eiffel Tower is a
+# "lattice tower", the Colosseum an "amphitheatre"), so these are listed by hand and get
+# attrs.famous = true. Natural wonders typed as mountain/lake/island keep that type.
+titles:
+  - Eiffel Tower
+  - Statue of Liberty
+  - Colosseum
+  - Big Ben
+  - Sydney Opera House
+  - Christ the Redeemer (statue)
+  - Golden Gate Bridge
+  - Tower of London
+  - Brandenburg Gate
+  - Sagrada Família
+  - Leaning Tower of Pisa
+  - Acropolis of Athens
+  - Parthenon
+  - Petra
+  - Angkor Wat
+  - Taj Mahal
+  - Great Wall of China
+  - Forbidden City
+  - Burj Khalifa
+  - Stonehenge
+  - Neuschwanstein Castle
+  - Moscow Kremlin
+  - Saint Basil's Cathedral
+  - Hagia Sophia
+  - Blue Mosque, Istanbul
+  - Mount Rushmore
+  - Empire State Building
+  - Chichen Itza
+  - Machu Picchu
+  - Giza pyramid complex
+  - Great Sphinx of Giza
+  - Alhambra
+  - Louvre
+  - Notre-Dame de Paris
+  - Arc de Triomphe
+  - Palace of Versailles
+  - Buckingham Palace
+  - Westminster Abbey
+  - St. Peter's Basilica
+  - Trevi Fountain
+  - Pantheon, Rome
+  - Moai
+  - CN Tower
+  - Space Needle
+  - Tokyo Tower
+  - Tokyo Skytree
+  - Petronas Towers
+  - Marina Bay Sands
+  - Burj Al Arab
+  - Sheikh Zayed Grand Mosque
+  - Borobudur
+  - Terracotta Army
+  - Potala Palace
+  - Golden Temple
+  - Red Fort
+  - Gateway of India
+  - Kinkaku-ji
+  - Fushimi Inari-taisha
+  - Wat Arun
+  - Shwedagon Pagoda
+  - Bagan
+  - Rock-hewn Churches, Lalibela
+  - Abu Simbel
+  - Karnak
+  - Valley of the Kings
+  - Uluru
+  - Table Mountain
+  - Victoria Falls
+  - Iguazu Falls
+  - Niagara Falls
+  - Grand Canyon
+  - Hollywood Sign
+  - Times Square
+  - Central Park
+  - Brooklyn Bridge
+  - White House
+  - Lincoln Memorial
+  - Alcatraz Island
+  - Atomium
+  - Manneken Pis
+  - The Little Mermaid (statue)
+  - Charles Bridge
+  - Prague Castle
+  - Schönbrunn Palace
+  - Mont-Saint-Michel
+  - Château de Chambord
+  - Edinburgh Castle
+  - Tower Bridge
+  - London Eye
+  - Cliffs of Moher
+  - Giant's Causeway
+  - Sugarloaf Mountain
+  - Teotihuacan
+  - Tikal
+  - Palenque
+  - Masada
+  - Western Wall
+  - Dome of the Rock
+  - Persepolis
+  - Ephesus
+  - Pamukkale
+  - Meteora
+  - Delphi
+  - Knossos
+  - Pompeii
+  - Park Güell
+  - Guggenheim Museum Bilbao
+  - Belém Tower
+  - Pena Palace
+  - Peterhof Palace
+  - Hermitage Museum
+  - Bran Castle
+  - Hungarian Parliament Building
+  - Wawel Castle
+  - Kremlin Wall
+  - Rialto Bridge
+  - St Mark's Basilica
+  - Doge's Palace
+  - Milan Cathedral
+  - Cologne Cathedral
+  - Florence Cathedral
+  - Ponte Vecchio
+  - Leshan Giant Buddha
+  - Great Buddha of Kamakura
+  - Itsukushima Shrine
+  - Himeji Castle
+  - Senso-ji
+  - Mezquita (Mosque–Cathedral of Córdoba)
+  - Hassan II Mosque
+  - Great Mosque of Djenné
+  - Göbekli Tepe
+  - Hampi
+  - Ellora Caves
+  - Sigiriya
+  - Ha Long Bay
+  - Plitvice Lakes National Park
+  - Cappadocia
+  - Galata Tower
+  - Sheikh Lotfollah Mosque
+  - Registan
+  - Bamiyan Buddhas
+  - Washington Monument
+  - Gateway Arch
+  - Golden Pavilion
+  - Hagia Sophia
+  - Christ the King (Lisbon)
+  - Motherland Calls

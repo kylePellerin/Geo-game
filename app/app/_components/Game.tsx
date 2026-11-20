@@ -84,7 +84,9 @@ export function Game() {
       setOffsetMs(Date.parse(d.serverNow) - Date.now());
       setDaily(d);
       const cur = currentQuestion(d.questions);
-      setView(cur === null ? { kind: "end" } : { kind: "question", idx: cur });
+      // only if nothing is shown yet: React's dev mode runs this effect twice, and a second run
+      // must not undo a click the player already made
+      setView((v) => v ?? (cur === null ? { kind: "end" } : { kind: "question", idx: cur }));
       // a question left running (reload): resume it, the clock kept going on the server
       if (cur !== null && d.questions.find((q) => q.idx === cur)?.play.state === "playing") {
         await start(d.date, cur);

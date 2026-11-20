@@ -1,0 +1,135 @@
+# National animals (Phase 6, QUESTIONS.md §3.4). Curated 2026-11-20 from Wikipedia's "List of
+# national animals" and national government sources, at the level players type ("eagle", not
+# "bald eagle"); the specific species is kept as `species` for fact cards.
+# Policy (QUESTIONS.md §3.4): officially designated AND widely recognised unofficial symbols
+# count; `official: false` marks the unofficial ones. Only confident entries: when in doubt,
+# leave the country out. Mythical animals (dragon, unicorn, turul) are kept but tagged.
+#
+# animals: key -> English Wikipedia article (resolved to a Wikidata QID by the ingest),
+#          groups used by templates, extra aliases.
+animals:
+  lion: {wiki: Lion, groups: [big_cat, mammal]}
+  tiger: {wiki: Tiger, groups: [big_cat, mammal]}
+  jaguar: {wiki: Jaguar, groups: [big_cat, mammal]}
+  leopard: {wiki: Leopard, groups: [big_cat, mammal]}
+  snow leopard: {wiki: Snow leopard, groups: [big_cat, mammal]}
+  lynx: {wiki: Lynx, groups: [mammal]}
+  eagle: {wiki: Eagle, groups: [bird, bird_of_prey]}
+  falcon: {wiki: Falcon, groups: [bird, bird_of_prey]}
+  condor: {wiki: Andean condor, groups: [bird, bird_of_prey], aliases: [andean condor]}
+  gyrfalcon: {wiki: Gyrfalcon, groups: [bird, bird_of_prey]}
+  bear: {wiki: Bear, groups: [mammal], aliases: [brown bear]}
+  wolf: {wiki: Wolf, groups: [mammal], aliases: [grey wolf, gray wolf, italian wolf]}
+  kangaroo: {wiki: Kangaroo, groups: [mammal, marsupial], aliases: [red kangaroo]}
+  emu: {wiki: Emu, groups: [bird]}
+  kiwi: {wiki: Kiwi (bird), groups: [bird], aliases: [kiwi bird]}
+  beaver: {wiki: Beaver, groups: [mammal], aliases: [north american beaver, canadian beaver]}
+  bison: {wiki: Bison, groups: [mammal], aliases: [american bison, european bison, wisent]}
+  rooster: {wiki: Chicken, groups: [bird], aliases: [cockerel, gallic rooster, cock, chicken]}
+  giant panda: {wiki: Giant panda, groups: [mammal], aliases: [panda]}
+  dragon: {wiki: Dragon, groups: [mythical], aliases: [chinese dragon, welsh dragon]}
+  elephant: {wiki: Elephant, groups: [mammal], aliases: [asian elephant, thai elephant]}
+  komodo dragon: {wiki: Komodo dragon, groups: [reptile]}
+  springbok: {wiki: Springbok, groups: [mammal, antelope]}
+  giraffe: {wiki: Giraffe, groups: [mammal]}
+  zebra: {wiki: Zebra, groups: [mammal], aliases: [plains zebra]}
+  oryx: {wiki: Oryx, groups: [mammal, antelope], aliases: [arabian oryx, gemsbok]}
+  markhor: {wiki: Markhor, groups: [mammal]}
+  takin: {wiki: Takin, groups: [mammal]}
+  vicuna: {wiki: Vicuña, groups: [mammal]}
+  llama: {wiki: Llama, groups: [mammal]}
+  camel: {wiki: Dromedary, groups: [mammal], aliases: [dromedary, arabian camel]}
+  cow: {wiki: Cattle, groups: [mammal], aliases: [cattle]}
+  water buffalo: {wiki: Water buffalo, groups: [mammal], aliases: [carabao, buffalo]}
+  quetzal: {wiki: Resplendent quetzal, groups: [bird], aliases: [resplendent quetzal]}
+  harpy eagle: {wiki: Harpy eagle, groups: [bird, bird_of_prey]}
+  bald eagle: {wiki: Bald eagle, groups: [bird, bird_of_prey]}
+  peacock: {wiki: Indian peafowl, groups: [bird], aliases: [peafowl, indian peafowl, peacock]}
+  crane: {wiki: Crane (bird), groups: [bird], aliases: [blue crane, grey crowned crane, red-crowned crane]}
+  stork: {wiki: White stork, groups: [bird], aliases: [white stork]}
+  swan: {wiki: Swan, groups: [bird], aliases: [mute swan, whooper swan]}
+  dodo: {wiki: Dodo, groups: [bird, extinct]}
+  scarlet ibis: {wiki: Scarlet ibis, groups: [bird]}
+  hornero: {wiki: Rufous hornero, groups: [bird], aliases: [rufous hornero, ovenbird]}
+  bird-of-paradise: {wiki: Bird-of-paradise, groups: [bird], aliases: [bird of paradise, raggiana bird-of-paradise]}
+  philippine eagle: {wiki: Philippine eagle, groups: [bird, bird_of_prey]}
+  tapir: {wiki: Tapir, groups: [mammal], aliases: [baird's tapir]}
+  white-tailed deer: {wiki: White-tailed deer, groups: [mammal], aliases: [deer]}
+  hoopoe: {wiki: Hoopoe, groups: [bird]}
+  kouprey: {wiki: Kouprey, groups: [mammal]}
+  unicorn: {wiki: Unicorn, groups: [mythical]}
+  pheasant: {wiki: Green pheasant, groups: [bird], aliases: [green pheasant, japanese pheasant]}
+  magpie: {wiki: Eurasian magpie, groups: [bird]}
+  horse: {wiki: Horse, groups: [mammal]}
+
+# country iso2 -> list of [animal key, official?]
+countries:
+  US: [[bald eagle, true], [bison, true]]
+  CA: [[beaver, true]]
+  MX: [[eagle, true], [jaguar, false]]
+  AU: [[kangaroo, false], [emu, false]]
+  NZ: [[kiwi, false]]
+  GB: [[lion, false]]
+  FR: [[rooster, false]]
+  DE: [[eagle, true]]
+  AT: [[eagle, true]]
+  PL: [[eagle, true]]
+  AL: [[eagle, true]]
+  KZ: [[eagle, false]]
+  IT: [[wolf, false]]
+  NL: [[lion, true]]
+  BE: [[lion, true]]
+  LU: [[lion, true]]
+  CZ: [[lion, true]]
+  "NO": [[lion, true]]  # quoted: bare NO is YAML false
+  FI: [[bear, false], [swan, true]]
+  RU: [[bear, false]]
+  DK: [[swan, true]]
+  IS: [[gyrfalcon, false]]
+  LT: [[stork, true]]
+  BY: [[bison, true]]
+  RO: [[lynx, false]]
+  CN: [[giant panda, false], [dragon, false]]
+  IN: [[tiger, true], [peacock, true]]
+  BD: [[tiger, true]]
+  MY: [[tiger, true]]
+  KR: [[tiger, false], [magpie, false]]
+  JP: [[pheasant, true]]
+  TH: [[elephant, true]]
+  LA: [[elephant, false]]
+  KH: [[kouprey, true]]
+  VN: [[water buffalo, false]]
+  PH: [[philippine eagle, true], [water buffalo, false]]
+  ID: [[komodo dragon, true]]
+  PK: [[markhor, true]]
+  AF: [[snow leopard, true]]
+  BT: [[takin, true]]
+  NP: [[cow, true]]
+  SA: [[camel, false], [falcon, false]]
+  AE: [[falcon, true], [oryx, true]]
+  QA: [[oryx, true]]
+  OM: [[oryx, true]]
+  JO: [[oryx, true]]
+  IL: [[hoopoe, true]]
+  ZA: [[springbok, true], [crane, true]]
+  TZ: [[giraffe, true]]
+  UG: [[crane, true]]
+  KE: [[lion, false]]
+  ET: [[lion, false]]
+  BW: [[zebra, true]]
+  NA: [[oryx, true]]
+  MU: [[dodo, false]]
+  BR: [[jaguar, false]]
+  AR: [[hornero, true]]
+  CL: [[condor, true]]
+  CO: [[condor, true]]
+  EC: [[condor, true]]
+  BO: [[condor, true], [llama, false]]
+  PE: [[vicuna, true]]
+  GT: [[quetzal, true]]
+  PA: [[harpy eagle, true]]
+  BZ: [[tapir, true]]
+  CR: [[white-tailed deer, true]]
+  HN: [[white-tailed deer, true]]
+  TT: [[scarlet ibis, true]]
+  PG: [[bird-of-paradise, true]]

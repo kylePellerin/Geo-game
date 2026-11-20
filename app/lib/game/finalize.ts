@@ -55,6 +55,24 @@ export async function finalizeDay(db: Pool, date: string, today: string) {
          final_points = EXCLUDED.final_points, finished = EXCLUDED.finished`,
       [date, puzzle.length],
     );
+    // per-question difficulty stats for calibration (PLAN §8 Phase 6): players, share who
+    // scored, median points, mean number of answers
+    await client.query(
+      `UPDATE puzzle_questions q SET stats = q.stats || jsonb_build_object('played', s.played)
+       FROM (
+         SELECT p.idx, jsonb_build_object(
+           'players', count(*),
+           'scored_pct', round(100.0 * count(*) FILTER (WHERE coalesce(t.pts, 0) > 0) / count(*), 1),
+           'median_points', percentile_cont(0.5) WITHIN GROUP (ORDER BY coalesce(t.pts, 0)),
+           'mean_answers', round(avg(coalesce(t.n, 0)), 2)) AS played
+         FROM question_plays p
+         LEFT JOIN (SELECT player_id, idx, sum(coalesce(final_points, points)) AS pts, count(*) AS n
+                    FROM answers WHERE date = $1 GROUP BY player_id, idx) t
+           ON t.player_id = p.player_id AND t.idx = p.idx
+         WHERE p.date = $1 GROUP BY p.idx) s
+       WHERE q.date = $1 AND q.idx = s.idx`,
+      [date],
+    );
     const players = (await client.query<{ player_id: string }>(
       "SELECT DISTINCT player_id FROM question_plays WHERE date = $1", [date],
     )).rows;

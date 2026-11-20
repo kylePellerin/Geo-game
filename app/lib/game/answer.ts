@@ -64,6 +64,8 @@ export interface QuestionSummary {
   answers: GivenAnswer[];
   commonAnswers?: NamedEntity[];
   rareAnswers?: NamedEntity[];
+  /** fact card about the rarest valid answer given so far (QUESTIONS.md §4) */
+  fact?: { name: string; text: string };
   /** matching rounds: pairs[leftPos] = rightPos; ordering rounds: the submitted order */
   pairs?: number[];
   order?: number[];
@@ -478,10 +480,25 @@ async function summarize(db: Db, playerId: string, q: PuzzleQuestion): Promise<Q
              solution: q.pairs.map((p) => q.rightOrder.indexOf(p.right)) };
   }
   const answers = await givenAnswers(db, playerId, q);
+  const shown = await reveal(db, q);
+  const fact = await factCard(db, q, shown.rareAnswers[0]?.id);
   return {
-    idx: q.idx, points: answers.reduce((s, a) => s + a.points, 0), answers,
-    ...(await reveal(db, q)),
+    idx: q.idx, points: answers.reduce((s, a) => s + a.points, 0), answers, ...shown,
+    ...(fact ? { fact } : {}),
   };
+}
+
+/** Fact card for the rarest valid answer anyone has given (fallback: the rarest shown). */
+async function factCard(db: Db, q: PuzzleQuestion, fallbackId?: string) {
+  const { rows } = await db.query<{ name: string; text: string }>(
+    `SELECT e.name, f.text FROM entity_facts f JOIN entities e ON e.id = f.entity_id
+     LEFT JOIN answer_counts c ON c.date = $1 AND c.idx = $2 AND c.entity_id = f.entity_id
+     WHERE f.context = 'general' AND f.entity_id = ANY($3)
+       AND (c.n IS NOT NULL OR f.entity_id = $4)
+     ORDER BY (c.n IS NULL), c.n, e.popularity NULLS FIRST LIMIT 1`,
+    [q.date, q.idx, q.validIds, fallbackId ?? null],
+  );
+  return rows[0] ?? null;
 }
 
 /** A few of the most common and of the rarest valid answers. */

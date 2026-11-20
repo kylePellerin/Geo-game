@@ -66,6 +66,7 @@ export interface Summary {
   answers: GivenAnswer[];
   commonAnswers?: Named[];
   rareAnswers?: Named[];
+  fact?: { name: string; text: string };
   pairs?: number[];
   order?: number[];
   correct?: boolean[];

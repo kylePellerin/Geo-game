@@ -47,6 +47,15 @@ def _giveaway(expr: str) -> str:
             f"WHERE length(w) >= 3 AND lower(left(w, 3)) = lower(left(unaccent({expr}), 3)))")
 
 
+def _names_country(expr: str) -> str:
+    """SQL: the item's name contains a word of its country's name (Lower Austria, Great Wall of
+    China) or the demonym's stem (Polish Corridor)."""
+    return (f"EXISTS (SELECT 1 FROM regexp_split_to_table(unaccent(c.name), '[^A-Za-z]+') w "
+            f"WHERE length(w) >= 4 AND unaccent({expr}) ILIKE '%%' || w || '%%') "
+            f"OR (length(c.attrs->>'demonym') >= 5 AND unaccent({expr}) ILIKE "
+            f"'%%' || left(c.attrs->>'demonym', length(c.attrs->>'demonym') - 1) || '%%')")
+
+
 _NOT_TRANSCONTINENTAL = "c.attrs->>'iso2' NOT IN ('RU', 'TR', 'KZ', 'AZ', 'GE', 'EG')"
 
 VARIANTS = [
@@ -159,6 +168,70 @@ VARIANTS = [
                     FROM entities c WHERE c.type = 'country'
                     AND c.attrs->'highest_point'->>'name' !~ '^Q[0-9]+$'
                     AND (c.attrs->'highest_point'->>'elevation_m')::float >= 2000""",
+    ),
+    MatchVariant(
+        id="match_outline_country",
+        text="Match each country outline to its country",
+        left_type="country",
+        weight=2.0,
+        # outlines too small to recognise (Luxembourg-sized and below) are left out
+        pool_sql="""SELECT e.id, e.id, e.name, coalesce(e.popularity, 0), e.attrs->>'iso2', NULL
+                    FROM entities e WHERE e.type = 'country'
+                    AND coalesce((e.attrs->'shape'->>'outline_ok')::boolean, false)""",
+    ),
+    MatchVariant(
+        id="match_region_country",
+        text="Match each region to its country",
+        left_type="region",
+        weight=1.5,
+        # skip names that give the country away ("Mexico City" -> Mexico)
+        pool_sql=f"""SELECT e.id, c.id, c.name, coalesce(e.popularity, 0), c.attrs->>'iso2', NULL
+                    FROM entities e JOIN entities c ON c.id = e.country_id
+                    WHERE e.type = 'region' AND NOT {_giveaway("e.name")}
+                    AND NOT ({_names_country("e.name")})
+                    -- names that echo another country (Papua -> Papua New Guinea?) are ambiguous
+                    AND NOT EXISTS (SELECT 1 FROM entities k, regexp_split_to_table(unaccent(k.name), '[^A-Za-z]+') w
+                                    WHERE k.type = 'country' AND length(w) >= 5
+                                    AND unaccent(e.name) ILIKE '%%' || w || '%%')
+                    -- city-regions (Moscow, Berlin, Hong Kong) would be trivial city questions
+                    AND NOT EXISTS (SELECT 1 FROM entities ci WHERE ci.type = 'city' AND ci.name = e.name)
+                    -- names shared by regions of different countries (Limburg) are ambiguous
+                    AND NOT EXISTS (SELECT 1 FROM entities o WHERE o.type = 'region'
+                                    AND o.name = e.name AND o.country_id <> e.country_id)
+                    AND (e.attrs->>'wikidata_sitelinks')::int >= 60""",
+    ),
+    MatchVariant(
+        id="match_landmark_country",
+        text="Match each landmark to its country",
+        left_type="landmark",
+        weight=1.5,
+        pool_sql=f"""SELECT e.id, c.id, c.name, coalesce(e.popularity, 0), c.attrs->>'iso2', NULL
+                    FROM entities e JOIN entities c ON c.id = e.country_id
+                    WHERE e.type = 'landmark'
+                    AND (coalesce((e.attrs->>'famous')::boolean, false)
+                         OR (coalesce((e.attrs->>'unesco')::boolean, false)
+                             AND (e.attrs->>'wikidata_sitelinks')::int >= 40))
+                    AND jsonb_array_length(e.attrs->'countries') = 1
+                    AND NOT {_giveaway("e.name")} AND NOT ({_names_country("e.name")})
+                    AND NOT EXISTS (SELECT 1 FROM regexp_split_to_table(unaccent(e.name), '[^A-Za-z]+') w
+                                    WHERE length(w) >= 4
+                                    AND lower(c.attrs->>'demonym') LIKE lower(left(w, 4)) || '%%')""",
+    ),
+    MatchVariant(
+        id="match_country_animal",
+        text="Match each country to its national animal",
+        left_type="country",
+        weight=1.0,
+        # right = the country's first (official first) animal; alts = all of its animals
+        pool_sql="""SELECT c.id, first.b, initcap(first.name), coalesce(c.popularity, 0),
+                           c.attrs->>'iso2',
+                           ARRAY(SELECT r2.b FROM relations r2 WHERE r2.a = c.id
+                                 AND r2.rel = 'has_national_animal')
+                    FROM entities c,
+                    LATERAL (SELECT r.b, an.name FROM relations r JOIN entities an ON an.id = r.b
+                             WHERE r.a = c.id AND r.rel = 'has_national_animal'
+                             ORDER BY (r.attrs->>'official')::boolean DESC, an.name LIMIT 1) first
+                    WHERE c.type = 'country'""",
     ),
     MatchVariant(
         id="match_olympic_city_year",
