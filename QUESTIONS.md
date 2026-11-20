@@ -51,6 +51,10 @@ whole type, rejected "Name a country in Africa" and most capital questions.)
 | 4–5 | Medium | airports, mountains, rivers & lakes, borders, map surprises, national parks |
 | 6 | Hard ("deep dive") | volcanoes, climate, weird borders, aviation deep cuts |
 
+Mix rules (2026-11-20): **flags every day** (sometimes two), **airports occasionally** (≤ 2 a
+week, easy-ish questions only), a **matching round** (§3.12) on most days in slot 3 or 4. Until
+deep-dive data exists (Phase 6), slot 6 often falls back to a medium question.
+
 ### Calibrating with real data (after launch)
 - Track per question: **% of players scoring > 0** and **median points**.
 - Targets: easy ≥ 85% scoring, medium ≥ 70%, hard ≥ 50%.

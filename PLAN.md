@@ -162,9 +162,13 @@ players is a core goal: every question needs well-known answers as well as rare 
   1. Sample candidate (template, params).
     2. Run filter → answer set; reject if outside min/max, or if it fails the easy-floor / tail
       checks in QUESTIONS.md §2 (≥5 answers in top-20% popularity, ≥5 in bottom-50%).
-    3. Assemble 6 questions from 6 different families using the daily mix in QUESTIONS.md §2
-      (slots 1–3 easy, 4–5 medium, 6 hard); include a flag question on most days.
-  4. No identical template+params within 60 days; no answer-set overlap > 50% with the last 14 days.
+    3. Assemble 6 questions using the daily mix in QUESTIONS.md §2 (slots 1–3 easy, 4–5 medium,
+       6 hard), different families except flags. A flag question every day, a second (harder) one
+       on ~1 day in 5; airports at most 2 per 7 days; a matching round (§1) on ~60% of days in
+       slot 3 or 4.
+    4. No identical template+params within 60 days. Similar answer sets (Jaccard > 0.5) within
+       14 days are allowed but strongly down-weighted (decided 2026-11-20: some repetition of
+       similar questions in later days is fine).
   5. Write to `daily_puzzles` / `puzzle_questions` with `reviewed = false`.
 - Generate ~90 days ahead. Admin review page can approve/replace questions.
 
