@@ -242,9 +242,12 @@ def pick_day(day: date, pool: list[Candidate], history: list[Past], salt: str,
                      else set() if note == "template reused" else None)
             options = [c for c in pool if c.difficulty == d and c.key not in keys_today
                        and eligible(c, day, history, sets, used, False, reuse, day_limits)]
-            wants_flag = (slot == 0 and want_flag) or (slot == 3 and want_second_flag)
+            # the first flag question is easy (slot 1); a second one is the medium slot 5
+            wants_flag = (slot == 0 and want_flag) or (slot == ORDER_SLOT and want_second_flag)
             if wants_flag and used["flags"] < day_limits["flags"]:
                 options = [c for c in options if c.family == "flags"] or options
+            elif slot in (1, 2) and used["flags"]:
+                options = [c for c in options if c.family != "flags"] or options
             if options:
                 break
         else:

@@ -102,12 +102,17 @@ VARIANTS = [
         # two countries whose bare names coincide (dinar, peso) never share a round.
         pool_sql="""SELECT c.id, lower(bare), bare, coalesce(c.popularity, 0), c.attrs->>'iso2', NULL
                     FROM entities c,
-                    LATERAL (SELECT regexp_replace(c.attrs->'currency_names'->>0,
+                    LATERAL (SELECT regexp_replace(regexp_replace(c.attrs->'currency_names'->>0,
                                '^(' || regexp_replace(coalesce(c.attrs->>'demonym', '-'),
                                                       '[^A-Za-z ]', '', 'g')
                                || '|' || regexp_replace(c.name, '[^A-Za-z ]', '', 'g')
-                               || ')\\s+', '', 'i') AS bare) b
+                               || ')\\s+', '', 'i'),
+                               -- any other adjective from the country name (Surinamese dollar)
+                               '^' || left(regexp_replace(c.name, '[^A-Za-z]', '', 'g'), 4)
+                               || '[a-z]*\\s+', '', 'i') AS bare) b
                     WHERE c.type = 'country'
+                    -- still names the country after stripping ("New Taiwan dollar"): skip
+                    AND bare !~* left(regexp_replace(c.name, '[^A-Za-z]', '', 'g'), 4)
                     AND jsonb_array_length(c.attrs->'currencies') = 1
                     AND (SELECT count(*) FROM entities o WHERE o.type = 'country'
                          AND o.attrs->'currencies' ? (c.attrs->'currencies'->>0)) = 1""",
