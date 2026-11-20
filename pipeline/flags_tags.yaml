@@ -17,6 +17,14 @@ flags:
     - white
     stripes: none
     n_colors: 3
+    dominant: black
+    color_shares:
+      black: 0.331
+      green: 0.331
+      red: 0.297
+      orange: 0.016
+      maroon: 0.013
+      white: 0.012
     has_star: false
     has_sun: false
     has_crescent: false
@@ -39,6 +47,11 @@ flags:
     - maroon
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.868
+      black: 0.114
+      maroon: 0.018
     has_star: false
     has_sun: false
     has_crescent: false
@@ -61,6 +74,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: white
+    color_shares:
+      white: 0.474
+      green: 0.455
+      red: 0.069
     has_star: true
     has_sun: false
     has_crescent: true
@@ -84,6 +102,12 @@ flags:
     - orange
     stripes: vertical
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.333
+      red: 0.33
+      blue: 0.319
+      orange: 0.018
     has_star: false
     has_sun: false
     has_crescent: false
@@ -107,6 +131,12 @@ flags:
     - brown
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.474
+      black: 0.47
+      yellow: 0.047
+      brown: 0.006
     has_star: true
     has_sun: false
     has_crescent: false
@@ -133,6 +163,15 @@ flags:
     - maroon
     stripes: none
     n_colors: 5
+    dominant: red
+    color_shares:
+      red: 0.499
+      black: 0.232
+      blue: 0.107
+      yellow: 0.081
+      white: 0.072
+      brown: 0.005
+      maroon: 0.003
     has_star: false
     has_sun: true
     has_crescent: false
@@ -156,6 +195,12 @@ flags:
     - yellow
     stripes: horizontal
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.667
+      white: 0.298
+      yellow: 0.018
+      orange: 0.017
     has_star: false
     has_sun: true
     has_crescent: false
@@ -178,6 +223,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.333
+      blue: 0.333
+      yellow: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -200,6 +250,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.758
+      white: 0.132
+      red: 0.11
     has_star: true
     has_sun: false
     has_crescent: false
@@ -221,6 +276,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.667
+      white: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -244,6 +303,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: blue
+    color_shares:
+      blue: 0.333
+      green: 0.333
+      red: 0.311
+      white: 0.022
     has_star: true
     has_sun: false
     has_crescent: true
@@ -267,6 +332,12 @@ flags:
     - green
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.532
+      black: 0.305
+      yellow: 0.158
+      green: 0.005
     has_star: false
     has_sun: false
     has_crescent: false
@@ -288,6 +359,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.767
+      white: 0.233
     has_star: false
     has_sun: false
     has_crescent: false
@@ -309,6 +384,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: green
+    color_shares:
+      green: 0.736
+      red: 0.261
     has_star: false
     has_sun: true
     has_crescent: false
@@ -332,6 +411,12 @@ flags:
     - brown
     stripes: vertical
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.662
+      yellow: 0.302
+      black: 0.03
+      brown: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -354,6 +439,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.669
+      green: 0.276
+      white: 0.054
     has_star: false
     has_sun: false
     has_crescent: false
@@ -377,6 +467,12 @@ flags:
     - orange
     stripes: vertical
     n_colors: 3
+    dominant: black
+    color_shares:
+      black: 0.331
+      yellow: 0.331
+      red: 0.331
+      orange: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -406,6 +502,18 @@ flags:
     - yellow
     stripes: horizontal
     n_colors: 4
+    dominant: blue
+    color_shares:
+      blue: 0.499
+      white: 0.224
+      red: 0.136
+      green: 0.07
+      purple: 0.017
+      yellow: 0.013
+      orange: 0.013
+      maroon: 0.012
+      brown: 0.011
+      grey: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -429,6 +537,12 @@ flags:
     - brown
     stripes: both
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.397
+      yellow: 0.3
+      red: 0.3
+      brown: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -452,6 +566,12 @@ flags:
     - red
     stripes: none
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.439
+      orange: 0.406
+      white: 0.148
+      red: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -476,6 +596,13 @@ flags:
     - orange
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.342
+      green: 0.342
+      yellow: 0.303
+      orange: 0.006
+      blue: 0.004
     has_star: false
     has_sun: false
     has_crescent: false
@@ -498,6 +625,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.568
+      yellow: 0.372
+      white: 0.055
     has_star: true
     has_sun: false
     has_crescent: false
@@ -521,6 +653,12 @@ flags:
     - grey
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.667
+      black: 0.217
+      white: 0.1
+      grey: 0.017
     has_star: false
     has_sun: false
     has_crescent: false
@@ -544,6 +682,12 @@ flags:
     - white
     stripes: none
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.623
+      yellow: 0.218
+      blue: 0.146
+      white: 0.011
     has_star: true
     has_sun: false
     has_crescent: false
@@ -569,6 +713,14 @@ flags:
     - orange
     stripes: none
     n_colors: 4
+    dominant: yellow
+    color_shares:
+      yellow: 0.539
+      white: 0.199
+      black: 0.157
+      red: 0.08
+      orange: 0.011
+      maroon: 0.011
     has_star: false
     has_sun: false
     has_crescent: true
@@ -591,6 +743,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: white
+    color_shares:
+      white: 0.333
+      green: 0.333
+      red: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -613,6 +770,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.49
+      red: 0.487
+      yellow: 0.022
     has_star: true
     has_sun: false
     has_crescent: false
@@ -635,6 +797,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: white
+    color_shares:
+      white: 0.4
+      red: 0.365
+      green: 0.231
     has_star: true
     has_sun: false
     has_crescent: false
@@ -659,6 +826,13 @@ flags:
     - maroon
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.5
+      red: 0.388
+      white: 0.087
+      grey: 0.02
+      maroon: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -682,6 +856,12 @@ flags:
     - orange
     stripes: vertical
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.342
+      green: 0.331
+      red: 0.318
+      orange: 0.008
     has_star: true
     has_sun: false
     has_crescent: false
@@ -703,6 +883,10 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.578
+      white: 0.422
     has_star: false
     has_sun: false
     has_crescent: false
@@ -727,6 +911,13 @@ flags:
     - brown
     stripes: horizontal
     n_colors: 4
+    dominant: blue
+    color_shares:
+      blue: 0.721
+      white: 0.161
+      red: 0.083
+      yellow: 0.03
+      brown: 0.003
     has_star: true
     has_sun: false
     has_crescent: false
@@ -751,6 +942,13 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 5
+    dominant: yellow
+    color_shares:
+      yellow: 0.214
+      white: 0.203
+      green: 0.203
+      blue: 0.192
+      red: 0.188
     has_star: true
     has_sun: false
     has_crescent: false
@@ -774,6 +972,12 @@ flags:
     - orange
     stripes: vertical
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.331
+      yellow: 0.331
+      red: 0.331
+      orange: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -796,6 +1000,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.5
+      white: 0.326
+      blue: 0.174
     has_star: true
     has_sun: false
     has_crescent: false
@@ -818,6 +1027,11 @@ flags:
     - orange
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.968
+      yellow: 0.027
+      orange: 0.006
     has_star: true
     has_sun: false
     has_crescent: false
@@ -840,6 +1054,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.5
+      blue: 0.25
+      red: 0.25
     has_star: false
     has_sun: false
     has_crescent: false
@@ -864,6 +1083,13 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 5
+    dominant: green
+    color_shares:
+      green: 0.246
+      blue: 0.215
+      yellow: 0.215
+      white: 0.179
+      red: 0.144
     has_star: true
     has_sun: false
     has_crescent: true
@@ -887,6 +1113,12 @@ flags:
     - orange
     stripes: none
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.364
+      green: 0.318
+      red: 0.312
+      orange: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -909,6 +1141,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.333
+      white: 0.333
+      red: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -932,6 +1169,12 @@ flags:
     - yellow
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.362
+      blue: 0.346
+      white: 0.284
+      yellow: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -954,6 +1197,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.43
+      red: 0.303
+      white: 0.263
     has_star: true
     has_sun: false
     has_crescent: false
@@ -976,6 +1224,11 @@ flags:
     - green
     stripes: none
     n_colors: 2
+    dominant: white
+    color_shares:
+      white: 0.883
+      orange: 0.103
+      green: 0.013
     has_star: false
     has_sun: false
     has_crescent: false
@@ -998,6 +1251,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: white
+    color_shares:
+      white: 0.358
+      red: 0.358
+      blue: 0.281
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1022,6 +1280,13 @@ flags:
     - orange
     stripes: none
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.668
+      red: 0.198
+      yellow: 0.125
+      green: 0.005
+      orange: 0.003
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1043,6 +1308,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.78
+      white: 0.22
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1066,6 +1335,12 @@ flags:
     - red
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.361
+      green: 0.361
+      white: 0.268
+      red: 0.011
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1093,6 +1368,16 @@ flags:
     - orange
     stripes: none
     n_colors: 5
+    dominant: green
+    color_shares:
+      green: 0.566
+      red: 0.129
+      yellow: 0.101
+      white: 0.096
+      black: 0.089
+      brown: 0.008
+      orange: 0.004
+      blue: 0.004
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1116,6 +1401,12 @@ flags:
     - green
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.344
+      blue: 0.344
+      white: 0.301
+      green: 0.008
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1146,6 +1437,19 @@ flags:
     - white
     stripes: horizontal
     n_colors: 5
+    dominant: yellow
+    color_shares:
+      yellow: 0.433
+      red: 0.257
+      blue: 0.205
+      brown: 0.043
+      green: 0.021
+      white: 0.014
+      orange: 0.01
+      maroon: 0.006
+      purple: 0.004
+      grey: 0.004
+      black: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1169,6 +1473,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.333
+      black: 0.333
+      white: 0.299
+      yellow: 0.035
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1192,6 +1502,12 @@ flags:
     - yellow
     stripes: horizontal
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.674
+      white: 0.303
+      yellow: 0.013
+      green: 0.008
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1215,6 +1531,12 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.306
+      red: 0.302
+      white: 0.245
+      blue: 0.141
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1240,6 +1562,14 @@ flags:
     - purple
     stripes: none
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.403
+      green: 0.249
+      blue: 0.247
+      yellow: 0.079
+      orange: 0.015
+      purple: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1262,6 +1592,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.333
+      black: 0.333
+      white: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1289,6 +1624,16 @@ flags:
     - maroon
     stripes: none
     n_colors: 5
+    dominant: blue
+    color_shares:
+      blue: 0.367
+      red: 0.303
+      yellow: 0.146
+      black: 0.09
+      white: 0.07
+      maroon: 0.009
+      grey: 0.008
+      brown: 0.007
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1312,6 +1657,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.333
+      red: 0.327
+      yellow: 0.261
+      blue: 0.079
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1337,6 +1688,14 @@ flags:
     - yellow
     stripes: none
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.706
+      red: 0.145
+      white: 0.117
+      yellow: 0.011
+      green: 0.01
+      maroon: 0.004
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1358,6 +1717,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: white
+    color_shares:
+      white: 0.569
+      blue: 0.431
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1380,6 +1743,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.338
+      blue: 0.331
+      white: 0.331
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1402,6 +1770,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.333
+      yellow: 0.333
+      blue: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1425,6 +1798,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: blue
+    color_shares:
+      blue: 0.3
+      green: 0.283
+      red: 0.275
+      white: 0.142
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1446,6 +1825,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: white
+    color_shares:
+      white: 0.626
+      red: 0.374
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1468,6 +1851,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: black
+    color_shares:
+      black: 0.333
+      red: 0.333
+      yellow: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1492,6 +1880,13 @@ flags:
     - brown
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.333
+      green: 0.333
+      yellow: 0.304
+      black: 0.026
+      brown: 0.003
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1513,6 +1908,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.576
+      white: 0.424
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1536,6 +1935,12 @@ flags:
     - orange
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.434
+      yellow: 0.297
+      green: 0.26
+      orange: 0.008
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1559,6 +1964,12 @@ flags:
     - yellow
     stripes: vertical
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.675
+      white: 0.291
+      green: 0.021
+      yellow: 0.011
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1581,6 +1992,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.338
+      red: 0.331
+      yellow: 0.331
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1604,6 +2020,12 @@ flags:
     colors_minor: []
     stripes: both
     n_colors: 4
+    dominant: yellow
+    color_shares:
+      yellow: 0.328
+      green: 0.328
+      red: 0.319
+      black: 0.022
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1629,6 +2051,14 @@ flags:
     - maroon
     stripes: none
     n_colors: 5
+    dominant: green
+    color_shares:
+      green: 0.519
+      yellow: 0.182
+      red: 0.181
+      white: 0.07
+      black: 0.042
+      maroon: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1653,6 +2083,13 @@ flags:
     - yellow
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.474
+      red: 0.473
+      white: 0.027
+      green: 0.013
+      yellow: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1674,6 +2111,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.682
+      white: 0.318
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1696,6 +2137,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.333
+      white: 0.333
+      green: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1718,6 +2164,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.656
+      red: 0.194
+      white: 0.15
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1741,6 +2192,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: orange
+    color_shares:
+      orange: 0.333
+      green: 0.333
+      white: 0.307
+      blue: 0.026
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1762,6 +2219,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.5
+      white: 0.5
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1784,6 +2245,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.351
+      green: 0.327
+      white: 0.322
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1807,6 +2273,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.333
+      black: 0.333
+      white: 0.302
+      green: 0.031
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1829,6 +2301,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.338
+      orange: 0.338
+      white: 0.325
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1850,6 +2327,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: white
+    color_shares:
+      white: 0.676
+      blue: 0.324
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1872,6 +2353,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.338
+      red: 0.338
+      white: 0.325
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1894,6 +2380,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: white
+    color_shares:
+      white: 0.338
+      orange: 0.331
+      green: 0.331
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1917,6 +2408,12 @@ flags:
     - brown
     stripes: none
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.335
+      green: 0.334
+      black: 0.327
+      brown: 0.005
     has_star: false
     has_sun: false
     has_crescent: false
@@ -1938,6 +2435,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: white
+    color_shares:
+      white: 0.77
+      red: 0.23
     has_star: false
     has_sun: true
     has_crescent: false
@@ -1961,6 +2462,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.374
+      green: 0.25
+      black: 0.248
+      white: 0.126
     has_star: true
     has_sun: false
     has_crescent: false
@@ -1983,6 +2490,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.841
+      yellow: 0.096
+      green: 0.063
     has_star: false
     has_sun: true
     has_crescent: false
@@ -2007,6 +2519,13 @@ flags:
     - maroon
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.301
+      black: 0.301
+      green: 0.288
+      white: 0.103
+      maroon: 0.005
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2031,6 +2550,13 @@ flags:
     - orange
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.471
+      blue: 0.234
+      white: 0.205
+      yellow: 0.076
+      orange: 0.013
     has_star: false
     has_sun: true
     has_crescent: false
@@ -2053,6 +2579,11 @@ flags:
     - white
     stripes: none
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.886
+      yellow: 0.097
+      white: 0.015
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2076,6 +2607,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.272
+      red: 0.271
+      black: 0.248
+      white: 0.208
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2098,6 +2635,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.879
+      yellow: 0.088
+      orange: 0.034
     has_star: false
     has_sun: true
     has_crescent: false
@@ -2120,6 +2662,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.5
+      blue: 0.392
+      white: 0.108
     has_star: false
     has_sun: false
     has_crescent: true
@@ -2141,6 +2688,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: maroon
+    color_shares:
+      maroon: 0.8
+      white: 0.2
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2163,6 +2714,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.5
+      white: 0.402
+      green: 0.098
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2187,6 +2743,13 @@ flags:
     - grey
     stripes: horizontal
     n_colors: 4
+    dominant: white
+    color_shares:
+      white: 0.36
+      blue: 0.3
+      green: 0.3
+      black: 0.036
+      grey: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2209,6 +2772,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.471
+      white: 0.393
+      blue: 0.136
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2232,6 +2800,12 @@ flags:
     - white
     stripes: horizontal
     n_colors: 3
+    dominant: black
+    color_shares:
+      black: 0.482
+      red: 0.25
+      green: 0.25
+      white: 0.016
     has_star: true
     has_sun: false
     has_crescent: true
@@ -2256,6 +2830,13 @@ flags:
     - brown
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.5
+      blue: 0.451
+      yellow: 0.029
+      brown: 0.011
+      black: 0.009
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2278,6 +2859,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.333
+      green: 0.333
+      red: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2300,6 +2886,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.333
+      white: 0.333
+      blue: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2322,6 +2913,11 @@ flags:
     colors_minor: []
     stripes: both
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.334
+      green: 0.334
+      white: 0.331
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2345,6 +2941,12 @@ flags:
     - maroon
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.388
+      green: 0.333
+      black: 0.262
+      maroon: 0.017
     has_star: false
     has_sun: true
     has_crescent: false
@@ -2370,6 +2972,14 @@ flags:
     - purple
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.388
+      white: 0.325
+      blue: 0.243
+      yellow: 0.033
+      purple: 0.006
+      brown: 0.004
     has_star: true
     has_sun: false
     has_crescent: true
@@ -2392,6 +3002,11 @@ flags:
     - white
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.688
+      green: 0.298
+      white: 0.015
     has_star: false
     has_sun: false
     has_crescent: true
@@ -2414,6 +3029,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.338
+      green: 0.331
+      red: 0.331
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2436,6 +3056,11 @@ flags:
     - grey
     stripes: vertical
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.516
+      white: 0.479
+      grey: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2458,6 +3083,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.705
+      white: 0.192
+      yellow: 0.1
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2480,6 +3110,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.64
+      red: 0.3
+      yellow: 0.06
     has_star: true
     has_sun: false
     has_crescent: true
@@ -2503,6 +3138,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.25
+      blue: 0.25
+      yellow: 0.25
+      green: 0.25
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2529,6 +3170,15 @@ flags:
     - yellow
     stripes: vertical
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.338
+      red: 0.332
+      white: 0.295
+      brown: 0.013
+      yellow: 0.009
+      orange: 0.007
+      blue: 0.005
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2550,6 +3200,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.965
+      white: 0.035
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2575,6 +3229,14 @@ flags:
     - orange
     stripes: vertical
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.344
+      blue: 0.33
+      yellow: 0.269
+      brown: 0.037
+      green: 0.011
+      orange: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2596,6 +3258,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.5
+      white: 0.5
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2619,6 +3285,12 @@ flags:
     - orange
     stripes: vertical
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.573
+      blue: 0.338
+      yellow: 0.076
+      orange: 0.014
     has_star: false
     has_sun: true
     has_crescent: true
@@ -2643,6 +3315,13 @@ flags:
     - green
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.696
+      yellow: 0.264
+      orange: 0.026
+      blue: 0.007
+      green: 0.004
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2664,6 +3343,10 @@ flags:
     - green
     stripes: none
     n_colors: 1
+    dominant: red
+    color_shares:
+      red: 0.978
+      green: 0.019
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2689,6 +3372,14 @@ flags:
     - orange
     stripes: horizontal
     n_colors: 5
+    dominant: yellow
+    color_shares:
+      yellow: 0.278
+      green: 0.267
+      red: 0.213
+      black: 0.194
+      white: 0.038
+      orange: 0.004
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2712,6 +3403,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: yellow
+    color_shares:
+      yellow: 0.328
+      red: 0.315
+      green: 0.253
+      white: 0.105
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2736,6 +3433,13 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 5
+    dominant: red
+    color_shares:
+      red: 0.359
+      green: 0.293
+      blue: 0.248
+      white: 0.074
+      yellow: 0.026
     has_star: false
     has_sun: true
     has_crescent: false
@@ -2758,6 +3462,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.884
+      yellow: 0.083
+      white: 0.032
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2782,6 +3491,13 @@ flags:
     - purple
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.656
+      blue: 0.196
+      white: 0.132
+      purple: 0.011
+      maroon: 0.004
     has_star: false
     has_sun: true
     has_crescent: true
@@ -2804,6 +3520,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.333
+      white: 0.333
+      blue: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2826,6 +3547,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.79
+      red: 0.118
+      white: 0.092
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2849,6 +3575,12 @@ flags:
     - yellow
     stripes: horizontal
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.671
+      white: 0.313
+      yellow: 0.01
+      green: 0.006
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2871,6 +3603,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: orange
+    color_shares:
+      orange: 0.382
+      green: 0.333
+      white: 0.285
     has_star: false
     has_sun: true
     has_crescent: false
@@ -2892,6 +3629,10 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 2
+    dominant: green
+    color_shares:
+      green: 0.675
+      white: 0.325
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2914,6 +3655,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.462
+      blue: 0.367
+      white: 0.171
     has_star: true
     has_sun: false
     has_crescent: false
@@ -2936,6 +3682,11 @@ flags:
     - orange
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.647
+      yellow: 0.334
+      orange: 0.019
     has_star: false
     has_sun: true
     has_crescent: false
@@ -2958,6 +3709,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.609
+      blue: 0.22
+      white: 0.171
     has_star: false
     has_sun: false
     has_crescent: false
@@ -2980,6 +3736,11 @@ flags:
     colors_minor: []
     stripes: both
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.51
+      green: 0.248
+      white: 0.24
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3001,6 +3762,10 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 2
+    dominant: green
+    color_shares:
+      green: 0.736
+      white: 0.264
     has_star: true
     has_sun: false
     has_crescent: true
@@ -3023,6 +3788,11 @@ flags:
     - green
     stripes: none
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.809
+      yellow: 0.186
+      green: 0.005
     has_star: false
     has_sun: false
     has_crescent: true
@@ -3046,6 +3816,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.278
+      black: 0.277
+      red: 0.249
+      white: 0.194
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3068,6 +3844,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: white
+    color_shares:
+      white: 0.454
+      blue: 0.289
+      red: 0.256
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3093,6 +3874,14 @@ flags:
     - white
     stripes: none
     n_colors: 3
+    dominant: black
+    color_shares:
+      black: 0.483
+      red: 0.431
+      yellow: 0.061
+      white: 0.013
+      orange: 0.006
+      maroon: 0.004
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3117,6 +3906,13 @@ flags:
     - grey
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.333
+      blue: 0.333
+      white: 0.321
+      green: 0.005
+      grey: 0.004
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3138,6 +3934,10 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.675
+      white: 0.325
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3161,6 +3961,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.339
+      blue: 0.339
+      white: 0.258
+      yellow: 0.064
     has_star: true
     has_sun: true
     has_crescent: false
@@ -3182,6 +3988,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: white
+    color_shares:
+      white: 0.5
+      red: 0.5
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3207,6 +4017,14 @@ flags:
     - white
     stripes: vertical
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.574
+      green: 0.352
+      yellow: 0.048
+      white: 0.014
+      orange: 0.007
+      blue: 0.005
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3229,6 +4047,11 @@ flags:
     - red
     stripes: none
     n_colors: 2
+    dominant: maroon
+    color_shares:
+      maroon: 0.667
+      white: 0.322
+      red: 0.012
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3251,6 +4074,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.338
+      blue: 0.331
+      red: 0.331
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3273,6 +4101,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: white
+    color_shares:
+      white: 0.333
+      blue: 0.333
+      red: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3295,6 +4128,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.477
+      yellow: 0.261
+      green: 0.261
     has_star: false
     has_sun: true
     has_crescent: false
@@ -3320,6 +4158,14 @@ flags:
     - brown
     stripes: none
     n_colors: 5
+    dominant: black
+    color_shares:
+      black: 0.326
+      red: 0.287
+      green: 0.275
+      yellow: 0.079
+      white: 0.022
+      brown: 0.005
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3343,6 +4189,12 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 4
+    dominant: blue
+    color_shares:
+      blue: 0.792
+      yellow: 0.106
+      black: 0.053
+      white: 0.046
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3365,6 +4217,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.46
+      green: 0.309
+      blue: 0.231
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3387,6 +4244,11 @@ flags:
     - white
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.75
+      blue: 0.236
+      white: 0.014
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3411,6 +4273,13 @@ flags:
     - red
     stripes: horizontal
     n_colors: 4
+    dominant: white
+    color_shares:
+      white: 0.46
+      blue: 0.444
+      green: 0.049
+      yellow: 0.037
+      red: 0.005
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3432,6 +4301,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: green
+    color_shares:
+      green: 0.921
+      white: 0.079
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3454,6 +4327,11 @@ flags:
     colors_minor: []
     stripes: vertical
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.37
+      red: 0.331
+      yellow: 0.299
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3478,6 +4356,13 @@ flags:
     - orange
     stripes: horizontal
     n_colors: 4
+    dominant: white
+    color_shares:
+      white: 0.367
+      red: 0.355
+      blue: 0.24
+      yellow: 0.025
+      orange: 0.009
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3503,6 +4388,14 @@ flags:
     - orange
     stripes: none
     n_colors: 5
+    dominant: red
+    color_shares:
+      red: 0.336
+      green: 0.169
+      blue: 0.166
+      yellow: 0.164
+      white: 0.161
+      orange: 0.003
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3525,6 +4418,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.333
+      white: 0.333
+      blue: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3546,6 +4444,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: white
+    color_shares:
+      white: 0.528
+      red: 0.472
     has_star: true
     has_sun: false
     has_crescent: true
@@ -3568,6 +4470,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.402
+      white: 0.338
+      blue: 0.259
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3591,6 +4498,12 @@ flags:
     - purple
     stripes: horizontal
     n_colors: 3
+    dominant: blue
+    color_shares:
+      blue: 0.346
+      red: 0.338
+      white: 0.31
+      purple: 0.005
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3614,6 +4527,12 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 4
+    dominant: blue
+    color_shares:
+      blue: 0.575
+      green: 0.281
+      yellow: 0.102
+      white: 0.038
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3635,6 +4554,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.944
+      white: 0.056
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3660,6 +4583,14 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 6
+    dominant: green
+    color_shares:
+      green: 0.333
+      red: 0.197
+      blue: 0.196
+      white: 0.118
+      black: 0.096
+      yellow: 0.058
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3684,6 +4615,13 @@ flags:
     - grey
     stripes: none
     n_colors: 4
+    dominant: white
+    color_shares:
+      white: 0.757
+      black: 0.085
+      blue: 0.074
+      red: 0.073
+      grey: 0.009
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3709,6 +4647,14 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 6
+    dominant: blue
+    color_shares:
+      blue: 0.304
+      green: 0.242
+      black: 0.241
+      red: 0.134
+      white: 0.058
+      yellow: 0.021
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3733,6 +4679,13 @@ flags:
     - white
     stripes: horizontal
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.516
+      yellow: 0.451
+      orange: 0.01
+      white: 0.009
+      brown: 0.007
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3758,6 +4711,14 @@ flags:
     - brown
     stripes: none
     n_colors: 4
+    dominant: maroon
+    color_shares:
+      maroon: 0.415
+      yellow: 0.312
+      orange: 0.127
+      green: 0.116
+      brown: 0.018
+      black: 0.011
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3781,6 +4742,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.277
+      black: 0.277
+      green: 0.251
+      white: 0.194
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3804,6 +4771,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.4
+      red: 0.366
+      white: 0.2
+      yellow: 0.032
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3825,6 +4798,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.68
+      yellow: 0.32
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3846,6 +4823,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.856
+      white: 0.144
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3869,6 +4850,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.333
+      black: 0.333
+      white: 0.28
+      red: 0.054
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3893,6 +4880,13 @@ flags:
     - brown
     stripes: horizontal
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.505
+      yellow: 0.27
+      red: 0.184
+      black: 0.031
+      brown: 0.007
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3915,6 +4909,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.719
+      blue: 0.249
+      white: 0.032
     has_star: false
     has_sun: true
     has_crescent: false
@@ -3938,6 +4937,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: white
+    color_shares:
+      white: 0.393
+      red: 0.292
+      green: 0.283
+      yellow: 0.032
     has_star: true
     has_sun: false
     has_crescent: false
@@ -3962,6 +4967,13 @@ flags:
     - brown
     stripes: none
     n_colors: 4
+    dominant: black
+    color_shares:
+      black: 0.31
+      green: 0.284
+      blue: 0.28
+      yellow: 0.121
+      brown: 0.005
     has_star: false
     has_sun: false
     has_crescent: false
@@ -3985,6 +4997,12 @@ flags:
     - grey
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.342
+      white: 0.325
+      blue: 0.325
+      grey: 0.008
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4010,6 +5028,14 @@ flags:
     - orange
     stripes: none
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.622
+      black: 0.224
+      yellow: 0.123
+      white: 0.022
+      orange: 0.004
+      brown: 0.004
     has_star: true
     has_sun: false
     has_crescent: false
@@ -4033,6 +5059,12 @@ flags:
     - white
     stripes: horizontal
     n_colors: 3
+    dominant: green
+    color_shares:
+      green: 0.42
+      yellow: 0.306
+      red: 0.254
+      white: 0.019
     has_star: true
     has_sun: false
     has_crescent: false
@@ -4054,6 +5086,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.872
+      white: 0.128
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4076,6 +5112,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.727
+      black: 0.187
+      white: 0.083
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4097,6 +5138,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.902
+      white: 0.098
     has_star: true
     has_sun: false
     has_crescent: true
@@ -4123,6 +5168,15 @@ flags:
     - white
     stripes: none
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.819
+      red: 0.095
+      yellow: 0.03
+      orange: 0.026
+      white: 0.014
+      brown: 0.009
+      maroon: 0.006
     has_star: true
     has_sun: false
     has_crescent: true
@@ -4147,6 +5201,13 @@ flags:
     - green
     stripes: none
     n_colors: 4
+    dominant: blue
+    color_shares:
+      blue: 0.752
+      red: 0.109
+      white: 0.087
+      yellow: 0.037
+      green: 0.015
     has_star: true
     has_sun: false
     has_crescent: false
@@ -4168,6 +5229,10 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.937
+      white: 0.063
     has_star: true
     has_sun: false
     has_crescent: true
@@ -4191,6 +5256,12 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 4
+    dominant: yellow
+    color_shares:
+      yellow: 0.334
+      black: 0.312
+      red: 0.309
+      white: 0.042
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4212,6 +5283,10 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 2
+    dominant: blue
+    color_shares:
+      blue: 0.5
+      yellow: 0.5
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4235,6 +5310,12 @@ flags:
     colors_minor: []
     stripes: both
     n_colors: 4
+    dominant: red
+    color_shares:
+      red: 0.344
+      green: 0.219
+      white: 0.219
+      black: 0.219
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4257,6 +5338,11 @@ flags:
     colors_minor: []
     stripes: none
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.444
+      white: 0.342
+      blue: 0.214
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4280,6 +5366,12 @@ flags:
     - purple
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.37
+      white: 0.366
+      blue: 0.26
+      purple: 0.005
     has_star: true
     has_sun: false
     has_crescent: false
@@ -4303,6 +5395,12 @@ flags:
     - brown
     stripes: horizontal
     n_colors: 3
+    dominant: white
+    color_shares:
+      white: 0.574
+      blue: 0.37
+      yellow: 0.038
+      brown: 0.015
     has_star: false
     has_sun: true
     has_crescent: false
@@ -4328,6 +5426,14 @@ flags:
     - purple
     stripes: horizontal
     n_colors: 4
+    dominant: white
+    color_shares:
+      white: 0.326
+      green: 0.317
+      blue: 0.307
+      red: 0.033
+      purple: 0.008
+      brown: 0.008
     has_star: true
     has_sun: false
     has_crescent: true
@@ -4352,6 +5458,13 @@ flags:
     - brown
     stripes: horizontal
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.313
+      red: 0.311
+      black: 0.243
+      yellow: 0.112
+      brown: 0.018
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4374,6 +5487,11 @@ flags:
     - red
     stripes: vertical
     n_colors: 2
+    dominant: yellow
+    color_shares:
+      yellow: 0.526
+      white: 0.464
+      red: 0.007
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4397,6 +5515,12 @@ flags:
     - white
     stripes: horizontal
     n_colors: 3
+    dominant: yellow
+    color_shares:
+      yellow: 0.333
+      red: 0.333
+      blue: 0.322
+      white: 0.011
     has_star: true
     has_sun: false
     has_crescent: false
@@ -4419,6 +5543,11 @@ flags:
     - orange
     stripes: none
     n_colors: 2
+    dominant: red
+    color_shares:
+      red: 0.917
+      yellow: 0.078
+      orange: 0.006
     has_star: true
     has_sun: false
     has_crescent: false
@@ -4441,6 +5570,11 @@ flags:
     colors_minor: []
     stripes: horizontal
     n_colors: 3
+    dominant: red
+    color_shares:
+      red: 0.333
+      white: 0.333
+      black: 0.333
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4465,6 +5599,13 @@ flags:
     - brown
     stripes: vertical
     n_colors: 4
+    dominant: green
+    color_shares:
+      green: 0.709
+      orange: 0.111
+      black: 0.084
+      red: 0.084
+      brown: 0.009
     has_star: false
     has_sun: false
     has_crescent: false
@@ -4492,6 +5633,16 @@ flags:
     - orange
     stripes: horizontal
     n_colors: 5
+    dominant: green
+    color_shares:
+      green: 0.255
+      yellow: 0.232
+      white: 0.203
+      red: 0.188
+      black: 0.094
+      orange: 0.012
+      maroon: 0.01
+      brown: 0.004
     has_star: true
     has_sun: false
     has_crescent: false

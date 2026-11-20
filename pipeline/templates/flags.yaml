@@ -127,3 +127,55 @@
   filter: >-
     e.attrs->>'continent' = :continent.name
     AND e.attrs->'flag'->'colors' @> (:colours.json)::jsonb
+
+- id: flag_only_colours
+  family: flags
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose flag uses only {colours.text}"
+  params:
+    colours:
+      - {json: '["red", "white"]', text: "red and white"}
+      - {json: '["blue", "red", "white"]', text: "red, white and blue"}
+      - {json: '["green", "red", "yellow"]', text: "green, yellow and red"}
+      - {json: '["blue", "white"]', text: "blue and white"}
+      - {json: '["green", "red", "white"]', text: "green, white and red"}
+  # main colours equal the set exactly (small emblem colours are ignored)
+  filter: >-
+    e.attrs->'flag'->'colors' @> (:colours.json)::jsonb
+    AND (:colours.json)::jsonb @> (e.attrs->'flag'->'colors')
+
+- id: flag_mostly_colour
+  family: flags
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose flag is mostly {colour.name}"
+  params:
+    colour:
+      - {name: red}
+      - {name: blue}
+      - {name: green}
+      - {name: white}
+      - {name: yellow}
+  filter: "e.attrs->'flag'->>'dominant' = :colour.name"
+
+- id: flag_mostly_colour_in_continent
+  family: flags
+  kind: intersection
+  entity_type: country
+  difficulty: 2
+  text: "Name a country in {continent.name} whose flag is mostly {colour.name}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+      - {name: North America}
+    colour:
+      - {name: red}
+      - {name: blue}
+      - {name: green}
+  filter: >-
+    e.attrs->>'continent' = :continent.name AND e.attrs->'flag'->>'dominant' = :colour.name

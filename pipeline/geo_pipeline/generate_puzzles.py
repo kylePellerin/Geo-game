@@ -2,11 +2,14 @@
 
   python -m geo_pipeline.generate_puzzles --from 2026-12-01 --days 30 [--print] [--dry-run]
 
-For each date: 6 questions from 6 different families, slots 1-3 easy, 4-5 medium, 6 hard, with a
-flag question on most days. Every question passes its template's answer-count and easy-floor/tail
-checks. No identical template+params within 60 days; no answer-set overlap > 50% with any question
-in the previous 14 days (or the same day). Choices are seeded by date, so a rerun with the same
-data and templates reproduces the same puzzles.
+For each date: 6 questions, slots 1-3 easy, 4-5 medium, 6 hard.
+- Families differ within a day, except flags, which may appear twice (one easy + one medium).
+- A flag question every day; airports appear less often (FAMILY_WEIGHT).
+- On most days one easy or medium slot is a matching round (geo_pipeline.matching).
+- Every free-text question passes its template's answer-count and rarity floor/tail checks.
+- Never the identical template+params within 60 days. Similar answer sets (Jaccard > 0.5) within
+  14 days are allowed but strongly down-weighted.
+- Seeded by date, so a rerun with the same data and templates reproduces the same puzzles.
 
 Answer sets are frozen into puzzle_questions. Existing dates are skipped (--replace regenerates
 them, except dates that are reviewed, in the past, or already have answers).
@@ -23,15 +26,26 @@ from datetime import UTC, date, datetime, timedelta
 
 from geo_pipeline.common import log, setup_logging
 from geo_pipeline.db import connect
+from geo_pipeline.matching import VARIANTS, MatchRound, build_round, load_pool
 from geo_pipeline.questions import Candidate, Template, evaluate, expand, load_templates, overlap
 
 SLOT_DIFFICULTY = [1, 1, 1, 2, 2, 3]
 REPEAT_DAYS = 60
 OVERLAP_DAYS = 14
 MAX_OVERLAP = 0.5
-FLAG_PROBABILITY = 0.8  # "a flag question on most days"
+OVERLAP_PENALTY = 0.05  # weight multiplier for a question similar to a recent one
+FLAG_PROBABILITY = 1.0  # a flag question every day
+SECOND_FLAG_PROBABILITY = 0.2  # ...and sometimes a second, harder one
+FAMILY_MAX_PER_DAY = {"flags": 2}  # only on "second flag" days; otherwise 1
+FAMILY_MAX_PER_WEEK = {"airports": 2}  # airports kept occasional (2026-11-20)
+# Relative frequency of families in the daily mix (default 1.0).
+FAMILY_WEIGHT = {"flags": 1.5, "airports": 0.15}
+MATCH_PROBABILITY = 0.6  # days with a matching round
+MATCH_FRESH_DAYS = 21  # don't reuse a matching item within this many days
 # If a slot has no candidate at its difficulty, borrow from these (logged as a fallback).
 FALLBACK_DIFFICULTY = {1: [2], 2: [1, 3], 3: [2]}
+
+Question = Candidate | MatchRound
 
 
 @dataclass
@@ -47,8 +61,22 @@ def utc_today() -> date:
     return datetime.now(UTC).date()
 
 
+def key_of(q: Question) -> str:
+    if isinstance(q, MatchRound):
+        return q.variant.id + json.dumps(sorted(q.answers))
+    return q.key
+
+
+def template_id_of(q: Question) -> str:
+    return q.variant.id if isinstance(q, MatchRound) else q.template.id
+
+
 def upsert_templates(cur, templates: list[Template]) -> None:
-    for t in templates:
+    rows = [(t.id, t.kind, t.entity_type, t.text, json.dumps(t.params), t.filter,
+             t.min_answers, t.max_answers, t.difficulty, t.family) for t in templates]
+    rows += [(v.id, "match", v.left_type, v.text, "{}", v.pool_sql, 4, 4, 1, "matching")
+             for v in VARIANTS]
+    for row in rows:
         cur.execute(
             """INSERT INTO question_templates (id, kind, entity_type, text_pattern, params_schema,
                    sql_or_filter, min_answers, max_answers, difficulty, family)
@@ -58,32 +86,48 @@ def upsert_templates(cur, templates: list[Template]) -> None:
                  params_schema = EXCLUDED.params_schema, sql_or_filter = EXCLUDED.sql_or_filter,
                  min_answers = EXCLUDED.min_answers, max_answers = EXCLUDED.max_answers,
                  difficulty = EXCLUDED.difficulty, family = EXCLUDED.family""",
-            (t.id, t.kind, t.entity_type, t.text, json.dumps(t.params), t.filter,
-             t.min_answers, t.max_answers, t.difficulty, t.family),
+            row,
         )
 
 
-def load_history(cur, start: date) -> list[Past]:
+def _history_rows(cur, where: str, params: tuple) -> list[Past]:
     cur.execute(
-        """SELECT date, template_id, params, family, valid_entity_ids FROM puzzle_questions
-           WHERE date >= %s AND date < %s""",
-        (start - timedelta(days=REPEAT_DAYS), start),
+        f"""SELECT date, template_id, params, family, valid_entity_ids, kind FROM puzzle_questions
+            WHERE {where}""",
+        params,
     )
-    return [
-        Past(d, tid + json.dumps(p, sort_keys=True), tid, fam, set(ids))
-        for d, tid, p, fam, ids in cur.fetchall()
-    ]
+    out = []
+    for d, tid, p, fam, ids, kind in cur.fetchall():
+        key = tid + (json.dumps(sorted(ids)) if kind == "match" else json.dumps(p, sort_keys=True))
+        out.append(Past(d, key, tid, fam, set(ids)))
+    return out
+
+
+def load_history(cur, start: date) -> list[Past]:
+    return _history_rows(cur, "date >= %s AND date < %s",
+                         (start - timedelta(days=REPEAT_DAYS), start))
+
+
+def load_history_for(cur, day: date) -> list[Past]:
+    return _history_rows(cur, "date = %s", (day,))
 
 
 def eligible(c: Candidate, day: date, history: list[Past], today_sets: list[list[str]],
-             used_families: set[str], check_overlap: bool = True,
-             used_templates: set[str] | None = None) -> bool:
+             used_families: set[str] | Counter, check_overlap: bool = True,
+             used_templates: set[str] | None = None,
+             day_limits: dict[str, int] | None = None) -> bool:
+    """Hard rules for a free-text candidate. used_templates set => family reuse is allowed."""
     if used_templates is None:
-        if c.family in used_families:
+        count = used_families[c.family] if isinstance(used_families, Counter) else (
+            1 if c.family in used_families else 0)
+        if count >= (day_limits or {}).get(c.family, 1):
             return False
     elif c.template.id in used_templates:
-        # family reuse allowed (last resort), but never the same template twice in a day
-        return False
+        return False  # family reuse is a fallback, but never the same template twice in a day
+    if (cap := FAMILY_MAX_PER_WEEK.get(c.family)) is not None:
+        week = sum(1 for p in history if p.family == c.family and 0 < (day - p.day).days < 7)
+        if week + (used_families[c.family] if isinstance(used_families, Counter) else 0) >= cap:
+            return False
     for p in history:
         age = (day - p.day).days
         if p.key == c.key and age < REPEAT_DAYS:
@@ -93,47 +137,73 @@ def eligible(c: Candidate, day: date, history: list[Past], today_sets: list[list
     return not (check_overlap and any(overlap(c.answers, s) > MAX_OVERLAP for s in today_sets))
 
 
-def weight(c: Candidate, day: date, history: list[Past]) -> float:
-    """Prefer templates and families not used recently, so the mix stays varied."""
+def weight(c: Candidate, day: date, history: list[Past], today_sets: list[list[str]]) -> float:
+    """Family frequency, recency of template/family use, and a penalty for similar answer sets."""
     t_uses = sum(1 for p in history if p.template_id == c.template.id and (day - p.day).days < 30)
     f_uses = sum(1 for p in history if p.family == c.family and (day - p.day).days < 7)
-    return 1.0 / ((1 + t_uses) ** 2 * (1 + f_uses))
+    w = FAMILY_WEIGHT.get(c.family, 1.0) / ((1 + t_uses) ** 2 * (1 + f_uses))
+    recent = [p.answers for p in history if (day - p.day).days < OVERLAP_DAYS]
+    if any(overlap(c.answers, s) > MAX_OVERLAP for s in [*recent, *today_sets]):
+        w *= OVERLAP_PENALTY
+    return w
+
+
+def pick_match(day: date, slot_diff: int, pools: dict, history: list[Past],
+               rng: random.Random) -> MatchRound | None:
+    recent = set().union(*[p.answers for p in history if p.family == "matching"
+                           and (day - p.day).days < MATCH_FRESH_DAYS] or [set()])
+    # flags are the favourite variant: twice as likely as each of the others
+    variants = rng.choices(VARIANTS, weights=[2 if v.id == "match_flag_country" else 1
+                                              for v in VARIANTS], k=len(VARIANTS))
+    for v in dict.fromkeys(variants):
+        r = build_round(v, pools[v.id], slot_diff, rng, recent)
+        if r:
+            return r
+    return None
 
 
 def pick_day(day: date, pool: list[Candidate], history: list[Past], salt: str,
-             stats: Counter) -> list[Candidate]:
+             stats: Counter, match_pools: dict | None = None) -> list[Question]:
     rng = random.Random(f"{salt}:{day.isoformat()}")
     want_flag = rng.random() < FLAG_PROBABILITY
-    chosen: dict[int, Candidate] = {}
-    used: set[str] = set()
-    # Easy slots first: their families (flags, countries, cities, names) are the most constrained,
-    # and medium/hard picks could otherwise use them all up. Then hard (small pool), then medium.
-    order = [0, 1, 2, 5, 3, 4]
-    for slot in order:
+    want_second_flag = rng.random() < SECOND_FLAG_PROBABILITY
+    match_slot = None
+    if match_pools and rng.random() < MATCH_PROBABILITY:
+        match_slot = rng.choice([2, 3])  # last easy slot or first medium slot
+    chosen: dict[int, Question] = {}
+    used: Counter = Counter()
+    day_limits = {"flags": FAMILY_MAX_PER_DAY["flags"] if want_second_flag else 1}
+    if match_slot is not None:
+        m = pick_match(day, SLOT_DIFFICULTY[match_slot], match_pools, history, rng)
+        if m:
+            chosen[match_slot] = m
+            used["matching"] += 1
+    # Easy slots first: their families (flags, countries, cities, names) are the most constrained.
+    # Then hard (small pool), then medium.
+    for slot in [0, 1, 2, 5, 3, 4]:
+        if slot in chosen:
+            continue
         diff = SLOT_DIFFICULTY[slot]
-        sets = [c.answers for c in chosen.values()]
+        sets = [q.answers for q in chosen.values()]
         tiers = [
-            (diff, True, None), (diff, False, "overlap relaxed"),
-            *[(d, True, f"difficulty {diff}->{d}") for d in FALLBACK_DIFFICULTY[diff]],
-            *[(d, False, f"difficulty {diff}->{d}, overlap relaxed")
-              for d in FALLBACK_DIFFICULTY[diff]],
-            *[(d, False, f"difficulty {diff}->{d} (last resort)")
+            (diff, None),
+            *[(d, f"difficulty {diff}->{d}") for d in FALLBACK_DIFFICULTY[diff]],
+            *[(d, f"difficulty {diff}->{d} (last resort)")
               for d in (1, 2, 3) if d != diff and d not in FALLBACK_DIFFICULTY[diff]],
+            # while there are only a few families (more arrive in Phase 6): reuse a family
+            *[(d, "family reused") for d in (diff, *FALLBACK_DIFFICULTY[diff])],
+            *[(d, "template reused") for d in (diff, *FALLBACK_DIFFICULTY[diff])],
         ]
-        # Last resort while there are only a few families (more arrive in Phase 6): reuse a family.
-        tiers += [(d, False, "family reused") for d in (diff, *FALLBACK_DIFFICULTY[diff])]
-        tiers += [(d, False, "template reused") for d in (diff, *FALLBACK_DIFFICULTY[diff])]
-        templates_today = {c.template.id for c in chosen.values()}
-        keys_today = {c.key for c in chosen.values()}
-        for d, check, note in tiers:
+        templates_today = {template_id_of(q) for q in chosen.values()}
+        keys_today = {key_of(q) for q in chosen.values()}
+        for d, note in tiers:
             reuse = (templates_today if note == "family reused"
                      else set() if note == "template reused" else None)
-            options = [c for c in pool if c.difficulty == d
-                       and eligible(c, day, history, sets, used, check, reuse)]
-            if slot == 0 and want_flag and "flags" not in used:
-                flag_opts = [c for c in options if c.family == "flags"]
-                options = flag_opts or options
-            options = [c for c in options if c.key not in keys_today]
+            options = [c for c in pool if c.difficulty == d and c.key not in keys_today
+                       and eligible(c, day, history, sets, used, False, reuse, day_limits)]
+            wants_flag = (slot == 0 and want_flag) or (slot == 3 and want_second_flag)
+            if wants_flag and used["flags"] < day_limits["flags"]:
+                options = [c for c in options if c.family == "flags"] or options
             if options:
                 break
         else:
@@ -141,9 +211,12 @@ def pick_day(day: date, pool: list[Candidate], history: list[Past], salt: str,
         if note:
             stats[note] += 1
             log.warning("%s slot %d: %s", day, slot + 1, note)
-        c = rng.choices(options, weights=[weight(o, day, history) for o in options])[0]
+        c = rng.choices(options, weights=[weight(o, day, history, sets) for o in options])[0]
+        if any(overlap(c.answers, s) > MAX_OVERLAP for s in
+               [p.answers for p in history if (day - p.day).days < OVERLAP_DAYS] + sets):
+            stats["similar to a recent question"] += 1
         chosen[slot] = c
-        used.add(c.family)
+        used[c.family] += 1
     # shuffle within the easy and medium bands so the flag question isn't always first
     easy, medium = [chosen[i] for i in (0, 1, 2)], [chosen[i] for i in (3, 4)]
     rng.shuffle(easy)
@@ -151,14 +224,43 @@ def pick_day(day: date, pool: list[Candidate], history: list[Past], salt: str,
     return easy + medium + [chosen[5]]
 
 
-def describe(cur, c: Candidate, n: int = 3) -> str:
+def describe(cur, q: Question, n: int = 3) -> str:
+    if isinstance(q, MatchRound):
+        cur.execute("SELECT id, name FROM entities WHERE id = ANY(%s)", (q.answers,))
+        names = dict(cur.fetchall())
+        return " | ".join(f"{names[i.left]} -> {i.right_label} ({i.category})" for i in q.items)
     cur.execute(
         "SELECT name FROM entities WHERE id = ANY(%s) ORDER BY popularity DESC NULLS LAST",
-        (c.answers,),
+        (q.answers,),
     )
     names = [r[0] for r in cur.fetchall()]
     rare = ", ".join(names[-2:]) if len(names) > n else ""
     return f"common: {', '.join(names[:n])} | rare: {rare}"
+
+
+def write_day(cur, day: date, questions: list[Question]) -> None:
+    cur.execute("DELETE FROM puzzle_questions WHERE date = %s", (day,))
+    cur.execute(
+        "INSERT INTO daily_puzzles (date) VALUES (%s) ON CONFLICT (date) DO UPDATE "
+        "SET created_at = now(), reviewed = false",
+        (day,),
+    )
+    for idx, q in enumerate(questions):
+        if isinstance(q, MatchRound):
+            row = (day, idx, q.variant.id, "{}", q.text, q.answers, "matching",
+                   q.variant.left_type, q.difficulty, json.dumps({"n_pairs": 4}), "match",
+                   json.dumps(q.payload()))
+        else:
+            row = (day, idx, q.template.id, json.dumps(q.params), q.text, q.answers, q.family,
+                   q.template.entity_type, q.difficulty,
+                   json.dumps({"n_answers": len(q.answers), "rarity": q.category_counts,
+                               "answer_rarity": q.categories}), "free_text", "{}")
+        cur.execute(
+            """INSERT INTO puzzle_questions (date, idx, template_id, params, question_text,
+                   valid_entity_ids, family, entity_type, difficulty, stats, kind, payload)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            row,
+        )
 
 
 def main() -> None:
@@ -180,6 +282,7 @@ def main() -> None:
             evaluate(cur, c)
         rejected = [c for c in pool if c.rejection()]
         pool = [c for c in pool if not c.rejection()]
+        match_pools = {v.id: load_pool(cur, v) for v in VARIANTS}
         log.info("%d templates, %d candidates pass, %d rejected; passing by difficulty: %s",
                  len(templates), len(pool), len(rejected),
                  dict(sorted(Counter(c.difficulty for c in pool).items())))
@@ -198,58 +301,27 @@ def main() -> None:
             day = a.start + timedelta(days=i)
             if day < utc_today() and not a.allow_past:
                 raise SystemExit(f"{day} is in the past; past puzzles are frozen")
-            if day in existing:
-                if not a.replace:
-                    log.info("%s exists, skipping", day)
-                    history += load_history_for(cur, day)
-                    continue
-                if existing[day] or day in answered:
-                    log.info("%s is reviewed or has answers; not replacing", day)
-                    history += load_history_for(cur, day)
-                    continue
-            questions = pick_day(day, pool, history, a.salt, stats)
-            for c in questions:
-                history.append(Past(day, c.key, c.template.id, c.family, set(c.answers)))
+            if day in existing and (not a.replace or existing[day] or day in answered):
+                why = "exists" if not a.replace else "is reviewed or has answers"
+                log.info("%s %s, skipping", day, why)
+                history += load_history_for(cur, day)
+                continue
+            questions = pick_day(day, pool, history, a.salt, stats, match_pools)
+            for q in questions:
+                history.append(Past(day, key_of(q), template_id_of(q), q.family, set(q.answers)))
             if not a.dry_run:
                 write_day(cur, day, questions)
             if a.print:
                 print(f"\n=== {day} ===")
-                for idx, c in enumerate(questions):
-                    print(f"{idx + 1}. [{c.family}/d{c.difficulty}] {c.text}  "
-                          f"({len(c.answers)} answers)\n     {describe(cur, c)}")
+                for idx, q in enumerate(questions):
+                    size = "4 pairs" if isinstance(q, MatchRound) else f"{len(q.answers)} answers"
+                    print(f"{idx + 1}. [{q.family}/d{q.difficulty}] {q.text}  ({size})\n"
+                          f"     {describe(cur, q)}")
         if stats:
             log.warning("fallbacks used: %s", dict(stats))
         if a.dry_run:
             conn.rollback()
     log.info("done%s", " (dry run, nothing written)" if a.dry_run else "")
-
-
-def load_history_for(cur, day: date) -> list[Past]:
-    cur.execute(
-        "SELECT template_id, params, family, valid_entity_ids FROM puzzle_questions WHERE date = %s",
-        (day,),
-    )
-    return [Past(day, t + json.dumps(p, sort_keys=True), t, f, set(ids))
-            for t, p, f, ids in cur.fetchall()]
-
-
-def write_day(cur, day: date, questions: list[Candidate]) -> None:
-    cur.execute("DELETE FROM puzzle_questions WHERE date = %s", (day,))
-    cur.execute(
-        "INSERT INTO daily_puzzles (date) VALUES (%s) ON CONFLICT (date) DO UPDATE "
-        "SET created_at = now(), reviewed = false",
-        (day,),
-    )
-    for idx, c in enumerate(questions):
-        cur.execute(
-            """INSERT INTO puzzle_questions (date, idx, template_id, params, question_text,
-                   valid_entity_ids, family, entity_type, difficulty, stats)
-               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-            (day, idx, c.template.id, json.dumps(c.params), c.text, c.answers, c.family,
-             c.template.entity_type, c.difficulty,
-             json.dumps({"n_answers": len(c.answers), "rarity": c.category_counts,
-                         "answer_rarity": c.categories})),
-        )
 
 
 if __name__ == "__main__":

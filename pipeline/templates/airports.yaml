@@ -1,0 +1,82 @@
+# Airports (QUESTIONS.md §3.8). Answer type: airport.
+# Kept deliberately easy (2026-11-20): well-known travel countries, famous names, big hubs.
+# Passenger-count and altitude questions were dropped as too niche for the daily game.
+# Airport questions are also down-weighted in the daily mix (generate_puzzles.FAMILY_WEIGHT).
+
+- id: airport_in_country
+  family: airports
+  kind: membership
+  entity_type: airport
+  difficulty: 2
+  text: "Name an airport in {country.text}"
+  params:
+    country:
+      - {iso2: GB, text: "the United Kingdom"}
+      - {iso2: FR, text: "France"}
+      - {iso2: DE, text: "Germany"}
+      - {iso2: IT, text: "Italy"}
+      - {iso2: ES, text: "Spain"}
+      - {iso2: PT, text: "Portugal"}
+      - {iso2: GR, text: "Greece"}
+      - {iso2: TR, text: "Turkey"}
+      - {iso2: JP, text: "Japan"}
+      - {iso2: TH, text: "Thailand"}
+      - {iso2: AU, text: "Australia"}
+      - {iso2: NZ, text: "New Zealand"}
+      - {iso2: CA, text: "Canada"}
+      - {iso2: MX, text: "Mexico"}
+      - {iso2: BR, text: "Brazil"}
+      - {iso2: IN, text: "India"}
+      - {iso2: ZA, text: "South Africa"}
+  filter: "c.attrs->>'iso2' = :country.iso2 AND e.attrs->>'territory' IS NULL"
+
+- id: airport_named_after_person
+  family: airports
+  kind: membership
+  entity_type: airport
+  difficulty: 2
+  text: "Name a major airport in {continent.name} that is named after a person"
+  params:
+    continent:
+      - {name: Europe}
+      - {name: North America}
+      - {name: South America}
+      - {name: Asia}
+      - {name: Africa}
+  filter: >-
+    jsonb_array_length(coalesce(e.attrs->'named_after', '[]')) > 0
+    AND e.attrs->>'airport_type' = 'large' AND c.attrs->>'continent' = :continent.name
+
+- id: airport_major_in_continent
+  family: airports
+  kind: membership
+  entity_type: airport
+  difficulty: 2
+  text: "Name a major international airport in {continent.name}"
+  params:
+    continent:
+      - {name: Europe}
+      - {name: Asia}
+      - {name: Africa}
+      - {name: South America}
+      - {name: Oceania}
+  filter: "e.attrs->>'airport_type' = 'large' AND c.attrs->>'continent' = :continent.name"
+
+- id: airport_busiest_in_country
+  family: airports
+  kind: superlative_per_group
+  entity_type: airport
+  difficulty: 2
+  text: "Name an airport that is the busiest in its country"
+  # Only countries where every large airport has a recent (2019+) annual passenger count, so the
+  # true busiest airport is known. Territories are excluded.
+  filter: >-
+    e.attrs->>'territory' IS NULL
+    AND (e.attrs->>'passengers_year')::int >= 2019
+    AND NOT EXISTS (SELECT 1 FROM entities o WHERE o.type = 'airport' AND o.country_id = e.country_id
+                    AND o.attrs->>'territory' IS NULL AND o.attrs->>'airport_type' = 'large'
+                    AND coalesce((o.attrs->>'passengers_year')::int, 0) < 2019)
+    AND (e.attrs->>'passengers')::bigint = (
+      SELECT max((o.attrs->>'passengers')::bigint) FROM entities o
+      WHERE o.type = 'airport' AND o.country_id = e.country_id AND o.attrs->>'territory' IS NULL
+      AND (o.attrs->>'passengers_year')::int >= 2019)

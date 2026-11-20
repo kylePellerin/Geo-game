@@ -146,7 +146,15 @@ Generated purely from coordinates.
 - Name a capital city with a desert climate (Köppen-Geiger 1 km map, CC BY 4.0)
 - Name an airport with a runway longer than 4,000 m
 
-### 3.12 Parked (too niche for the daily game — endless/expert mode only)
+### 3.12 Matching rounds (E–M) ⭐ visual switch-up
+Four items ↔ four items, the player pairs them. Not rarity-scored (see PLAN.md §1).
+- Match four **flags** to four **countries** (most common variant; flags are the daily favourite)
+- Match four **capital cities** to four **countries**
+- Match four **cities** to four **continents** (each continent used once)
+- Easy rounds use famous/well-known items; medium rounds include one or two familiar/obscure ones.
+- Avoid look-alike traps in easy rounds (Chad/Romania, Indonesia/Monaco); they're fine in medium.
+
+### 3.13 Parked (too niche for the daily game — endless/expert mode only)
 - Sister cities, tripoints of specific minor countries, runway surfaces, volcano types,
   second-level administrative regions.
 

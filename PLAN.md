@@ -14,14 +14,35 @@
 
 ### Rarity tiers (tune later)
 
-| Share of players giving that answer | Points |
+Five tiers, named like the answer rarity categories in QUESTIONS.md §2 (revised 2026-11-20).
+
+| Tier | Share of players giving that answer | Points |
+|---|---|---|
+| Famous | > 20% | 10 |
+| Well known | 10–20% | 25 |
+| Familiar | 5–10% | 50 |
+| Obscure | 2–5% | 75 |
+| Rarest | < 2% | 100 |
+
+### Matching rounds
+
+Some questions are a **matching round** instead of free text: four items on the left, four on the
+right, the player pairs them up. Variants: flag ↔ country, capital ↔ country, city ↔ continent
+(more later). Every player sees the same eight items, so rarity-by-share doesn't apply; instead
+each correct pair scores by how obscure its item is (rarity category of the left item, from
+popularity within the variant's pool):
+
+| Item category | Points per correct pair |
 |---|---|
-| > 20% | 10 |
-| 10–20% | 25 |
-| 5–10% | 40 |
-| 2–5% | 60 |
-| 0.5–2% | 80 |
-| < 0.5% | 100 |
+| Famous | 10 |
+| Well known | 15 |
+| Familiar | 25 |
+| Obscure | 35 |
+| Rarest | 40 |
+
+Max ~100 per round. The correct mapping stays on the server; the client gets the items in shuffled
+order. Generated rounds mix categories by difficulty (easy: mostly famous/well-known; medium: one
+or two familiar/obscure). Right-hand items are always distinct (e.g. four different continents).
 
 ## 2. Data model (Postgres)
 
@@ -178,7 +199,8 @@ Fixtures (`pipeline/tests/match_cases.yaml`): ≥100 cases incl. "Kathmandoo", "
 - **Cold-start prior** from popularity: for each valid entity,
   `prior_share = softmax(popularity / T)` over the valid set (tune T so the top answer gets ~25–40%).
 - Blend: `w = n_total / (n_total + 50)`; `est_share = w * observed + (1 - w) * prior`.
-- Map `est_share` to tier (table in §1). Points awarded immediately.
+- Map `est_share` to tier (five tiers, table in §1). Points awarded immediately.
+- Matching rounds: points per correct pair by item rarity category (table in §1, "Matching rounds").
 - Nightly job: recompute final shares → leaderboard scores (keep the instant score displayed; store both).
 
 ## 7. API (Next.js route handlers)

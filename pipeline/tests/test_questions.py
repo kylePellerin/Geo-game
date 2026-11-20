@@ -141,3 +141,65 @@ def test_every_candidate_query_runs_against_db() -> None:
             for c in expand(t):
                 evaluate(cur, c)
                 assert isinstance(c.answers, list)
+
+
+# ---- matching rounds and daily-mix rules
+
+def _match_pool(n_per_cat: int = 6):
+    from geo_pipeline.matching import MatchItem
+
+    cats = ["famous", "well_known", "familiar", "obscure"]
+    return [MatchItem(f"{c}{i}", f"R{c}{i}", f"Right {c}{i}", c, f"X{c[0]}{i}")
+            for c in cats for i in range(n_per_cat)]
+
+
+def test_match_round_easy_and_medium_mix() -> None:
+    import random
+
+    from geo_pipeline.matching import VARIANTS, build_round
+
+    v = VARIANTS[0]
+    easy = build_round(v, _match_pool(), 1, random.Random(1), set())
+    assert sorted(i.category for i in easy.items) == ["famous", "famous", "well_known",
+                                                      "well_known"]
+    medium = build_round(v, _match_pool(), 2, random.Random(1), set())
+    assert sum(i.category in {"familiar", "obscure", "rarest"} for i in medium.items) == 2
+    for r in (easy, medium):
+        assert len({i.right for i in r.items}) == 4
+        assert sorted(r.right_order) == sorted(i.right for i in r.items)
+        assert r.right_order != [i.right for i in r.items]  # never shown pre-aligned
+
+
+def test_match_round_avoids_recent_items_and_look_alike_flags() -> None:
+    import random
+
+    from geo_pipeline.matching import VARIANTS, MatchItem, build_round
+
+    pool = [MatchItem("td", "td", "Chad", "famous", "TD"), MatchItem("ro", "ro", "Romania",
+            "famous", "RO"), MatchItem("fr", "fr", "France", "famous", "FR"),
+            MatchItem("jp", "jp", "Japan", "well_known", "JP"),
+            MatchItem("br", "br", "Brazil", "well_known", "BR")]
+    for seed in range(20):
+        r = build_round(VARIANTS[0], pool, 1, random.Random(seed), set())
+        assert r is not None
+        assert not {"td", "ro"} <= set(r.answers)
+    assert build_round(VARIANTS[0], pool, 1, random.Random(0), {"fr", "td"}) is None
+
+
+def test_airports_capped_per_week() -> None:
+    day = date(2026, 1, 10)
+    c = cand("air", "airports", 2, [f"a{i}" for i in range(10)])
+    hist = [Past(day - timedelta(days=k), f"k{k}", f"t{k}", "airports", {f"z{k}"})
+            for k in (2, 5)]
+    assert not eligible(c, day, hist, [], Counter())
+    assert eligible(c, day, hist[:1], [], Counter())
+    old = [Past(day - timedelta(days=7), "k", "t", "airports", {"z"})] * 3
+    assert eligible(c, day, old, [], Counter())
+
+
+def test_flags_twice_only_on_second_flag_days() -> None:
+    day = date(2026, 1, 10)
+    c = cand("fl", "flags", 2, [f"f{i}" for i in range(10)])
+    used = Counter({"flags": 1})
+    assert not eligible(c, day, [], [], used, day_limits={"flags": 1})
+    assert eligible(c, day, [], [], used, day_limits={"flags": 2})

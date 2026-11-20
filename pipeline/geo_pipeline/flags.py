@@ -107,6 +107,8 @@ def main(force: bool = False) -> None:
             else "vertical" if vert else "none",
         }
         tags["n_colors"] = len(tags["colors"])
+        tags["dominant"] = next(iter(shares))  # colour covering the largest area
+        tags["color_shares"] = {c: round(v, 3) for c, v in shares.items() if v >= MINOR_SHARE}
         for t in BOOL_TAGS:
             tags[t] = iso2 in features.get(t, [])
         flags[iso2] = tags

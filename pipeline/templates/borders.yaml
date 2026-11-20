@@ -1,0 +1,97 @@
+# Borders (QUESTIONS.md §3.10). Answer type: country.
+
+- id: country_borders_either
+  family: borders
+  kind: relational
+  entity_type: country
+  difficulty: 2
+  text: "Name a country that borders {pair.a} or {pair.b}"
+  params:
+    pair:  # curated neighbouring pairs, so the question reads naturally
+      - {a: "France", b: "Germany"}
+      - {a: "Germany", b: "Poland"}
+      - {a: "Austria", b: "Hungary"}
+      - {a: "Italy", b: "Switzerland"}
+      - {a: "Spain", b: "France"}
+      - {a: "Serbia", b: "Hungary"}
+      - {a: "Ukraine", b: "Poland"}
+      - {a: "Russia", b: "China"}
+      - {a: "China", b: "India"}
+      - {a: "Iran", b: "Turkey"}
+      - {a: "Saudi Arabia", b: "Iraq"}
+      - {a: "Egypt", b: "Sudan"}
+      - {a: "Kenya", b: "Tanzania"}
+      - {a: "DR Congo", b: "Zambia"}
+      - {a: "South Africa", b: "Botswana"}
+      - {a: "Nigeria", b: "Niger"}
+      - {a: "Brazil", b: "Argentina"}
+      - {a: "Peru", b: "Bolivia"}
+      - {a: "Colombia", b: "Venezuela"}
+      - {a: "Mali", b: "Algeria"}
+      - {a: "Germany", b: "Austria"}
+      - {a: "Afghanistan", b: "Pakistan"}
+      - {a: "Kazakhstan", b: "Uzbekistan"}
+      - {a: "Ethiopia", b: "Kenya"}
+      - {a: "Germany", b: "Hungary"}
+      - {a: "France", b: "Austria"}
+      - {a: "Poland", b: "Serbia"}
+      - {a: "Italy", b: "Croatia"}
+      - {a: "Germany", b: "Serbia"}
+      - {a: "Brazil", b: "Colombia"}
+      - {a: "Argentina", b: "Peru"}
+      - {a: "Brazil", b: "Peru"}
+      - {a: "Tanzania", b: "DR Congo"}
+      - {a: "Sudan", b: "Chad"}
+      - {a: "Niger", b: "Mali"}
+      - {a: "Zambia", b: "Tanzania"}
+      - {a: "Iran", b: "Iraq"}
+      - {a: "China", b: "Kazakhstan"}
+      - {a: "India", b: "Myanmar"}
+      - {a: "Turkey", b: "Saudi Arabia"}
+      - {a: "Russia", b: "Iran"}
+      - {a: "Algeria", b: "Sudan"}
+      - {a: "Ethiopia", b: "DR Congo"}
+      - {a: "Cameroon", b: "Chad"}
+  filter: >-
+    e.name NOT IN (:pair.a, :pair.b)
+    AND EXISTS (SELECT 1 FROM relations r JOIN entities x ON x.id = r.b
+                WHERE r.a = e.id AND r.rel = 'borders' AND x.name IN (:pair.a, :pair.b))
+
+- id: country_borders_x
+  family: borders
+  kind: relational
+  entity_type: country
+  difficulty: 2
+  text: "Name a country that borders {x.name}"
+  params:
+    x:
+      - {name: China}
+      - {name: Russia}
+      - {name: Brazil}
+      - {name: Germany}
+      - {name: DR Congo}
+  filter: >-
+    EXISTS (SELECT 1 FROM relations r JOIN entities x ON x.id = r.b
+            WHERE r.a = e.id AND r.rel = 'borders' AND x.name = :x.name)
+
+- id: country_borders_one
+  family: borders
+  kind: relational
+  entity_type: country
+  difficulty: 2
+  text: "Name a country that borders exactly one other country (by land)"
+  filter: >-
+    (SELECT count(*) FROM relations r WHERE r.a = e.id AND r.rel = 'borders') = 1
+
+- id: country_borders_many
+  family: borders
+  kind: relational
+  entity_type: country
+  difficulty: 2
+  text: "Name a country that borders {n.text} or more other countries"
+  params:
+    n:
+      - {value: 7, text: "seven"}
+      - {value: 8, text: "eight", difficulty: 3}
+  filter: >-
+    (SELECT count(*) FROM relations r WHERE r.a = e.id AND r.rel = 'borders') >= :n.value
