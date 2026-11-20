@@ -163,7 +163,10 @@ def test_match_round_easy_and_medium_mix() -> None:
     assert sorted(i.category for i in easy.items) == ["famous", "famous", "well_known",
                                                       "well_known"]
     medium = build_round(v, _match_pool(), 2, random.Random(1), set())
-    assert sum(i.category in {"familiar", "obscure", "rarest"} for i in medium.items) == 2
+    # standard daily round (2026-11-20): 1 well known + 2 familiar + 1 obscure/rarest
+    cats = sorted(i.category for i in medium.items)
+    assert cats.count("familiar") == 2 and cats.count("well_known") == 1
+    assert sum(c in {"obscure", "rarest"} for c in cats) == 1
     for r in (easy, medium):
         assert len({i.right for i in r.items}) == 4
         assert sorted(r.right_order) == sorted(i.right for i in r.items)
@@ -222,3 +225,30 @@ def test_match_round_rejects_ambiguous_pairs() -> None:
         r = build_round(VARIANTS[0], pool, 1, random.Random(seed), set())
         assert r is not None
         assert not {"sto", "mel"} <= set(r.answers)
+
+
+def test_order_round_close_but_apart_and_never_presorted() -> None:
+    import random
+
+    from geo_pipeline.ordering import VARIANTS, OrderItem, apart, build_round
+
+    v = next(x for x in VARIANTS if x.id == "order_country_area")
+    pool = [OrderItem(f"c{i}", f"C{i}", 1000 * 1.2 ** i, 100 - i) for i in range(40)]
+    for seed in range(20):
+        r = build_round(v, pool, 2, random.Random(seed), set())
+        assert r is not None
+        values = [i.value for i in r.items]
+        assert apart(values, v)
+        assert max(values) / min(values) < 1.2 ** 14  # from a window of neighbours
+        assert r.answer != list(range(5))
+        ranked = [values[p] for p in r.answer]
+        assert ranked == sorted(values, reverse=True)
+    # too-close values are rejected
+    assert not apart([100, 110, 200, 400, 800], v)
+
+
+def test_haversine() -> None:
+    from geo_pipeline.ordering import haversine_km
+
+    # Paris - London ~ 344 km
+    assert 330 < haversine_km(48.8566, 2.3522, 51.5074, -0.1278) < 360

@@ -15,10 +15,19 @@ export interface MatchPair {
   category: "famous" | "well_known" | "familiar" | "obscure" | "rarest";
 }
 
+export type QuestionKind = "free_text" | "match" | "order";
+
+/** An ordering-round item (display order). value is secret until the question ends. */
+export interface OrderItem {
+  id: string;
+  label: string;
+  value: number;
+}
+
 export interface PuzzleQuestion {
   date: string;
   idx: number;
-  kind: "free_text" | "match";
+  kind: QuestionKind;
   text: string;
   family: string;
   entityType: string;
@@ -31,22 +40,29 @@ export interface PuzzleQuestion {
   pairs: MatchPair[];
   rightOrder: string[];
   variant?: string;
+  /** order: items in display order, the correct order (display positions), unit */
+  items: OrderItem[];
+  answer: number[];
+  unit: string;
+  direction: "asc" | "desc";
 }
 
 export interface PublicQuestion {
   idx: number;
-  kind: "free_text" | "match";
+  kind: QuestionKind;
   text: string;
   family: string;
   answerType: string;
   left?: { pos: number; label?: string; image?: string }[];
   right?: { pos: number; label: string }[];
+  /** order: labels in display order */
+  items?: { pos: number; label: string }[];
 }
 
 export const FAMILY_LABELS: Record<string, string> = {
   flags: "Flags", countries: "Countries", cities: "Cities", names: "Names", borders: "Borders",
   map_surprises: "Map surprises", airports: "Airports", nature: "Nature", olympics: "Olympics",
-  matching: "Matching",
+  matching: "Matching", ordering: "Ordering",
 };
 
 export function utcToday(now = new Date()): string {
@@ -64,9 +80,12 @@ export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion
   const hit = cache.get(date);
   if (hit) return hit;
   const { rows } = await db.query<{
-    idx: number; kind: "free_text" | "match"; question_text: string; family: string;
+    idx: number; kind: QuestionKind; question_text: string; family: string;
     entity_type: string; difficulty: number; template_id: string; valid_entity_ids: string[];
-    payload: { variant?: string; pairs?: MatchPair[]; right_order?: string[] };
+    payload: {
+      variant?: string; pairs?: MatchPair[]; right_order?: string[]; items?: OrderItem[];
+      answer?: number[]; unit?: string; direction?: "asc" | "desc";
+    };
   }>(
     `SELECT idx, kind, question_text, family, entity_type, difficulty, template_id,
             valid_entity_ids, payload
@@ -96,6 +115,10 @@ export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion
     pairs: r.payload.pairs ?? [],
     rightOrder: r.payload.right_order ?? [],
     variant: r.payload.variant,
+    items: r.payload.items ?? [],
+    answer: r.payload.answer ?? [],
+    unit: r.payload.unit ?? "",
+    direction: r.payload.direction ?? "desc",
   }));
   cache.set(date, questions);
   return questions;
@@ -113,6 +136,7 @@ export async function publicQuestions(db: Pool, puzzle: PuzzleQuestion[]): Promi
       idx: q.idx, kind: q.kind, text: q.text,
       family: FAMILY_LABELS[q.family] ?? q.family, answerType: q.entityType,
     };
+    if (q.kind === "order") return { ...base, items: q.items.map((it, pos) => ({ pos, label: it.label })) };
     if (q.kind !== "match") return base;
     const labelOf = new Map(q.pairs.map((p) => [p.right, p.right_label]));
     const isFlag = q.variant === "match_flag_country";

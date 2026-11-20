@@ -5,15 +5,21 @@ import { api } from "@/lib/client/api";
 import { formatShare, TIER_LABEL, untilNextPuzzle } from "@/lib/client/state";
 import type { DayResults } from "@/lib/client/types";
 
-export function EndScreen({ date, remaining, onResume }: { date: string; remaining: number; onResume: () => void }) {
-  const [res, setRes] = useState<DayResults | null>(null);
+export function EndScreen({ date, prefetched, remaining, onResume }: {
+  date: string; prefetched: DayResults | null; remaining: number; onResume: () => void;
+}) {
+  const [res, setRes] = useState<DayResults | null>(prefetched);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
+    if (prefetched && prefetched.finished === (remaining === 0)) {
+      setRes(prefetched);
+      return;
+    }
     api<DayResults>(`/api/results/${date}`).then(setRes, (e: Error) => setError(e.message));
-  }, [date, remaining]);
+  }, [date, remaining, prefetched]);
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30_000);
     return () => clearInterval(t);
@@ -42,16 +48,24 @@ export function EndScreen({ date, remaining, onResume }: { date: string; remaini
         </p>
       )}
       <table>
-        <thead><tr><th>#</th><th>Question</th><th>Your answer</th><th>Points</th></tr></thead>
+        <thead><tr><th>#</th><th>Question</th><th>Your answers</th><th>Points</th></tr></thead>
         <tbody>
           {res.questions.map((q, i) => (
             <tr key={q.idx}>
               <td>{i + 1}</td>
-              <td>{q.text}</td>
+              <td>{q.text ?? "—"}</td>
               <td>
-                {!q.answered ? "—" : q.correctPairs !== undefined ? `${q.correctPairs}/4 pairs`
-                  : q.status === "valid" ? `${q.answer}${q.tier ? ` · ${TIER_LABEL[q.tier]}` : ""}${q.share !== undefined ? ` · ${formatShare(q.share)}` : ""}`
-                  : q.answer ? <><s>{q.answer}</s> (wrong)</> : "not recognised"}
+                {q.state === "not_started" ? "—"
+                  : q.pairCount !== undefined ? `${q.correctPairs ?? 0}/${q.pairCount} right`
+                  : q.answers.length === 0 ? "none"
+                  : q.answers.map((a, j) => (
+                    <span key={j}>
+                      {j > 0 && ", "}
+                      {a.status === "valid"
+                        ? `${a.name} (${a.tier ? TIER_LABEL[a.tier] : ""}${a.share !== undefined ? `, ${formatShare(a.share)}` : ""})`
+                        : <s>{a.name}</s>}
+                    </span>
+                  ))}
               </td>
               <td>{q.points}{q.finalPoints !== undefined && q.finalPoints !== q.points ? ` → ${q.finalPoints}` : ""}</td>
             </tr>

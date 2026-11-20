@@ -24,6 +24,9 @@ export const MATCH_PAIR_POINTS: Record<Tier, number> = {
   famous: 10, well_known: 15, familiar: 25, obscure: 35, rarest: 40,
 };
 
+/** Ordering rounds: points per item in the right position (5 items → 100). */
+export const ORDER_POINTS_PER_ITEM = 20;
+
 export const BLEND_K = 50;
 export const PRIOR_TOP_SHARE = 0.3;
 

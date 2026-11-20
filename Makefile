@@ -65,6 +65,11 @@ generate:
 dev:
 	npm --prefix app run dev
 
+# Production build on http://localhost:3000: much faster to click through than `make dev`, which
+# compiles each route on first use (several seconds per new screen).
+play:
+	npm --prefix app run build && npm --prefix app run start
+
 # Nightly: finalise yesterday's scores (DATE=YYYY-MM-DD for another finished day)
 finalize:
 	npm --prefix app run finalize -- $(DATE)

@@ -1,13 +1,13 @@
 /**
- * GET /api/daily[?date=YYYY-MM-DD] → today's (or a past) puzzle without answers, plus the
- * player's progress. Future puzzles are never served.
+ * GET /api/daily[?date=YYYY-MM-DD] → the day's questions and the player's progress. A question's
+ * text (and matching items) is only included once the player has started it, since the clock
+ * starts then. Future puzzles are never served.
  */
 import { NextResponse, type NextRequest } from "next/server";
 import { getPool } from "@/lib/db";
-import { GameError } from "@/lib/game/answer";
+import { closeExpired, GameError, playsFor, playState } from "@/lib/game/answer";
 import { gameToday, isIsoDate, withPlayer } from "@/lib/game/http";
-import { loadPuzzle, publicQuestions } from "@/lib/game/puzzle";
-import { getResults } from "@/lib/game/results";
+import { FAMILY_LABELS, loadPuzzle, publicQuestions } from "@/lib/game/puzzle";
 
 export const dynamic = "force-dynamic";
 
@@ -20,14 +20,25 @@ export async function GET(req: NextRequest) {
     const db = getPool();
     const puzzle = await loadPuzzle(db, date);
     if (!puzzle) throw new GameError("no_puzzle", "No puzzle for that date", 404);
-    const results = await getResults(db, playerId, date);
+    const now = new Date();
+    if (date === today) await closeExpired(db, playerId, puzzle, today, now);
+    const plays = await playsFor(db, playerId, date);
+    const started = puzzle.filter((q) => plays.has(q.idx) || date !== today);
+    const pub = new Map((await publicQuestions(db, started)).map((q) => [q.idx, q]));
+    const points = new Map((await db.query<{ idx: number; points: string }>(
+      "SELECT idx, sum(points) AS points FROM answers WHERE player_id = $1 AND date = $2 GROUP BY idx",
+      [playerId, date],
+    )).rows.map((r) => [r.idx, Number(r.points)]));
     return NextResponse.json({
       date,
       isToday: date === today,
-      questions: await publicQuestions(db, puzzle),
-      progress: results?.questions.filter((q) => q.answered).map((q) => ({
-        idx: q.idx, status: q.status, points: q.points, answer: q.answer, tier: q.tier,
-      })) ?? [],
+      serverNow: now.toISOString(),
+      questions: puzzle.map((q) => ({
+        ...(pub.get(q.idx) ?? { idx: q.idx, kind: q.kind, family: FAMILY_LABELS[q.family] ?? q.family }),
+        difficulty: q.difficulty,
+        play: playState(q, plays.get(q.idx), now),
+        points: points.get(q.idx) ?? 0,
+      })),
     });
   });
 }

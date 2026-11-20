@@ -1,24 +1,33 @@
 /**
- * Submitting an answer (PLAN.md §1, §6, §7).
+ * Playing a question (PLAN.md §1, §6, §7; timed multi-answer rules decided 2026-11-20).
  *
- * - "did you mean" never uses up the question (PLAN §1).
- * - Unrecognised input gets MAX_UNRECOGNISED_ATTEMPTS tries before it counts as a 0-point answer.
- *   This can't leak answers: "unrecognised" says nothing about validity. Every unrecognised input
- *   is logged to unmatched_log for the alias-fixing page.
- * - One answer per player and question (unique constraint); resubmitting returns the stored result.
- * - Points are awarded immediately from the blended share (scoring.ts); the nightly finalise job
- *   (finalize.ts) stores final points too.
- * - When the player has answered every question of the day, daily_scores and player_stats update
- *   in the same transaction.
+ * - Questions are played in order. Starting one (startQuestion) shows its text and starts the
+ *   clock: QUESTION_SECONDS for free text, more for matching rounds. The clock is the server's;
+ *   answers arriving later than the deadline + GRACE_MS are refused.
+ * - Free text: as many answers as the player likes until time runs out. Each distinct place
+ *   counts once; valid ones score by rarity (scoring.ts), wrong ones score 0, unrecognised input
+ *   costs nothing (and is logged to unmatched_log for the alias page).
+ * - Spelling corrections are never applied silently: anything but an exact name/alias hit comes
+ *   back as "did you mean", and only a confirm (confirm_entity_id) records it.
+ * - Matching rounds: one submission of pairs (unpaired = -1, counts as wrong), which ends the
+ *   question. Ordering rounds: one submission of the order, ORDER_POINTS_PER_ITEM per item in
+ *   the right place. Running out of time without submitting scores 0.
+ * - A question ends with "I'm done" (endQuestion), a matching submit, or the deadline. Only then
+ *   does the reveal (common/rare answers, matching solution) leave the server.
+ * - When all of the day's questions have ended, daily_scores is marked finished and player_stats
+ *   is refreshed in the same transaction.
  */
 import type { Pool, PoolClient } from "pg";
-import { matchAnswer, type MatchResult } from "../matcher";
+import { matchAnswer } from "../matcher";
 import { normalize } from "../normalize";
-import { loadPuzzle, type PuzzleQuestion } from "./puzzle";
-import { matchPoints, scoreAnswer, type Tier } from "./scoring";
+import { loadPuzzle, publicQuestions, type PublicQuestion, type PuzzleQuestion } from "./puzzle";
+import { matchPoints, ORDER_POINTS_PER_ITEM, scoreAnswer, type Tier } from "./scoring";
 import { refreshPlayerStats } from "./stats";
 
-export const MAX_UNRECOGNISED_ATTEMPTS = 3;
+/** Seconds per question (tune here). */
+export const QUESTION_SECONDS = { free_text: 20, match: 40, order: 40 } as const;
+/** Network slack after the deadline for answers already on their way. */
+export const GRACE_MS = 2000;
 const MAX_TEXT_LENGTH = 120;
 
 export class GameError extends Error {
@@ -27,49 +36,83 @@ export class GameError extends Error {
   }
 }
 
-export interface AnswerInput {
-  playerId: string;
-  date: string;
-  idx: number;
-  /** free-text questions */
-  text?: string;
-  confirmEntityId?: string;
-  /** matching rounds: pairs[leftPos] = rightPos */
-  pairs?: number[];
-  /** the current UTC date (injectable for tests) */
-  today: string;
-}
+type Db = Pool | PoolClient;
 
 export interface NamedEntity {
   id: string;
   name: string;
 }
 
+export interface PlayState {
+  state: "not_started" | "playing" | "done";
+  startedAt?: string;
+  deadline?: string;
+  seconds: number;
+}
+
+export interface GivenAnswer {
+  entity: NamedEntity & { partOf?: string };
+  status: "valid" | "real_but_wrong";
+  points: number;
+  tier?: Tier;
+  share?: number;
+}
+
+export interface QuestionSummary {
+  idx: number;
+  points: number;
+  answers: GivenAnswer[];
+  commonAnswers?: NamedEntity[];
+  rareAnswers?: NamedEntity[];
+  /** matching rounds: pairs[leftPos] = rightPos; ordering rounds: the submitted order */
+  pairs?: number[];
+  order?: number[];
+  correct?: boolean[];
+  /** matching: right pos per left pos; ordering: display positions in the right order */
+  solution?: number[];
+  /** ordering: each item's value in display order, with the unit */
+  values?: number[];
+  unit?: string;
+  /** set when this question completed the day */
+  dayComplete?: { total: number };
+}
+
+export interface StartResult {
+  question: PublicQuestion;
+  play: PlayState;
+  serverNow: string;
+  /** answers already given (resuming after a reload) */
+  answers: GivenAnswer[];
+  /** set if the question is already over */
+  summary?: QuestionSummary;
+}
+
 export interface AnswerResult {
-  status: "valid" | "real_but_wrong" | "unrecognised" | "did_you_mean" | "match";
-  /** true if this question is now done for the player */
-  final: boolean;
-  alreadyAnswered?: boolean;
+  status: "valid" | "real_but_wrong" | "unrecognised" | "did_you_mean" | "duplicate";
   entity?: NamedEntity & { partOf?: string };
   suggestion?: NamedEntity;
   alternative?: NamedEntity;
   otherType?: string;
-  attemptsLeft?: number;
   points: number;
   tier?: Tier;
   share?: number;
-  commonAnswers?: NamedEntity[];
-  rareAnswers?: NamedEntity[];
-  /** matching rounds */
-  correct?: boolean[];
-  solution?: number[];
-  /** set when this answer completed the day */
-  dayComplete?: { total: number };
+  /** points so far on this question */
+  questionPoints: number;
 }
+
+interface PlayRow {
+  started_at: Date;
+  deadline: Date;
+  ended_at: Date | null;
+}
+
+export const secondsFor = (q: PuzzleQuestion) => QUESTION_SECONDS[q.kind];
+const isOver = (p: PlayRow, now: Date) =>
+  p.ended_at !== null || now.getTime() > p.deadline.getTime() + GRACE_MS;
 
 async function getQuestion(db: Pool, date: string, idx: number, today: string) {
   if (date !== today) {
-    throw new GameError("not_today", "Only today's puzzle can be answered", 409);
+    throw new GameError("not_today", "Only today's puzzle can be played", 409);
   }
   const puzzle = await loadPuzzle(db, date);
   const q = puzzle?.find((x) => x.idx === idx);
@@ -77,33 +120,110 @@ async function getQuestion(db: Pool, date: string, idx: number, today: string) {
   return { puzzle, q };
 }
 
-export async function submitAnswer(db: Pool, input: AnswerInput): Promise<AnswerResult> {
+async function getPlay(db: Db, playerId: string, q: PuzzleQuestion): Promise<PlayRow | null> {
+  const { rows } = await db.query<PlayRow>(
+    `SELECT started_at, deadline, ended_at FROM question_plays
+     WHERE player_id = $1 AND date = $2 AND idx = $3`,
+    [playerId, q.date, q.idx],
+  );
+  return rows[0] ?? null;
+}
+
+/** Every play of the player on this date, keyed by idx. */
+export async function playsFor(db: Db, playerId: string, date: string): Promise<Map<number, PlayRow>> {
+  const { rows } = await db.query<PlayRow & { idx: number }>(
+    `SELECT idx, started_at, deadline, ended_at FROM question_plays WHERE player_id = $1 AND date = $2`,
+    [playerId, date],
+  );
+  return new Map(rows.map((r) => [r.idx, r]));
+}
+
+export function playState(q: PuzzleQuestion, p: PlayRow | undefined | null, now: Date): PlayState {
+  const seconds = secondsFor(q);
+  if (!p) return { state: "not_started", seconds };
+  return {
+    state: isOver(p, now) ? "done" : "playing",
+    startedAt: p.started_at.toISOString(), deadline: p.deadline.toISOString(), seconds,
+  };
+}
+
+// ------------------------------------------------------------------ start
+
+export async function startQuestion(db: Pool, input: {
+  playerId: string; date: string; idx: number; today: string; now?: Date;
+}): Promise<StartResult> {
+  const now = input.now ?? new Date();
   const { puzzle, q } = await getQuestion(db, input.date, input.idx, input.today);
-  const existing = await storedResult(db, input.playerId, q);
-  if (existing) return existing;
-  return q.kind === "match" ? submitMatch(db, input, q, puzzle) : submitText(db, input, q, puzzle);
+  await closeExpired(db, input.playerId, puzzle, input.today, now);
+  const plays = await playsFor(db, input.playerId, q.date);
+  let play = plays.get(q.idx) ?? null;
+  if (!play) {
+    const earlier = puzzle.filter((x) => x.idx < q.idx);
+    if (earlier.some((x) => { const p = plays.get(x.idx); return !p || !isOver(p, now); })) {
+      throw new GameError("out_of_order", "Finish the earlier questions first", 409);
+    }
+    await db.query(
+      `INSERT INTO question_plays (player_id, date, idx, started_at, deadline)
+       VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
+      [input.playerId, q.date, q.idx, now, new Date(now.getTime() + secondsFor(q) * 1000)],
+    );
+    play = await getPlay(db, input.playerId, q);
+  }
+  const state = playState(q, play, now);
+  return {
+    question: (await publicQuestions(db, [q]))[0],
+    play: state,
+    serverNow: now.toISOString(),
+    answers: await givenAnswers(db, input.playerId, q),
+    ...(state.state === "done" ? { summary: await summarize(db, input.playerId, q) } : {}),
+  };
 }
 
 // ------------------------------------------------------------------ free text
 
-async function submitText(
-  db: Pool, input: AnswerInput, q: PuzzleQuestion, puzzle: PuzzleQuestion[],
-): Promise<AnswerResult> {
+export async function submitAnswer(db: Pool, input: {
+  playerId: string; date: string; idx: number; text?: string; confirmEntityId?: string;
+  pairs?: number[]; order?: number[]; today: string; now?: Date;
+}): Promise<AnswerResult | QuestionSummary> {
+  const now = input.now ?? new Date();
+  const { puzzle, q } = await getQuestion(db, input.date, input.idx, input.today);
+  const play = await getPlay(db, input.playerId, q);
+  if (!play) throw new GameError("not_started", "Start the question first", 409);
+  if (isOver(play, now)) throw new GameError("time_up", "Time's up for this question", 409);
+  if (q.kind === "match") return submitMatch(db, input, q, puzzle, now);
+  if (q.kind === "order") return submitOrder(db, input, q, puzzle, now);
+
   const raw = (input.text ?? "").slice(0, MAX_TEXT_LENGTH);
   if (!raw.trim()) throw new GameError("empty", "Type an answer");
   const m = await matchAnswer(db, raw, {
     entityType: q.entityType, validIds: q.validIds, confirmEntityId: input.confirmEntityId,
   });
+  const questionPoints = () => pointsOn(db, input.playerId, q);
 
-  if (m.status === "did_you_mean") {
+  if (m.status === "unrecognised") {
+    const logged = normalize(raw) || raw.trim().toLowerCase();
+    await db.query(
+      `INSERT INTO unmatched_log (date, idx, raw_text, n) VALUES ($1, $2, $3, 1)
+       ON CONFLICT (date, idx, raw_text) DO UPDATE SET n = unmatched_log.n + 1`,
+      [q.date, q.idx, logged],
+    );
+    return { status: "unrecognised", points: 0, questionPoints: await questionPoints(),
+             ...(m.otherType ? { otherType: m.otherType } : {}) };
+  }
+  // Corrections are suggested, never applied silently: only exact name/alias hits or a confirm
+  // from the player get recorded.
+  const corrected = m.status !== "did_you_mean" && m.method === "fuzzy" && !input.confirmEntityId;
+  if (m.status === "did_you_mean" || corrected) {
+    const s = m.status === "did_you_mean" ? m.suggestion! : m.entity!;
     return {
-      status: "did_you_mean", final: false, points: 0,
-      suggestion: m.suggestion && { id: m.suggestion.id, name: m.suggestion.name },
+      status: "did_you_mean", points: 0, questionPoints: await questionPoints(),
+      suggestion: { id: s.id, name: s.name },
       ...(m.alternative ? { alternative: { id: m.alternative.id, name: m.alternative.name } } : {}),
     };
   }
-  if (m.status === "unrecognised") return handleUnrecognised(db, input, q, puzzle, raw, m);
 
+  const entity = { id: m.entity!.id, name: m.entity!.name,
+                   ...(m.entity!.partOf ? { partOf: m.entity!.partOf } : {}) };
   const client = await db.connect();
   try {
     await client.query("BEGIN");
@@ -111,82 +231,34 @@ async function submitText(
       `INSERT INTO answers (player_id, date, idx, raw_text, matched_entity_id, valid, points,
                             status, kind, detail)
        VALUES ($1, $2, $3, $4, $5, $6, 0, $7, 'free_text', $8)
-       ON CONFLICT (player_id, date, idx) DO NOTHING RETURNING id`,
-      [input.playerId, q.date, q.idx, raw, m.entity!.id, m.status === "valid", m.status,
+       ON CONFLICT (player_id, date, idx, matched_entity_id) WHERE matched_entity_id IS NOT NULL
+       DO NOTHING RETURNING id`,
+      [input.playerId, q.date, q.idx, raw, entity.id, m.status === "valid", m.status,
        JSON.stringify(m.namesakes?.length ? { namesakes: m.namesakes.map((n) => n.id) } : {})],
     );
     if (!ins.rows.length) {
       await client.query("ROLLBACK");
-      return (await storedResult(db, input.playerId, q))!; // a concurrent duplicate submission
+      return { status: "duplicate", entity, points: 0, questionPoints: await questionPoints() };
     }
     const nSame = (await client.query<{ n: number }>(
       `INSERT INTO answer_counts (date, idx, entity_id, n) VALUES ($1, $2, $3, 1)
        ON CONFLICT (date, idx, entity_id) DO UPDATE SET n = answer_counts.n + 1 RETURNING n`,
-      [q.date, q.idx, m.entity!.id],
+      [q.date, q.idx, entity.id],
     )).rows[0].n;
     let points = 0;
     let tier: Tier | undefined;
     let share: number | undefined;
     if (m.status === "valid") {
-      const nTotal = await totalAnswers(client, q);
-      ({ points, tier, share } = scoreAnswer(nSame, nTotal, q.prior.get(m.entity!.id) ?? 0));
+      ({ points, tier, share } = scoreAnswer(nSame, await answersOn(client, q), q.prior.get(entity.id) ?? 0));
       await client.query(
         "UPDATE answers SET points = $1, tier = $2, share = $3 WHERE id = $4",
         [points, tier, share, ins.rows[0].id],
       );
     }
-    const dayComplete = await afterAnswer(client, input.playerId, puzzle, input.today);
+    await updateDailyScore(client, input.playerId, q.date, null);
+    const total = await pointsOn(client, input.playerId, q);
     await client.query("COMMIT");
-    return {
-      status: m.status, final: true, points, tier, share,
-      entity: { id: m.entity!.id, name: m.entity!.name,
-                ...(m.entity!.partOf ? { partOf: m.entity!.partOf } : {}) },
-      ...(await reveal(client, q)),
-      ...(dayComplete ? { dayComplete } : {}),
-    };
-  } catch (e) {
-    await client.query("ROLLBACK").catch(() => {});
-    throw e;
-  } finally {
-    client.release();
-  }
-}
-
-async function handleUnrecognised(
-  db: Pool, input: AnswerInput, q: PuzzleQuestion, puzzle: PuzzleQuestion[], raw: string,
-  m: MatchResult,
-): Promise<AnswerResult> {
-  const logged = normalize(raw) || raw.trim().toLowerCase();
-  await db.query(
-    `INSERT INTO unmatched_log (date, idx, raw_text, n) VALUES ($1, $2, $3, 1)
-     ON CONFLICT (date, idx, raw_text) DO UPDATE SET n = unmatched_log.n + 1`,
-    [q.date, q.idx, logged],
-  );
-  const attempts = (await db.query<{ n: number }>(
-    `INSERT INTO answer_attempts (player_id, date, idx, n) VALUES ($1, $2, $3, 1)
-     ON CONFLICT (player_id, date, idx) DO UPDATE SET n = answer_attempts.n + 1 RETURNING n`,
-    [input.playerId, q.date, q.idx],
-  )).rows[0].n;
-  const left = MAX_UNRECOGNISED_ATTEMPTS - attempts;
-  const hint = m.otherType ? { otherType: m.otherType } : {};
-  if (left > 0) return { status: "unrecognised", final: false, points: 0, attemptsLeft: left, ...hint };
-
-  // out of attempts: record a 0-point answer
-  const client = await db.connect();
-  try {
-    await client.query("BEGIN");
-    await client.query(
-      `INSERT INTO answers (player_id, date, idx, raw_text, valid, points, status, kind)
-       VALUES ($1, $2, $3, $4, false, 0, 'unrecognised', 'free_text')
-       ON CONFLICT (player_id, date, idx) DO NOTHING`,
-      [input.playerId, q.date, q.idx, raw],
-    );
-    const dayComplete = await afterAnswer(client, input.playerId, puzzle, input.today);
-    await client.query("COMMIT");
-    return {
-      status: "unrecognised", final: true, points: 0, attemptsLeft: 0, ...hint,
-      ...(await reveal(client, q)), ...(dayComplete ? { dayComplete } : {}),
-    };
+    return { status: m.status, entity, points, tier, share, questionPoints: total };
   } catch (e) {
     await client.query("ROLLBACK").catch(() => {});
     throw e;
@@ -198,36 +270,57 @@ async function handleUnrecognised(
 // ------------------------------------------------------------------ matching rounds
 
 async function submitMatch(
-  db: Pool, input: AnswerInput, q: PuzzleQuestion, puzzle: PuzzleQuestion[],
-): Promise<AnswerResult> {
+  db: Pool, input: { playerId: string; pairs?: number[]; today: string },
+  q: PuzzleQuestion, puzzle: PuzzleQuestion[], now: Date,
+): Promise<QuestionSummary> {
   const n = q.pairs.length;
   const pairs = input.pairs;
+  const picked = (pairs ?? []).filter((p) => p !== -1);
   if (!Array.isArray(pairs) || pairs.length !== n ||
-      !pairs.every((p) => Number.isInteger(p) && p >= 0 && p < n) || new Set(pairs).size !== n) {
-    throw new GameError("bad_pairs", `Pair each of the ${n} items with a different option`);
+      !pairs.every((p) => Number.isInteger(p) && p >= -1 && p < n) ||
+      new Set(picked).size !== picked.length) {
+    throw new GameError("bad_pairs", `Pair each of the ${n} items with a different option (-1 = none)`);
   }
-  const correct = q.pairs.map((p, i) => q.rightOrder[pairs[i]] === p.right);
+  const correct = q.pairs.map((p, i) => pairs[i] >= 0 && q.rightOrder[pairs[i]] === p.right);
   const points = matchPoints(q.pairs.filter((_, i) => correct[i]));
-  const solution = q.pairs.map((p) => q.rightOrder.indexOf(p.right));
+  return recordRound(db, input.playerId, q, puzzle, input.today, now, points, correct.every(Boolean),
+                     JSON.stringify(pairs), { pairs, correct });
+}
+
+async function submitOrder(
+  db: Pool, input: { playerId: string; order?: number[]; today: string },
+  q: PuzzleQuestion, puzzle: PuzzleQuestion[], now: Date,
+): Promise<QuestionSummary> {
+  const n = q.items.length;
+  const order = input.order;
+  if (!Array.isArray(order) || order.length !== n || new Set(order).size !== n ||
+      !order.every((p) => Number.isInteger(p) && p >= 0 && p < n)) {
+    throw new GameError("bad_order", `Send all ${n} items in your order`);
+  }
+  const correct = order.map((p, i) => q.answer[i] === p);
+  const points = correct.filter(Boolean).length * ORDER_POINTS_PER_ITEM;
+  return recordRound(db, input.playerId, q, puzzle, input.today, now, points, correct.every(Boolean),
+                     JSON.stringify(order), { order, correct });
+}
+
+/** Store a matching/ordering submission and end the question. */
+async function recordRound(
+  db: Pool, playerId: string, q: PuzzleQuestion, puzzle: PuzzleQuestion[], today: string,
+  now: Date, points: number, allRight: boolean, raw: string, detail: object,
+): Promise<QuestionSummary> {
   const client = await db.connect();
   try {
     await client.query("BEGIN");
-    const ins = await client.query(
+    await client.query(
       `INSERT INTO answers (player_id, date, idx, raw_text, valid, points, final_points, status,
                             kind, detail)
-       VALUES ($1, $2, $3, $4, $5, $6, $6, 'match', 'match', $7)
-       ON CONFLICT (player_id, date, idx) DO NOTHING RETURNING id`,
-      [input.playerId, q.date, q.idx, JSON.stringify(pairs), correct.every(Boolean), points,
-       JSON.stringify({ pairs, correct })],
+       VALUES ($1, $2, $3, $4, $5, $6, $6, $7, $7, $8)
+       ON CONFLICT (player_id, date, idx) WHERE kind IN ('match', 'order') DO NOTHING`,
+      [playerId, q.date, q.idx, raw, allRight, points, q.kind, JSON.stringify(detail)],
     );
-    if (!ins.rows.length) {
-      await client.query("ROLLBACK");
-      return (await storedResult(db, input.playerId, q))!;
-    }
-    const dayComplete = await afterAnswer(client, input.playerId, puzzle, input.today);
+    const dayComplete = await endPlay(client, playerId, q, puzzle, today, now);
     await client.query("COMMIT");
-    return { status: "match", final: true, points, correct, solution,
-             ...(dayComplete ? { dayComplete } : {}) };
+    return { ...(await summarize(db, playerId, q)), ...(dayComplete ? { dayComplete } : {}) };
   } catch (e) {
     await client.query("ROLLBACK").catch(() => {});
     throw e;
@@ -236,37 +329,163 @@ async function submitMatch(
   }
 }
 
-// ------------------------------------------------------------------ shared
+// ------------------------------------------------------------------ end / summary
 
-async function totalAnswers(db: Pool | PoolClient, q: PuzzleQuestion): Promise<number> {
+/** "I'm done" or time up: end the question (idempotent) and return its summary + reveal. */
+export async function endQuestion(db: Pool, input: {
+  playerId: string; date: string; idx: number; today: string; now?: Date;
+}): Promise<QuestionSummary> {
+  const now = input.now ?? new Date();
+  const puzzle = await loadPuzzle(db, input.date);
+  const q = puzzle?.find((x) => x.idx === input.idx);
+  if (!puzzle || !q) throw new GameError("no_question", "No such question", 404);
+  const play = await getPlay(db, input.playerId, q);
+  if (!play) throw new GameError("not_started", "That question hasn't been started", 409);
+  let dayComplete: { total: number } | null = null;
+  if (play.ended_at === null) {
+    const client = await db.connect();
+    try {
+      await client.query("BEGIN");
+      dayComplete = await endPlay(client, input.playerId, q, puzzle, input.today, now);
+      await client.query("COMMIT");
+    } catch (e) {
+      await client.query("ROLLBACK").catch(() => {});
+      throw e;
+    } finally {
+      client.release();
+    }
+  }
+  return { ...(await summarize(db, input.playerId, q)), ...(dayComplete ? { dayComplete } : {}) };
+}
+
+/** Close plays whose time ran out while the player was away (e.g. closed the tab). */
+export async function closeExpired(
+  db: Pool, playerId: string, puzzle: PuzzleQuestion[], today: string, now = new Date(),
+): Promise<void> {
+  const res = await db.query(
+    `UPDATE question_plays SET ended_at = deadline
+     WHERE player_id = $1 AND date = $2 AND ended_at IS NULL
+       AND deadline + make_interval(secs => $3) < $4`,
+    [playerId, puzzle[0].date, GRACE_MS / 1000, now],
+  );
+  if (res.rowCount) {
+    const client = await db.connect();
+    try {
+      await client.query("BEGIN");
+      await updateDailyScore(client, playerId, puzzle[0].date, puzzle, today);
+      await client.query("COMMIT");
+    } catch (e) {
+      await client.query("ROLLBACK").catch(() => {});
+      throw e;
+    } finally {
+      client.release();
+    }
+  }
+}
+
+async function endPlay(
+  client: PoolClient, playerId: string, q: PuzzleQuestion, puzzle: PuzzleQuestion[],
+  today: string, now: Date,
+): Promise<{ total: number } | null> {
+  await client.query(
+    `UPDATE question_plays SET ended_at = least($4::timestamptz, deadline)
+     WHERE player_id = $1 AND date = $2 AND idx = $3 AND ended_at IS NULL`,
+    [playerId, q.date, q.idx, now],
+  );
+  return updateDailyScore(client, playerId, q.date, puzzle, today);
+}
+
+/**
+ * Keep daily_scores current. With `puzzle`, also check whether every question has ended; if so
+ * mark the day finished and refresh player stats. Returns the day total when finished.
+ */
+async function updateDailyScore(
+  client: PoolClient, playerId: string, date: string, puzzle: PuzzleQuestion[] | null,
+  today?: string,
+): Promise<{ total: number } | null> {
+  const { rows } = await client.query<{ total: string; ended: string }>(
+    `SELECT (SELECT coalesce(sum(points), 0) FROM answers WHERE player_id = $1 AND date = $2) AS total,
+            (SELECT count(*) FROM question_plays WHERE player_id = $1 AND date = $2
+               AND ended_at IS NOT NULL) AS ended`,
+    [playerId, date],
+  );
+  const total = Number(rows[0].total);
+  const done = puzzle !== null && Number(rows[0].ended) >= puzzle.length;
+  await client.query(
+    `INSERT INTO daily_scores (date, player_id, instant_points, finished) VALUES ($1, $2, $3, $4)
+     ON CONFLICT (date, player_id) DO UPDATE SET instant_points = $3,
+       finished = daily_scores.finished OR $4`,
+    [date, playerId, total, done],
+  );
+  if (!done) return null;
+  await refreshPlayerStats(client, playerId, today!);
+  return { total };
+}
+
+async function pointsOn(db: Db, playerId: string, q: PuzzleQuestion): Promise<number> {
+  return Number((await db.query<{ n: string }>(
+    "SELECT coalesce(sum(points), 0) AS n FROM answers WHERE player_id = $1 AND date = $2 AND idx = $3",
+    [playerId, q.date, q.idx],
+  )).rows[0].n);
+}
+
+/**
+ * Share denominator: every answer given to the question (right or wrong), so a share is "this
+ * answer's part of all answers". With several answers per player, a per-player share would push
+ * most answers over the tier thresholds; per-answer shares keep the prior (which sums to 1) and
+ * the tiers calibrated (decided 2026-11-20, PLAN §6).
+ */
+async function answersOn(db: Db, q: PuzzleQuestion): Promise<number> {
   return Number((await db.query<{ n: string }>(
     "SELECT count(*) AS n FROM answers WHERE date = $1 AND idx = $2", [q.date, q.idx],
   )).rows[0].n);
 }
 
-/** After an answer: keep daily_scores current; on the last question, refresh player stats. */
-async function afterAnswer(
-  client: PoolClient, playerId: string, puzzle: PuzzleQuestion[], today: string,
-): Promise<{ total: number } | null> {
-  const date = puzzle[0].date;
-  const { rows } = await client.query<{ n: string; total: string }>(
-    "SELECT count(*) AS n, coalesce(sum(points), 0) AS total FROM answers WHERE player_id = $1 AND date = $2",
-    [playerId, date],
+async function givenAnswers(db: Db, playerId: string, q: PuzzleQuestion): Promise<GivenAnswer[]> {
+  if (q.kind !== "free_text") return [];
+  const { rows } = await db.query<{
+    id: string; name: string; status: "valid" | "real_but_wrong"; points: number;
+    tier: Tier | null; share: number | null;
+  }>(
+    `SELECT e.id, e.name, a.status, a.points, a.tier, a.share
+     FROM answers a JOIN entities e ON e.id = a.matched_entity_id
+     WHERE a.player_id = $1 AND a.date = $2 AND a.idx = $3 ORDER BY a.id`,
+    [playerId, q.date, q.idx],
   );
-  const done = Number(rows[0].n) >= puzzle.length;
-  const total = Number(rows[0].total);
-  await client.query(
-    `INSERT INTO daily_scores (date, player_id, instant_points, finished) VALUES ($1, $2, $3, $4)
-     ON CONFLICT (date, player_id) DO UPDATE SET instant_points = $3, finished = $4`,
-    [date, playerId, total, done],
-  );
-  if (!done) return null;
-  await refreshPlayerStats(client, playerId, today);
-  return { total };
+  return rows.map((r) => ({
+    entity: { id: r.id, name: r.name }, status: r.status, points: r.points,
+    ...(r.tier ? { tier: r.tier } : {}), ...(r.share !== null ? { share: r.share } : {}),
+  }));
 }
 
-/** The reveal after answering: a few of the most common and of the rarest valid answers. */
-async function reveal(db: Pool | PoolClient, q: PuzzleQuestion): Promise<{ commonAnswers: NamedEntity[]; rareAnswers: NamedEntity[] }> {
+/** The reveal for an ended question. Never call before the question is over for the player. */
+async function summarize(db: Db, playerId: string, q: PuzzleQuestion): Promise<QuestionSummary> {
+  if (q.kind !== "free_text") {
+    const { rows } = await db.query<{
+      points: number; detail: { pairs?: number[]; order?: number[]; correct?: boolean[] };
+    }>(
+      "SELECT points, detail FROM answers WHERE player_id = $1 AND date = $2 AND idx = $3 AND kind = $4",
+      [playerId, q.date, q.idx, q.kind],
+    );
+    const r = rows[0];
+    const base = { idx: q.idx, points: r?.points ?? 0, answers: [],
+                   ...(r ? { correct: r.detail.correct } : {}) };
+    if (q.kind === "order") {
+      return { ...base, ...(r ? { order: r.detail.order } : {}), solution: q.answer,
+               values: q.items.map((it) => it.value), unit: q.unit };
+    }
+    return { ...base, ...(r ? { pairs: r.detail.pairs } : {}),
+             solution: q.pairs.map((p) => q.rightOrder.indexOf(p.right)) };
+  }
+  const answers = await givenAnswers(db, playerId, q);
+  return {
+    idx: q.idx, points: answers.reduce((s, a) => s + a.points, 0), answers,
+    ...(await reveal(db, q)),
+  };
+}
+
+/** A few of the most common and of the rarest valid answers. */
+async function reveal(db: Db, q: PuzzleQuestion): Promise<{ commonAnswers: NamedEntity[]; rareAnswers: NamedEntity[] }> {
   const counts = new Map((await db.query<{ entity_id: string; n: number }>(
     "SELECT entity_id, n FROM answer_counts WHERE date = $1 AND idx = $2 AND entity_id = ANY($3)",
     [q.date, q.idx, q.validIds],
@@ -285,29 +504,4 @@ async function reveal(db: Pool | PoolClient, q: PuzzleQuestion): Promise<{ commo
   )).rows.map((r) => [r.id, r.name]));
   const named = (ids: string[]) => ids.map((id) => ({ id, name: names.get(id) ?? id }));
   return { commonAnswers: named(common), rareAnswers: named(rare) };
-}
-
-/** The stored result for a question the player already answered, or null. */
-async function storedResult(db: Pool, playerId: string, q: PuzzleQuestion): Promise<AnswerResult | null> {
-  const { rows } = await db.query<{
-    status: string; points: number; tier: Tier | null; share: number | null;
-    matched_entity_id: string | null; name: string | null; detail: { correct?: boolean[] };
-  }>(
-    `SELECT a.status, a.points, a.tier, a.share, a.matched_entity_id, e.name, a.detail
-     FROM answers a LEFT JOIN entities e ON e.id = a.matched_entity_id
-     WHERE a.player_id = $1 AND a.date = $2 AND a.idx = $3`,
-    [playerId, q.date, q.idx],
-  );
-  const r = rows[0];
-  if (!r) return null;
-  if (q.kind === "match") {
-    return { status: "match", final: true, alreadyAnswered: true, points: r.points,
-             correct: r.detail.correct, solution: q.pairs.map((p) => q.rightOrder.indexOf(p.right)) };
-  }
-  return {
-    status: r.status as AnswerResult["status"], final: true, alreadyAnswered: true,
-    points: r.points, tier: r.tier ?? undefined, share: r.share ?? undefined,
-    ...(r.matched_entity_id ? { entity: { id: r.matched_entity_id, name: r.name ?? "" } } : {}),
-    ...(await reveal(db, q)),
-  };
 }

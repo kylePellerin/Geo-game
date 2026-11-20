@@ -1,24 +1,31 @@
 import { describe, expect, it } from "vitest";
 import {
-  assignPair, firstUnanswered, formatShare, nextUnanswered, pairsComplete, progressEmoji,
-  untilNextPuzzle, withArticle,
+  assignPair, currentQuestion, formatShare, formatValue, moveItem, pairsComplete, remainingMs,
+  stripLabel, untilNextPuzzle, withArticle,
 } from "./state";
-import type { Question } from "./types";
+import type { DayQuestion } from "./types";
 
-const qs = [0, 1, 2, 3, 4, 5].map((idx): Question => ({
-  idx, kind: idx === 2 ? "match" : "free_text", text: `q${idx}`, family: "Flags", answerType: "country",
-}));
+const q = (idx: number, state: DayQuestion["play"]["state"], points = 0): DayQuestion => ({
+  idx, kind: "free_text", family: "Flags", difficulty: 1, play: { state, seconds: 20 }, points,
+});
 
-describe("question order", () => {
-  it("starts at the first unanswered question", () => {
-    expect(firstUnanswered(qs, new Set())).toBe(0);
-    expect(firstUnanswered(qs, new Set([0, 1]))).toBe(2);
-    expect(firstUnanswered(qs, new Set([0, 1, 2, 3, 4, 5]))).toBeNull();
+describe("progress", () => {
+  it("is on the first question that isn't done", () => {
+    expect(currentQuestion([q(0, "done"), q(1, "playing"), q(2, "not_started")])).toBe(1);
+    expect(currentQuestion([q(0, "done"), q(1, "not_started")])).toBe(1);
+    expect(currentQuestion([q(0, "done"), q(1, "done")])).toBeNull();
   });
-  it("moves on and wraps round to skipped questions", () => {
-    expect(nextUnanswered(qs, new Set([0]), 0)).toBe(1);
-    expect(nextUnanswered(qs, new Set([1, 2, 3, 4, 5]), 5)).toBe(0);
-    expect(nextUnanswered(qs, new Set([0, 1, 2, 3, 4, 5]), 3)).toBeNull();
+  it("labels the strip", () => {
+    expect(stripLabel(q(0, "done", 85), 1)).toBe("1 · 85");
+    expect(stripLabel(q(1, "playing"), 2)).toBe("2 ⏱");
+    expect(stripLabel(q(2, "not_started"), 3)).toBe("3");
+  });
+  it("counts down on the server's clock", () => {
+    const deadline = "2026-11-20T12:00:20.000Z";
+    const now = Date.parse("2026-11-20T12:00:05.000Z");
+    expect(remainingMs(deadline, 0, now)).toBe(15_000);
+    expect(remainingMs(deadline, 3_000, now)).toBe(12_000); // client clock 3 s behind
+    expect(remainingMs(deadline, 0, now + 60_000)).toBe(0);
   });
 });
 
@@ -38,6 +45,18 @@ describe("matching pairs", () => {
   });
 });
 
+describe("ordering", () => {
+  it("moves items up and down", () => {
+    expect(moveItem([0, 1, 2, 3], 2, 1)).toEqual([0, 2, 1, 3]);
+    expect(moveItem([0, 1, 2, 3], 0, -1)).toEqual([0, 1, 2, 3]);
+    expect(moveItem([0, 1, 2, 3], 3, 4)).toEqual([0, 1, 2, 3]);
+  });
+  it("formats values", () => {
+    expect(formatValue(2012, "year")).toBe("2012");
+    expect(formatValue(1234567.4, "people")).toBe("1,234,567 people");
+  });
+});
+
 describe("formatting", () => {
   it("formats shares", () => {
     expect(formatShare(0.123)).toBe("12%");
@@ -51,11 +70,5 @@ describe("formatting", () => {
   it("picks the article", () => {
     expect(withArticle("airport")).toBe("an airport");
     expect(withArticle("city")).toBe("a city");
-  });
-  it("shows progress emoji", () => {
-    expect(progressEmoji(undefined, qs[0])).toBe("▫️");
-    expect(progressEmoji({ idx: 0, points: 50, tier: "familiar" }, qs[0])).toBe("🟨");
-    expect(progressEmoji({ idx: 0, points: 0 }, qs[0])).toBe("⬛");
-    expect(progressEmoji({ idx: 2, points: 25 }, qs[2])).toBe("🧩");
   });
 });

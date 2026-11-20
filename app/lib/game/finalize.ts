@@ -17,6 +17,10 @@ export async function finalizeDay(db: Pool, date: string, today: string) {
   let updated = 0;
   try {
     await client.query("BEGIN");
+    // the day is over: close every question still open (players who left mid-question)
+    await client.query(
+      "UPDATE question_plays SET ended_at = deadline WHERE date = $1 AND ended_at IS NULL", [date],
+    );
     for (const q of puzzle.filter((x) => x.kind === "free_text")) {
       const total = Number((await client.query<{ n: string }>(
         "SELECT count(*) AS n FROM answers WHERE date = $1 AND idx = $2", [date, q.idx],
@@ -40,14 +44,19 @@ export async function finalizeDay(db: Pool, date: string, today: string) {
       );
     }
     await client.query(
-      `UPDATE daily_scores d SET final_points = s.total FROM (
-         SELECT player_id, sum(coalesce(final_points, points)) AS total FROM answers
-         WHERE date = $1 GROUP BY player_id) s
-       WHERE d.date = $1 AND d.player_id = s.player_id`,
-      [date],
+      `INSERT INTO daily_scores (date, player_id, instant_points, final_points, finished)
+       SELECT $1, p.player_id,
+              coalesce((SELECT sum(points) FROM answers a WHERE a.player_id = p.player_id AND a.date = $1), 0),
+              coalesce((SELECT sum(coalesce(final_points, points)) FROM answers a
+                        WHERE a.player_id = p.player_id AND a.date = $1), 0),
+              count(*) >= $2
+       FROM question_plays p WHERE p.date = $1 GROUP BY p.player_id
+       ON CONFLICT (date, player_id) DO UPDATE SET instant_points = EXCLUDED.instant_points,
+         final_points = EXCLUDED.final_points, finished = EXCLUDED.finished`,
+      [date, puzzle.length],
     );
     const players = (await client.query<{ player_id: string }>(
-      "SELECT DISTINCT player_id FROM answers WHERE date = $1", [date],
+      "SELECT DISTINCT player_id FROM question_plays WHERE date = $1", [date],
     )).rows;
     for (const p of players) await refreshPlayerStats(client, p.player_id, today);
     await client.query("COMMIT");

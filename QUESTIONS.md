@@ -45,15 +45,22 @@ Every generated question must pass all of these:
 whole type, rejected "Name a country in Africa" and most capital questions.)
 
 ### Daily mix
+Questions run **easiest to hardest** (2026-11-20):
+
 | Slot | Difficulty | Typical families |
 |---|---|---|
-| 1–3 | Easy | countries, capitals & big cities, flags, national symbols, famous landmarks |
-| 4–5 | Medium | airports, mountains, rivers & lakes, borders, map surprises, national parks |
+| 1–3 | Easy (the one with most well-known answers first) | countries, capitals & big cities, flags, national symbols, famous landmarks |
+| 4 | **Matching round, every day** (§3.12) | |
+| 5 | Medium, or an **ordering round** on ~40% of days (§3.12c) | airports, mountains, rivers & lakes, borders, map surprises, national parks |
 | 6 | Hard ("deep dive") | volcanoes, climate, weird borders, aviation deep cuts |
 
 Mix rules (2026-11-20): **flags every day** (sometimes two), **airports occasionally** (≤ 2 a
-week, easy-ish questions only), a **matching round** (§3.12) on most days in slot 3 or 4. Until
-deep-dive data exists (Phase 6), slot 6 often falls back to a medium question.
+week, easy-ish questions only). Until deep-dive data exists (Phase 6), slot 6 often falls back
+to a medium question.
+
+**Timed, many answers (2026-11-20):** each free-text question gives 20 s to type as many right
+answers as you can; every right answer scores by its rarity. Matching and ordering rounds get
+40 s and one submission.
 
 ### Calibrating with real data (after launch)
 - Track per question: **% of players scoring > 0** and **median points**.
@@ -150,22 +157,42 @@ Generated purely from coordinates.
 - Name a capital city with a desert climate (Köppen-Geiger 1 km map, CC BY 4.0)
 - Name an airport with a runway longer than 4,000 m
 
-### 3.12 Matching rounds (E–M) ⭐ visual switch-up, every day
+### 3.12 Matching rounds (M) ⭐ visual switch-up, every day
 Four items ↔ four items, the player pairs them. Not rarity-scored (see PLAN.md §1). One per day,
-in slot 3 (easy) or 4 (medium). Variants (`pipeline/geo_pipeline/matching.py`), flags most often:
+always slot 4. Since 2026-11-20 every round is "standard" difficulty (players found country ↔
+continent too easy): 1 well-known + 2 familiar + 1 obscure item, look-alike flags allowed.
+Variants (`pipeline/geo_pipeline/matching.py`), flags most often:
 - **flags ↔ countries** · **capitals ↔ countries** · **big cities ↔ countries**
-- **cities ↔ continents** · **countries ↔ continents** (easy only)
+- **cities ↔ continents** (countries ↔ continents removed: too easy)
 - **countries ↔ currencies** (bare names: "lira", "krone"; only currencies unique to one country)
 - **countries ↔ official language** and **countries ↔ what the people are called**: only
   non-giveaways (Brazil–Portuguese, Netherlands–Dutch; not Poland–Polish)
 - **countries ↔ internet domain** (.jp, .de)
 - **countries ↔ highest mountain** (medium; peaks over 2,000 m)
 - **Olympic host cities ↔ year** (medium)
-- Easy rounds: 2 famous + 2 well-known items; medium: 2 famous/well-known + 2 rarer.
+- (Easy rounds, 2 famous + 2 well-known, still exist in code for a future practice mode.)
 - No round may contain two items that could match the same right-hand item (e.g. Stockholm,
   which hosted in 1912 and 1956, never appears beside a 1956 Melbourne).
-- Look-alike flags (Chad/Romania, Indonesia/Monaco) never share an easy round.
+- Look-alike flags (Chad/Romania, Indonesia/Monaco) never share an easy round (allowed in
+  standard rounds: that's part of the challenge).
+- Ideas from playtesting (2026-11-20), added with Phase 6 data: **country outlines ↔ countries**
+  (Natural Earth shapes, public domain), **regions ↔ country** (Bavaria → Germany, Ontario →
+  Canada), **famous landmarks ↔ country** (harder ones: Petra, Angkor Wat, Chichén Itzá).
 - A variant doesn't repeat within 4 days; an item doesn't repeat within 21 days.
+
+### 3.12c Ordering rounds (M) — added 2026-11-20
+Five items, put them in order; 20 points per item in the right place. Items are well known (top
+half of their pool by popularity); the challenge is the numbers. The five come from a narrow band
+of similar values (a window of neighbours) but are still clearly apart (≥15–30% or a fixed gap),
+so the order is neither trivial (Canada vs Andorra) nor a coin toss on noisy data.
+Variants (`pipeline/geo_pipeline/ordering.py`):
+- **cities in one country by population** · **countries by area** · **countries by population**
+- **cities by distance from a famous city** (great-circle distance from coordinates)
+- **countries by height of their highest mountain** · **capitals by elevation**
+- **Olympic host cities by when they last hosted** ("most recently did X")
+- **airports by passengers** (rare)
+- Later: mountains by height, rivers by length, landmarks by age, countries by independence year.
+- Parked: "which country most recently passed law X": no reliable, licence-clean dataset.
 
 ### 3.12b Attribute-based questions added 2026-11-20
 Monarchies, King Charles III realms, countries named after a person, native-name first letter,

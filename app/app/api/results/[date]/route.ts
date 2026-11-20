@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ date: strin
   return withPlayer(req, async (playerId) => {
     const { date } = await ctx.params;
     if (!isIsoDate(date) || date > gameToday()) throw new GameError("bad_date", "No such date", 404);
-    const results = await getResults(getPool(), playerId, date);
+    const results = await getResults(getPool(), playerId, date, gameToday());
     if (!results) throw new GameError("no_puzzle", "No puzzle for that date", 404);
     return NextResponse.json(results);
   });

@@ -1,31 +1,41 @@
 /** Pure helpers for the game screen (no React, no fetch) so they can be unit tested. */
-import { TIER_EMOJI, TIERS, type Tier } from "../game/scoring";
-import type { Progress, Question } from "./types";
+import { TIERS, type Tier } from "../game/scoring";
+import type { DayQuestion } from "./types";
 
 export const TIER_LABEL: Record<Tier, string> = Object.fromEntries(
   TIERS.map((t) => [t.tier, t.label]),
 ) as Record<Tier, string>;
 
-/** The question to show on load: the first unanswered one, or null if the day is done. */
-export function firstUnanswered(questions: Question[], answered: Set<number>): number | null {
-  return questions.find((q) => !answered.has(q.idx))?.idx ?? null;
+/** The question the player is on: the first that isn't done, or null when the day is over. */
+export function currentQuestion(questions: DayQuestion[]): number | null {
+  return questions.find((q) => q.play.state !== "done")?.idx ?? null;
 }
 
-/** The next unanswered question after `idx` (wrapping round), or null if none are left. */
-export function nextUnanswered(questions: Question[], answered: Set<number>, idx: number): number | null {
-  const at = questions.findIndex((q) => q.idx === idx);
-  for (let i = 1; i <= questions.length; i++) {
-    const q = questions[(at + i) % questions.length];
-    if (!answered.has(q.idx)) return q.idx;
-  }
-  return null;
+/** Label for a question in the progress strip. */
+export function stripLabel(q: DayQuestion, n: number): string {
+  if (q.play.state === "done") return `${n} · ${q.points}`;
+  if (q.play.state === "playing") return `${n} ⏱`;
+  return `${n}`;
 }
 
-/** One emoji per question for the progress strip (same symbols as the share text). */
-export function progressEmoji(p: Progress | undefined, q: Question): string {
-  if (!p) return "▫️";
-  if (q.kind === "match") return "🧩";
-  return p.tier ? TIER_EMOJI[p.tier] : TIER_EMOJI.wrong;
+/** Milliseconds left before `deadline`, given the server clock offset (server - client). */
+export function remainingMs(deadline: string, offsetMs: number, nowMs: number): number {
+  return Math.max(0, Date.parse(deadline) - (nowMs + offsetMs));
+}
+
+/** Ordering rounds: move the item at `from` to `to`. */
+export function moveItem<T>(list: T[], from: number, to: number): T[] {
+  if (to < 0 || to >= list.length || from === to) return list;
+  const out = [...list];
+  const [it] = out.splice(from, 1);
+  out.splice(to, 0, it);
+  return out;
+}
+
+/** "1,234,567 people", "2012", "8,611 m". */
+export function formatValue(value: number, unit: string): string {
+  if (unit === "year") return String(Math.round(value));
+  return `${Math.round(value).toLocaleString("en-US")}${unit ? ` ${unit}` : ""}`;
 }
 
 /**

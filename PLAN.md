@@ -4,13 +4,16 @@
 
 - 6 questions per day, released 00:00 UTC, identical for all players.
 - Each question is about a different category (e.g. airport, country, national park, river…).
-- Player types a free-text answer (no autocomplete — it would leak answers). Optional timer (~25 s),
-  configurable.
-- One submission per question. Result shows: matched entity, valid/invalid, points, rarity tier,
-  % of players who gave the same answer, and a few of the most common + rarest valid answers.
-- Wrong or unrecognised answer = 0 points.
-- If the matcher is unsure, show **"Did you mean X?"** (confirm / retype). This doesn't count as the
-  submission.
+- Questions run easiest → hardest; slot 4 is always a matching round, slot 5 sometimes an
+  ordering round (QUESTIONS.md §2).
+- **Timed (2026-11-20):** the player starts each question; free text gets 20 s, matching and
+  ordering 40 s (`QUESTION_SECONDS` in `app/lib/game/answer.ts`). The server's clock decides.
+- **Free text: as many answers as you like within the time** (no autocomplete — it would leak
+  answers). Each distinct right answer scores by its rarity; wrong or unrecognised answers score
+  0 and cost nothing. After the question: your answers, points, and a few of the most common +
+  rarest valid answers.
+- The matcher never silently corrects: anything but an exact name/alias hit comes back as
+  **"Did you mean X?"** and only counts once confirmed.
 
 ### Rarity tiers (tune later)
 
@@ -220,12 +223,16 @@ Fixtures (`pipeline/tests/match_cases.yaml`): ≥100 cases incl. "Kathmandoo", "
 
 ## 6. Scoring
 
-- `share = n_same_answer / n_total_answers` for that question today.
+- `share = n_same_answer / n_total_answers` for that question today, where n_total_answers counts
+  every answer given (right or wrong), not players: with several answers per player a per-player
+  share would push most answers over the tier thresholds, while per-answer shares keep the prior
+  (which sums to 1) and the tiers calibrated (2026-11-20).
 - **Cold-start prior** from popularity: for each valid entity,
   `prior_share = softmax(popularity / T)` over the valid set (tune T so the top answer gets ~25–40%).
 - Blend: `w = n_total / (n_total + 50)`; `est_share = w * observed + (1 - w) * prior`.
 - Map `est_share` to tier (five tiers, table in §1). Points awarded immediately.
 - Matching rounds: points per correct pair by item rarity category (table in §1, "Matching rounds").
+- Ordering rounds: 20 points per item in the right position (max 100).
 - Nightly job: recompute final shares → leaderboard scores (keep the instant score displayed; store both).
 
 ## 7. API (Next.js route handlers)
@@ -299,11 +306,9 @@ pure helpers in `app/lib/client/`):
   a flag matching round, an unrecognised try, reload/resume and revisiting an answer.
 
 Deviations from the plan (2026-11-20), for review:
-- **Questions can be answered in any order** (tap a number in the strip) and answered ones can be
-  revisited (the server returns the stored result for a repeat submit). Skipping a hard question
-  and coming back felt friendlier than a forced order; it can't leak anything.
-- **No timer.** §1 says optional; it penalises slow typists and phone players, the opposite of
-  the "playable by non-experts" goal. Revisit as an opt-in "speed mode" later.
+- ~~Questions in any order~~ and ~~no timer~~: reversed after the user playtested (2026-11-20):
+  questions run in order, easiest first, each timed, with many answers per free-text question
+  (see "Phase 5.1" below). Finished questions can still be revisited.
 - **"How to play" panel** (collapsed) explains rarity scoring in plain words with the tier table,
   since "rarer = more points" is the one non-obvious rule.
 - **Shares are worded as estimates** ("about 31% of players give this answer"): before many
@@ -313,6 +318,19 @@ Deviations from the plan (2026-11-20), for review:
 - **Cities with no Wikidata QID are never valid answers** (GeoNames-only rows are mostly city
   districts, e.g. Shanghai's Minhang, plus junk like a 2,000,000-person "Amua Ichemidiara"). They
   stay in the entity table, so the matcher still recognises them.
+
+**Phase 5.1 — Playtest changes (2026-11-20).**
+- Timed questions: `POST /api/question/start` starts the clock (the question text is only sent
+  then), `POST /api/answer` takes any number of answers until deadline + 2 s grace,
+  `POST /api/question/end` ("I'm done", time up, or reviewing later) returns the summary and the
+  reveal. Questions left running are closed lazily on the player's next request and by the
+  nightly finalise. Tables: `question_plays` (migration 007); answers unique per
+  (player, question, entity).
+- Corrections suggested, never applied; easy → hard order; matching fixed at slot 4 and harder;
+  ordering rounds (migration 008, `geo_pipeline/ordering.py`).
+- "Summary takes too long": every endpoint answers in < 60 ms in a production build; the delay
+  was `next dev` compiling each route on first use. The end screen is now prefetched while the
+  last question's summary is shown, and `make play` runs a production build for playtesting.
 
 **Phase 6 — More categories.** Add one at a time, easy families first: national symbols (needs the
 non-place entity types + relation qualifiers), landmarks/UNESCO, national parks, mountains,

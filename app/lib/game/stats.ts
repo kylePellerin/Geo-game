@@ -5,14 +5,22 @@
  */
 import type { Pool, PoolClient } from "pg";
 
-export interface AnswerRow {
+/** One question a player played (points = sum of their answers on it). */
+export interface QuestionRow {
   date: string;
   idx: number;
+  family: string;
+  points: number;
+  ended: boolean;
+}
+
+/** One recorded answer (for rarest answer / 100-point counts). */
+export interface AnswerRow {
+  date: string;
   points: number;
   share: number | null;
   status: string;
   entityId: string | null;
-  family: string;
 }
 
 export interface PlayerStats {
@@ -38,18 +46,20 @@ export function histogramBucket(score: number): string {
 }
 
 /**
+ * @param questions every question the player started
  * @param answers every answer of the player
- * @param questionsPerDay number of questions per date (a day counts once all are answered)
+ * @param questionsPerDay number of questions per date (a day counts once all have ended)
  * @param today UTC date; the current streak is 0 if the last game was before yesterday
  */
 export function computeStats(
-  answers: AnswerRow[], questionsPerDay: Map<string, number>, today: string,
+  questions: QuestionRow[], answers: AnswerRow[], questionsPerDay: Map<string, number>, today: string,
 ): PlayerStats {
-  const byDate = new Map<string, AnswerRow[]>();
-  for (const a of answers) byDate.set(a.date, [...(byDate.get(a.date) ?? []), a]);
+  const byDate = new Map<string, QuestionRow[]>();
+  for (const q of questions) byDate.set(q.date, [...(byDate.get(q.date) ?? []), q]);
   const finished = [...byDate.entries()]
-    .filter(([d, rows]) => rows.length >= (questionsPerDay.get(d) ?? 6))
+    .filter(([d, rows]) => rows.filter((r) => r.ended).length >= (questionsPerDay.get(d) ?? 6))
     .sort(([a], [b]) => a.localeCompare(b));
+  const finishedDates = new Set(finished.map(([d]) => d));
 
   let maxStreak = 0;
   let run = 0;
@@ -70,14 +80,15 @@ export function computeStats(
   const last = finished.at(-1)?.[0] ?? null;
   const currentStreak = last !== null && dayNum(today) - dayNum(last) <= 1 ? run : 0;
 
-  const finishedRows = finished.flatMap(([, rows]) => rows);
+  const finishedAnswers = answers.filter((a) => finishedDates.has(a.date));
   let rarest: PlayerStats["rarestAnswer"] = null;
-  for (const r of finishedRows) {
+  for (const r of finishedAnswers) {
     if (r.status === "valid" && r.share !== null && r.entityId &&
         (!rarest || r.share < rarest.share)) {
       rarest = { entityId: r.entityId, share: r.share, date: r.date };
     }
   }
+  const finishedRows = finished.flatMap(([, rows]) => rows);
   const fam: Record<string, { n: number; sum: number }> = {};
   for (const r of finishedRows) {
     fam[r.family] ??= { n: 0, sum: 0 };
@@ -92,7 +103,7 @@ export function computeStats(
     bestScore: best?.score ?? null,
     bestScoreDate: best?.date ?? null,
     totalPoints: total,
-    hundredPointAnswers: finishedRows.filter((r) => r.points === 100 && r.status === "valid").length,
+    hundredPointAnswers: finishedAnswers.filter((r) => r.points === 100 && r.status === "valid").length,
     rarestAnswer: rarest,
     scoreHistogram: histogram,
     familyStats: Object.fromEntries(Object.entries(fam).map(([k, v]) => [k, {
@@ -105,22 +116,31 @@ export function computeStats(
 export async function refreshPlayerStats(
   db: Pool | PoolClient, playerId: string, today: string,
 ): Promise<PlayerStats> {
-  const { rows } = await db.query<{
-    date: string; idx: number; points: number; share: number | null; status: string;
-    matched_entity_id: string | null; family: string; per_day: string;
+  const questions = (await db.query<{
+    date: string; idx: number; family: string; points: string; ended: boolean; per_day: string;
   }>(
-    `SELECT to_char(a.date, 'YYYY-MM-DD') AS date, a.idx, coalesce(a.final_points, a.points) AS points,
-            coalesce(a.final_share, a.share) AS share, a.status, a.matched_entity_id, q.family,
-            (SELECT count(*) FROM puzzle_questions q2 WHERE q2.date = a.date) AS per_day
-     FROM answers a JOIN puzzle_questions q ON q.date = a.date AND q.idx = a.idx
-     WHERE a.player_id = $1`,
+    `SELECT to_char(p.date, 'YYYY-MM-DD') AS date, p.idx, q.family, p.ended_at IS NOT NULL AS ended,
+            (SELECT coalesce(sum(coalesce(a.final_points, a.points)), 0) FROM answers a
+             WHERE a.player_id = p.player_id AND a.date = p.date AND a.idx = p.idx) AS points,
+            (SELECT count(*) FROM puzzle_questions q2 WHERE q2.date = p.date) AS per_day
+     FROM question_plays p JOIN puzzle_questions q ON q.date = p.date AND q.idx = p.idx
+     WHERE p.player_id = $1`,
     [playerId],
+  )).rows;
+  const answers = (await db.query<{
+    date: string; points: number; share: number | null; status: string; matched_entity_id: string | null;
+  }>(
+    `SELECT to_char(date, 'YYYY-MM-DD') AS date, coalesce(final_points, points) AS points,
+            coalesce(final_share, share) AS share, status, matched_entity_id
+     FROM answers WHERE player_id = $1`,
+    [playerId],
+  )).rows;
+  const perDay = new Map(questions.map((r) => [r.date, Number(r.per_day)]));
+  const stats = computeStats(
+    questions.map((r) => ({ date: r.date, idx: r.idx, family: r.family, points: Number(r.points), ended: r.ended })),
+    answers.map((r) => ({ date: r.date, points: r.points, share: r.share, status: r.status, entityId: r.matched_entity_id })),
+    perDay, today,
   );
-  const perDay = new Map(rows.map((r) => [r.date, Number(r.per_day)]));
-  const stats = computeStats(rows.map((r) => ({
-    date: r.date, idx: r.idx, points: r.points, share: r.share, status: r.status,
-    entityId: r.matched_entity_id, family: r.family,
-  })), perDay, today);
   await db.query(
     `INSERT INTO player_stats (player_id, games_played, current_streak, max_streak,
        last_played_date, best_score, best_score_date, total_points, hundred_point_answers,
@@ -144,7 +164,7 @@ export async function refreshPlayerStats(
 /** Rebuild every player's stats from answers (PLAN §10: player_stats is only a cache). */
 export async function rebuildAllPlayerStats(db: Pool, today: string): Promise<number> {
   const { rows } = await db.query<{ player_id: string }>(
-    "SELECT DISTINCT player_id FROM answers",
+    "SELECT DISTINCT player_id FROM question_plays",
   );
   for (const r of rows) await refreshPlayerStats(db, r.player_id, today);
   return rows.length;

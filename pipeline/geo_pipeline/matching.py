@@ -25,7 +25,6 @@ SIMILAR_FLAGS = [
     {"EG", "IQ", "SY", "YE"}, {"HN", "NI", "SV"}, {"DK", "CH"}, {"BE", "DE"}, {"HU", "IT", "BG"},
 ]
 
-EASY_CATEGORIES = {"famous", "well_known"}
 HARDER_CATEGORIES = {"familiar", "obscure", "rarest"}
 
 
@@ -39,7 +38,7 @@ class MatchVariant:
     #   a round is rejected if a left item also matches another right item shown.
     pool_sql: str
     weight: float = 1.0
-    difficulties: tuple[int, ...] = (1, 2)
+    difficulties: tuple[int, ...] = (2,)
 
 
 def _giveaway(expr: str) -> str:
@@ -93,15 +92,6 @@ VARIANTS = [
                      AND e.attrs->>'territory' IS NULL
                      -- transcontinental countries: our continent is per country, not per city
                      AND {_NOT_TRANSCONTINENTAL}""",
-    ),
-    MatchVariant(
-        id="match_country_continent",
-        text="Match each country to its continent",
-        left_type="country",
-        difficulties=(1,),
-        pool_sql=f"""SELECT c.id, c.attrs->>'continent', c.attrs->>'continent',
-                            coalesce(c.popularity, 0), c.attrs->>'iso2', NULL
-                     FROM entities c WHERE c.type = 'country' AND {_NOT_TRANSCONTINENTAL}""",
     ),
     MatchVariant(
         id="match_country_currency",
@@ -244,14 +234,20 @@ def _look_alike(a: MatchItem, b: MatchItem) -> bool:
 
 def build_round(variant: MatchVariant, pool: list[MatchItem], difficulty: int,
                 rng: random.Random, recently_used: set[str]) -> MatchRound | None:
-    """Pick 4 items: easy = all famous/well-known; medium = 2 easy + 2 harder."""
+    """Pick 4 items. Easy (1): 2 famous + 2 well known. Standard (2, every daily round since
+    2026-11-20, "country to continent is too easy"): 1 well known + 2 familiar + 1 obscure or
+    rarer, and look-alike flags are allowed."""
     fresh = [i for i in pool if i.left not in recently_used]
     famous = [i for i in fresh if i.category == "famous"]
     well_known = [i for i in fresh if i.category == "well_known"]
-    easy = famous + well_known
-    hard = [i for i in fresh if i.category in HARDER_CATEGORIES]
-    # easy: 2 famous + 2 well known; medium: 2 famous/well known + 2 familiar or rarer
-    want = [(famous, 2), (well_known, 2)] if difficulty == 1 else [(easy, 2), (hard, 2)]
+    familiar = [i for i in fresh if i.category == "familiar"]
+    rare = [i for i in fresh if i.category in ("obscure", "rarest")]
+    if difficulty == 1:
+        want = [(famous, 2), (well_known, 2)]
+    elif len(rare) >= 1 and len(familiar) >= 2:
+        want = [(well_known or famous, 1), (familiar, 2), (rare, 1)]
+    else:  # small pools (Olympic hosts): whatever isn't famous
+        want = [(well_known, 1), ([i for i in fresh if i.category in HARDER_CATEGORIES], 3)]
     for _attempt in range(50):
         chosen: list[MatchItem] = []
         for group, n in want:
