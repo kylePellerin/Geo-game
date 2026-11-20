@@ -1,8 +1,10 @@
 /**
- * Plays a full day in a real browser under the timed rules: start each question, several answers,
- * an unrecognised try, a "did you mean" confirm, a matching round (with flags when the copied day
- * has one), an ordering round, a question left to time out, the end screen, then reload and
- * revisit. Uses a copy of a generated puzzle on a sandbox date and deletes everything afterwards.
+ * Plays a full day in a real browser under the timed one-correct-answer rules: start each
+ * question, an unrecognised try, a wrong place (retry allowed), a "did you mean" confirm that
+ * ends the question, a matching round (tap to pair, with flags when the copied day has one), an
+ * ordering round, a question left to time out, the end screen, then reload (results from the
+ * local cache) and revisit. Uses a copy of a generated puzzle on a sandbox date and deletes
+ * everything afterwards.
  */
 import { expect, test, type Page } from "@playwright/test";
 import { Pool } from "pg";
@@ -58,12 +60,14 @@ test.afterAll(async () => {
   await pool.end();
 });
 
-/** The three most popular valid answers per free-text question; payloads for the rounds. */
-async function solutions(): Promise<Row[]> {
-  return (await pool.query<Row>(
+/** Popular valid answers per free-text question, a wrong place of the same type, round payloads. */
+async function solutions(): Promise<(Row & { wrong: string | null })[]> {
+  return (await pool.query<Row & { wrong: string | null }>(
     `SELECT q.idx, q.kind, q.payload,
        ARRAY(SELECT e.name FROM entities e WHERE e.id = ANY(q.valid_entity_ids)
-             ORDER BY e.popularity DESC NULLS LAST LIMIT 3) AS names
+             ORDER BY e.popularity DESC NULLS LAST LIMIT 3) AS names,
+       (SELECT e.name FROM entities e WHERE e.type = q.entity_type AND NOT (e.id = ANY(q.valid_entity_ids))
+          AND e.name ~ '^[A-Za-z ]+$' ORDER BY e.popularity DESC NULLS LAST LIMIT 1) AS wrong
      FROM puzzle_questions q WHERE q.date = $1 ORDER BY q.idx`,
     [E2E_DATE],
   )).rows;
@@ -75,14 +79,18 @@ async function shot(page: Page, name: string) {
 }
 
 async function answer(page: Page, text: string) {
-  await page.getByLabel("Answer").fill(text);
-  await page.getByLabel("Answer").press("Enter");
+  await page.getByLabel("Answer", { exact: true }).fill(text);
+  await page.getByLabel("Answer", { exact: true }).press("Enter");
 }
+
+const pointsLine = (page: Page) => page.locator(".points-line");
 
 test("play a whole day", async ({ page }) => {
   test.setTimeout(240_000);
   const rows = await solutions();
   await page.goto("/");
+  // first visit: the rules open by themselves
+  await page.getByRole("button", { name: "Got it" }).click();
   await expect(page.getByRole("button", { name: "Start question 1" })).toBeVisible();
   playerId = await page.evaluate(() => localStorage.getItem("gr_pid"));
   expect(playerId).toMatch(/^[0-9a-f-]{36}$/);
@@ -93,12 +101,12 @@ test("play a whole day", async ({ page }) => {
   for (const [i, row] of rows.entries()) {
     const last = i === rows.length - 1;
     await page.getByRole("button", { name: `Start question ${i + 1}` }).click();
-    await expect(page.getByText(/⏱ \d+s/)).toBeVisible();
+    await expect(page.getByRole("timer")).toBeVisible();
 
     if (row.kind === "match") {
       const labels = row.payload!.pairs!.map((p) => p.right_label);
       if (row.payload!.variant === "match_flag_country") {
-        const imgs = page.locator("img");
+        const imgs = page.locator(".tile img");
         await expect(imgs).toHaveCount(labels.length);
         for (const img of await imgs.all()) {
           await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBeGreaterThan(0);
@@ -106,76 +114,82 @@ test("play a whole day", async ({ page }) => {
         }
       }
       for (const [n, label] of labels.entries()) {
-        await page.locator("select").nth(n).selectOption({ label });
+        await page.getByRole("button", { name: new RegExp(`^Item ${n + 1}\\b`) }).click();
+        await page.getByRole("button", { name: label, exact: true }).click();
       }
       await shot(page, `q${i + 1}-match`);
       await page.getByRole("button", { name: "Submit pairs" }).click();
-      await expect(page.getByText(/Points for this question: \d+/)).toBeVisible();
-      await expect(page.getByText("✗")).toHaveCount(0);
+      await expect(pointsLine(page)).toBeVisible();
+      await expect(page.locator(".tile.bad")).toHaveCount(0);
     } else if (row.kind === "order") {
       const items = row.payload!.items!.map((it) => it.label);
       const want = row.payload!.answer!.map((p) => items[p]);
-      // selection sort with the ↑ buttons
+      // selection sort with the ▲ buttons
       for (const [t, label] of want.entries()) {
         for (;;) {
-          const current = await page.locator("section ol li").allInnerTexts();
-          const at = current.findIndex((txt) => txt.startsWith(label));
-          if (at <= t) break;
+          const current = await page.locator(".order-item .label").allInnerTexts();
+          if (current.indexOf(label) <= t) break;
           await page.getByRole("button", { name: `Move ${label} up` }).click();
         }
       }
       await shot(page, `q${i + 1}-order`);
       await page.getByRole("button", { name: "Submit order" }).click();
-      await expect(page.getByText("Points for this question: 100")).toBeVisible();
+      await expect(pointsLine(page)).toContainText("100");
     } else if (last) {
       // leave the last question to run out: the summary appears on its own
-      await expect(page.getByText(/Points for this question/)).toBeVisible({ timeout: 30_000 });
+      await expect(pointsLine(page)).toBeVisible({ timeout: 30_000 });
       await expect(page.getByText("No answers given.")).toBeVisible();
     } else {
       const names = row.names!;
+      let target = names[0];
       if (!triedExtras) {
         triedExtras = true;
         await answer(page, "qqxzvb");
         await expect(page.getByText(/not recognised/)).toBeVisible();
+        // a real place that doesn't fit: shown as tried, and you can go again
+        if (row.wrong) {
+          await answer(page, row.wrong);
+          await expect(page.getByRole("list", { name: "Tried so far" })).toContainText(row.wrong);
+          await expect(page.getByText(/doesn't fit/)).toBeVisible();
+        }
         // a misspelling is suggested, not counted until confirmed
-        const long = names.find((n) => n.length >= 6 && /^[A-Za-z ]+$/.test(n));
-        if (long) {
-          const typo = long.slice(0, 3) + long.slice(4);
-          await answer(page, typo);
-          const yes = page.getByRole("button", { name: `${long}?` });
+        target = names.find((n) => n.length >= 6 && /^[A-Za-z ]+$/.test(n)) ?? names[0];
+        if (target.length >= 6) {
+          await answer(page, target.slice(0, 3) + target.slice(4));
+          const yes = page.getByRole("button", { name: `${target}?` });
           await expect(yes).toBeVisible();
           await shot(page, `q${i + 1}-did-you-mean`);
           await yes.click();
-          await expect(page.getByText(new RegExp(`✓ ${long}`))).toBeVisible();
+        } else {
+          await answer(page, target);
         }
-      }
-      for (const name of names) {
-        if (await page.getByText(new RegExp(`✓ ${name}\\b`)).count()) continue;
-        await answer(page, name);
-        const dym = page.getByRole("button", { name: `${name}?` });
-        const ok = page.getByText(new RegExp(`✓ ${name}\\b`));
-        await expect(dym.or(ok).first()).toBeVisible();
+      } else {
+        await answer(page, target);
+        const dym = page.getByRole("button", { name: `${target}?` });
+        await expect(dym.or(pointsLine(page)).first()).toBeVisible();
         if (await dym.isVisible()) await dym.click();
-        await expect(ok).toBeVisible();
       }
-      await shot(page, `q${i + 1}-playing`);
-      await page.getByRole("button", { name: "I'm done" }).click();
-      await expect(page.getByText(/Points for this question: \d+/)).toBeVisible();
+      // one right answer ends the question
+      await expect(pointsLine(page)).toBeVisible();
+      await expect(page.locator(".answer-name")).toHaveText(target);
       await expect(page.getByText(/Most common answers/)).toBeVisible();
+      await expect(page.getByLabel("Answer", { exact: true })).toHaveCount(0);
     }
     await shot(page, `q${i + 1}-summary`);
-    await page.getByRole("button", { name: last ? "See results" : "Next question" }).click();
+    await page.getByRole("button", { name: last ? /See results/ : /Next question/ }).click();
   }
 
   await expect(page.getByRole("heading", { name: "Today's results" })).toBeVisible();
-  await expect(page.locator("pre")).toContainText(`Geo-rarity ${E2E_DATE}`);
-  await expect(page.getByText(/Next puzzle in \d+h \d\dm/)).toBeVisible();
+  await expect(page.locator(".telegram")).toContainText(`Geo-rarity ${E2E_DATE}`);
+  await expect(page.getByText(/Next puzzle in/)).toBeVisible();
   await shot(page, "end");
 
-  // reload → straight to the end screen; revisiting a question shows its summary
+  // reload → straight to the end screen (from the local cache); a question shows its summary
   await page.reload();
   await expect(page.getByRole("heading", { name: "Today's results" })).toBeVisible();
+  expect(await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("gr_c:")).length))
+    .toBe(2);
   await page.getByRole("button", { name: /^1 · \d+$/ }).click();
-  await expect(page.getByText(/Points for this question/)).toBeVisible();
-  await expect(page.getByLabel("Answer")).toHaveCount(0);
+  await expect(pointsLine(page)).toBeVisible();
+  await expect(page.getByLabel("Answer", { exact: true })).toHaveCount(0);
 });

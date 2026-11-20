@@ -94,6 +94,8 @@ export interface AnswerResponse {
   tier?: Tier;
   share?: number;
   questionPoints: number;
+  /** a correct answer ends the question: here's its summary */
+  summary?: Summary;
 }
 
 export interface DayResults {

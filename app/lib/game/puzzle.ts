@@ -12,6 +12,8 @@ export interface MatchPair {
   left: string;
   right: string;
   right_label: string;
+  /** hand-written rounds may label the left side themselves */
+  left_label?: string;
   category: "famous" | "well_known" | "familiar" | "obscure" | "rarest";
 }
 
@@ -146,7 +148,7 @@ export async function publicQuestions(db: Pool, puzzle: PuzzleQuestion[]): Promi
       ...base,
       left: q.pairs.map((p, pos) => imageRoute
         ? { pos, image: `/api/${imageRoute}/${q.date}/${q.idx}/${pos}` }
-        : { pos, label: names.get(p.left) ?? p.left }),
+        : { pos, label: p.left_label ?? names.get(p.left) ?? p.left }),
       right: q.rightOrder.map((r, pos) => ({ pos, label: labelOf.get(r) ?? r })),
     };
   });

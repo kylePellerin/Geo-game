@@ -15,6 +15,18 @@ This file defines *what* we ask. `PLAN.md` defines how it's built. Templates in
 5. **Traps are fun, not unfair.** "Real but wrong" answers (e.g. a country whose national bird is
    unofficial) get a friendly explanation, never a bare ✗.
 
+## 2b. Keep it broad (user feedback 2026-11-20)
+
+"Name a volcano in Iceland" is too specific; "Name a volcano in Asia" is right. Natural features
+and sights (mountains, volcanoes, rivers, lakes, islands, parks, UNESCO sites) are asked per
+continent or worldwide. A single country only where it's big and famous for the thing (national
+parks in the US, Kenya or Tanzania; islands of Greece or Japan; UNESCO sites in Italy) — the
+allowed list is `BROAD_COUNTRIES` in `pipeline/tests/test_phase6.py`, which fails on anything
+else. Regions: only countries whose divisions people know (US states, Canadian provinces, German
+states…, not Swiss cantons or Argentine provinces). Cities over a population: big countries only.
+Continent-wide sets can be large (2,000 rivers in Europe); `max_answers` is raised for those,
+since rarity scoring handles the long tail.
+
 ## 2. The "easy floor" rule (enforced by the generator)
 
 Every generated question must pass all of these:

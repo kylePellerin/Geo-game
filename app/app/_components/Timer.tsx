@@ -19,18 +19,26 @@ export function useCountdown(deadline: string, offsetMs: number, onExpire: () =>
       }
     };
     tick();
-    const t = setInterval(tick, 200);
+    const t = setInterval(tick, 100);
     return () => clearInterval(t);
   }, [deadline, offsetMs]);
   return left;
 }
 
+/** A ring that empties as time runs out; red and ticking for the last five seconds. */
 export function TimerDisplay({ ms, seconds }: { ms: number; seconds: number }) {
   const s = Math.ceil(ms / 1000);
+  const r = 16;
+  const c = 2 * Math.PI * r;
+  const frac = Math.max(0, Math.min(1, ms / (seconds * 1000)));
   return (
-    <p aria-live="off">
-      <strong>⏱ {s}s</strong>{" "}
-      <progress value={ms} max={seconds * 1000} style={{ width: "10em", verticalAlign: "middle" }} />
-    </p>
+    <div className="timer" data-low={s <= 5} role="timer" aria-label={`${s} seconds left`}>
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <circle className="track" cx="20" cy="20" r={r} fill="none" strokeWidth="4" />
+        <circle className="arc" cx="20" cy="20" r={r} fill="none" strokeWidth="4"
+                strokeDasharray={c} strokeDashoffset={c * (1 - frac)} />
+      </svg>
+      <span aria-hidden="true">{s}</span>
+    </div>
   );
 }

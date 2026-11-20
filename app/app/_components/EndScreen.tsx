@@ -1,88 +1,128 @@
 "use client";
-/** End of the day: per-question summary, percentile and the share text. */
+/**
+ * End of the day, as a passport page: one stamp per question, the total, percentile and the share
+ * text. Renders at once from the player's local cache (or from what the game screen already
+ * knows) and refreshes from the server in the background.
+ */
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client/api";
-import { formatShare, TIER_LABEL, untilNextPuzzle } from "@/lib/client/state";
+import { cachedResults, storeResults } from "@/lib/client/cache";
+import { untilNextPuzzle } from "@/lib/client/state";
 import type { DayResults } from "@/lib/client/types";
+import { CountUp, Stamp, tilt } from "./Bits";
 
-export function EndScreen({ date, prefetched, remaining, onResume }: {
-  date: string; prefetched: DayResults | null; remaining: number; onResume: () => void;
+type QResult = DayResults["questions"][number];
+
+function QuestionStamp({ q }: { q: QResult }) {
+  const rot = tilt(`${q.idx}-${q.text}`, 10);
+  if (q.state === "not_started") return <Stamp tier="wrong" label="—" round rotate={rot} />;
+  if (q.pairCount !== undefined) {
+    const right = q.correctPairs ?? 0;
+    const tier = right === q.pairCount ? "rarest" : right >= q.pairCount / 2 ? "familiar" : right > 0 ? "famous" : "wrong";
+    return <Stamp tier={tier} label={`${right}/${q.pairCount}`} points={q.points} round rotate={rot} />;
+  }
+  const valid = q.answers.find((a) => a.status === "valid");
+  return valid
+    ? <Stamp tier={valid.tier} points={q.points} round rotate={rot} />
+    : <Stamp tier="wrong" label="Missed" points="0" round rotate={rot} />;
+}
+
+export function EndScreen({ date, local, remaining, onResume }: {
+  date: string; local: DayResults; remaining: number; onResume: () => void;
 }) {
-  const [res, setRes] = useState<DayResults | null>(prefetched);
-  const [error, setError] = useState<string | null>(null);
+  const [res, setRes] = useState<DayResults>(() => {
+    const cached = cachedResults(date);
+    // a cached copy is good if it describes the same progress as now
+    return cached && cached.finished === local.finished && cached.total === local.total ? cached : local;
+  });
   const [copied, setCopied] = useState(false);
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    if (prefetched && prefetched.finished === (remaining === 0)) {
-      setRes(prefetched);
-      return;
-    }
-    api<DayResults>(`/api/results/${date}`).then(setRes, (e: Error) => setError(e.message));
-  }, [date, remaining, prefetched]);
+    let live = true;
+    api<DayResults>(`/api/results/${date}`).then((r) => {
+      if (!live) return;
+      setRes(r);
+      storeResults(date, r);
+    }, () => { /* keep showing what we have */ });
+    return () => { live = false; };
+  }, [date, remaining]);
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30_000);
     return () => clearInterval(t);
   }, []);
 
   async function copy() {
-    if (!res) return;
     try {
       await navigator.clipboard.writeText(res.shareText);
       setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch {
-      setError("Couldn't copy; select the text above instead.");
+      /* the text is on screen to select by hand */
     }
   }
 
-  if (error) return <p role="alert">{error}</p>;
-  if (!res) return <p>Loading results…</p>;
-
+  const finalChanged = res.finalTotal !== null && res.finalTotal !== res.total;
   return (
-    <section>
-      <h2>{res.finished ? "Today's results" : "Results so far"}</h2>
+    <section className="card passport" aria-labelledby="results-title">
+      <div className="passport-head">
+        <div>
+          <div className="kicker">Expedition log · {date}</div>
+          <h2 id="results-title">{res.finished ? "Today's results" : "Results so far"}</h2>
+        </div>
+        <div className="total">
+          <CountUp value={finalChanged ? res.finalTotal! : res.total} ms={1100} />
+          <small>points</small>
+        </div>
+      </div>
+
       {!res.finished && (
-        <p>
-          {remaining} question{remaining === 1 ? "" : "s"} left.{" "}
-          <button type="button" onClick={onResume}>Keep playing</button>
-        </p>
+        <div className="btn-row">
+          <span>{remaining} question{remaining === 1 ? "" : "s"} left.</span>
+          <button type="button" className="btn btn-gold" onClick={onResume}>Keep playing</button>
+        </div>
       )}
-      <table>
-        <thead><tr><th>#</th><th>Question</th><th>Your answers</th><th>Points</th></tr></thead>
-        <tbody>
-          {res.questions.map((q, i) => (
-            <tr key={q.idx}>
-              <td>{i + 1}</td>
-              <td>{q.text ?? "—"}</td>
-              <td>
-                {q.state === "not_started" ? "—"
-                  : q.pairCount !== undefined ? `${q.correctPairs ?? 0}/${q.pairCount} right`
-                  : q.answers.length === 0 ? "none"
-                  : q.answers.map((a, j) => (
-                    <span key={j}>
-                      {j > 0 && ", "}
-                      {a.status === "valid"
-                        ? `${a.name} (${a.tier ? TIER_LABEL[a.tier] : ""}${a.share !== undefined ? `, ${formatShare(a.share)}` : ""})`
-                        : <s>{a.name}</s>}
-                    </span>
-                  ))}
-              </td>
-              <td>{q.points}{q.finalPoints !== undefined && q.finalPoints !== q.points ? ` → ${q.finalPoints}` : ""}</td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr><td /><td><strong>Total</strong></td><td />
-            <td><strong>{res.total}</strong>{res.finalTotal !== null && res.finalTotal !== res.total ? ` → ${res.finalTotal}` : ""}</td></tr>
-        </tfoot>
-      </table>
-      {res.percentile !== null && <p>You scored better than {Math.round(res.percentile)}% of players today.</p>}
+
+      <div className="stamp-grid">
+        {res.questions.map((q, i) => {
+          const valid = q.answers.find((a) => a.status === "valid");
+          return (
+            <div key={q.idx} className="stamp-cell" style={{ "--d": `${0.1 * i}s` } as React.CSSProperties}>
+              <QuestionStamp q={q} />
+              <div className="a">
+                {q.state === "not_started" ? "Not played"
+                  : q.pairCount !== undefined ? `${q.kind === "order" ? "Order" : "Matching"}`
+                  : valid ? valid.name : "—"}
+              </div>
+              <div className="q">{q.text ?? `Question ${i + 1}`}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {res.percentile !== null && (
+        <div className="percentile">
+          <div className="bar"><i style={{ width: `${Math.round(res.percentile)}%` }} /></div>
+          <p>You scored better than <b>{Math.round(res.percentile)}%</b> of players today.</p>
+        </div>
+      )}
+
       {res.finished && (
         <>
-          <pre>{res.shareText}</pre>
-          <button type="button" onClick={copy}>{copied ? "Copied!" : "Copy result"}</button>
-          <p>Next puzzle in {untilNextPuzzle(now)}.</p>
-          <p><small>Points shown are estimates until tonight&apos;s update, when they settle on everyone&apos;s answers.</small></p>
+          {res.shareText
+            ? <pre className="telegram">{res.shareText}</pre>
+            : <div className="telegram"><div className="skeleton" style={{ width: "60%" }} /></div>}
+          <div className="btn-row">
+            <button type="button" className="btn" onClick={copy} disabled={!res.shareText}>
+              {copied ? "Copied!" : "Copy result"}
+            </button>
+          </div>
+          <p className="next-in">Next puzzle in <b>{untilNextPuzzle(now)}</b></p>
+          <p className="fine">
+            {finalChanged
+              ? <>Points settled overnight on everyone&apos;s answers: {res.total} → {res.finalTotal}.</>
+              : <>Points are estimates until tonight&apos;s update, when they settle on everyone&apos;s answers.</>}
+          </p>
         </>
       )}
     </section>

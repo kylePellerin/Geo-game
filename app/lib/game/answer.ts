@@ -1,18 +1,19 @@
 /**
- * Playing a question (PLAN.md §1, §6, §7; timed multi-answer rules decided 2026-11-20).
+ * Playing a question (PLAN.md §1, §6, §7; rules of the 2026-11-20 playtests).
  *
  * - Questions are played in order. Starting one (startQuestion) shows its text and starts the
  *   clock: QUESTION_SECONDS for free text, more for matching rounds. The clock is the server's;
  *   answers arriving later than the deadline + GRACE_MS are refused.
- * - Free text: as many answers as the player likes until time runs out. Each distinct place
- *   counts once; valid ones score by rarity (scoring.ts), wrong ones score 0, unrecognised input
- *   costs nothing (and is logged to unmatched_log for the alias page).
+ * - Free text: ONE correct answer. Wrong answers (real places that don't fit) score 0 and the
+ *   player may try again until time runs out; the first valid answer is final, scores by rarity
+ *   (scoring.ts) and ends the question. Unrecognised input costs nothing (and is logged to
+ *   unmatched_log for the alias page).
  * - Spelling corrections are never applied silently: anything but an exact name/alias hit comes
  *   back as "did you mean", and only a confirm (confirm_entity_id) records it.
  * - Matching rounds: one submission of pairs (unpaired = -1, counts as wrong), which ends the
  *   question. Ordering rounds: one submission of the order, ORDER_POINTS_PER_ITEM per item in
  *   the right place. Running out of time without submitting scores 0.
- * - A question ends with "I'm done" (endQuestion), a matching submit, or the deadline. Only then
+ * - A question ends with a correct answer, "skip" (endQuestion), a round submit, or the deadline. Only then
  *   does the reveal (common/rare answers, matching solution) leave the server.
  * - When all of the day's questions have ended, daily_scores is marked finished and player_stats
  *   is refreshed in the same transaction.
@@ -100,6 +101,8 @@ export interface AnswerResult {
   share?: number;
   /** points so far on this question */
   questionPoints: number;
+  /** a valid answer ends the question: its summary (and dayComplete) comes straight back */
+  summary?: QuestionSummary;
 }
 
 interface PlayRow {
@@ -251,18 +254,29 @@ export async function submitAnswer(db: Pool, input: {
     let tier: Tier | undefined;
     let share: number | undefined;
     if (m.status === "valid") {
-      ({ points, tier, share } = scoreAnswer(nSame, await answersOn(client, q), q.prior.get(entity.id) ?? 0));
+      ({ points, tier, share } = scoreAnswer(nSame, await playersOn(client, q), q.prior.get(entity.id) ?? 0));
       await client.query(
         "UPDATE answers SET points = $1, tier = $2, share = $3 WHERE id = $4",
         [points, tier, share, ins.rows[0].id],
       );
     }
-    await updateDailyScore(client, input.playerId, q.date, null);
+    // the first correct answer is final: it ends the question
+    const dayComplete = m.status === "valid"
+      ? await endPlay(client, input.playerId, q, puzzle, input.today, now)
+      : await updateDailyScore(client, input.playerId, q.date, null);
     const total = await pointsOn(client, input.playerId, q);
     await client.query("COMMIT");
-    return { status: m.status, entity, points, tier, share, questionPoints: total };
+    const summary = m.status === "valid"
+      ? { ...(await summarize(db, input.playerId, q)), ...(dayComplete ? { dayComplete } : {}) }
+      : undefined;
+    return { status: m.status, entity, points, tier, share, questionPoints: total,
+             ...(summary ? { summary } : {}) };
   } catch (e) {
     await client.query("ROLLBACK").catch(() => {});
+    // two correct answers racing: the second loses to answers_one_valid
+    if ((e as { constraint?: string }).constraint === "answers_one_valid") {
+      throw new GameError("already_answered", "You've already answered this one", 409);
+    }
     throw e;
   } finally {
     client.release();
@@ -432,14 +446,13 @@ async function pointsOn(db: Db, playerId: string, q: PuzzleQuestion): Promise<nu
 }
 
 /**
- * Share denominator: every answer given to the question (right or wrong), so a share is "this
- * answer's part of all answers". With several answers per player, a per-player share would push
- * most answers over the tier thresholds; per-answer shares keep the prior (which sums to 1) and
- * the tiers calibrated (decided 2026-11-20, PLAN §6).
+ * Share denominator: players who have answered the question (right or wrong). Each player has
+ * at most one valid answer, so a share is "the part of players who said this" (PLAN §6).
  */
-async function answersOn(db: Db, q: PuzzleQuestion): Promise<number> {
+export async function playersOn(db: Db, q: { date: string; idx: number }): Promise<number> {
   return Number((await db.query<{ n: string }>(
-    "SELECT count(*) AS n FROM answers WHERE date = $1 AND idx = $2", [q.date, q.idx],
+    "SELECT count(DISTINCT player_id) AS n FROM answers WHERE date = $1 AND idx = $2",
+    [q.date, q.idx],
   )).rows[0].n);
 }
 

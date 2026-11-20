@@ -196,7 +196,10 @@ export async function matchAnswer(db: Pool, raw: string, opts: MatchOptions): Pr
     const stripped = stripFuzzyAffix(q, type);
     if (stripped !== q) {
       const retry = await matchAnswer(db, stripped, { ...opts, entityType: type });
-      if (retry.status !== "unrecognised") return { ...retry, normalized: q };
+      // the affix itself was misspelt: that's a correction, so never "exact"
+      if (retry.status !== "unrecognised") {
+        return { ...retry, normalized: q, ...(retry.method ? { method: "fuzzy" as const } : {}) };
+      }
     }
   }
   if (!ranked.length) return { status: "unrecognised", normalized: q };

@@ -26,13 +26,9 @@
       - {name: Brazil, kinds: "state of Brazil|federative unit of Brazil", text: "a Brazilian state", difficulty: 2}
       - {name: India, kinds: "state of India|union territory of India", text: "an Indian state or union territory", difficulty: 2}
       - {name: Italy, kinds: "region of Italy|autonomous region with special statute", text: "a region of Italy", difficulty: 2}
-      - {name: Spain, kinds: "autonomous community of Spain", text: "an autonomous community of Spain", difficulty: 2}
       - {name: France, kinds: "region of France|overseas department and region of France", text: "a region of France", difficulty: 2}
       - {name: China, kinds: "province of China|autonomous region of China", text: "a Chinese province or autonomous region", difficulty: 3}
       - {name: Japan, kinds: "prefecture of Japan|metropolitan prefecture|fu", text: "a Japanese prefecture", difficulty: 3}
-      - {name: Switzerland, kinds: "canton of Switzerland|half-canton", text: "a Swiss canton", difficulty: 3}
-      - {name: Argentina, kinds: "province of Argentina", text: "an Argentine province", difficulty: 3}
-      - {name: Austria, kinds: "federal state of Austria", text: "an Austrian state", difficulty: 2}
   filter: >-
     e.country_id = (SELECT k.id FROM entities k WHERE k.type = 'country' AND k.name = :country.name)
     AND e.attrs->'region_kinds' ?| string_to_array(:country.kinds, '|')

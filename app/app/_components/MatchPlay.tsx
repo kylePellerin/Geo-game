@@ -1,26 +1,41 @@
 "use client";
-/** A timed matching round: pair each left item with one right item. Auto-submits at time up. */
-import { useRef, useState } from "react";
+/**
+ * A timed matching round: tap an item on the left, then its partner on the right. Pairs share a
+ * coloured pin. Auto-submits at time up (unpaired items count as wrong).
+ */
+import { useRef, useState, type CSSProperties } from "react";
 import { api } from "@/lib/client/api";
 import { assignPair, pairsComplete } from "@/lib/client/state";
 import type { Question, Summary } from "@/lib/client/types";
 import { TimerDisplay, useCountdown } from "./Timer";
 
+export const PIN_COLORS = ["#d9472b", "#335fa8", "#23806f", "#cf7414", "#7a4fa0", "#5d574b"];
+export const PIN_LETTERS = "ABCDEF";
+
 export function LeftItem({ item, n }: { item: { label?: string; image?: string }; n: number }) {
-  return item.image
-    // eslint-disable-next-line @next/next/no-img-element
-    ? <img src={item.image} alt={`Picture ${n}`} width={96} height={item.image.includes("/outline/") ? 96 : 72}
-           style={{ border: "1px solid #999", objectFit: "contain" }} />
-    : <>{item.label}</>;
+  if (!item.image) return <span>{item.label}</span>;
+  const outline = item.image.includes("/outline/");
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={item.image} alt={`Picture ${n}`} className={outline ? "outline" : ""} />;
 }
 
-export function MatchPlay({ date, question, deadline, seconds, offsetMs, onDone }: {
+export function Pin({ i, on = true }: { i: number | null; on?: boolean }) {
+  return (
+    <span className="pin" aria-hidden="true"
+          style={i !== null && on ? { "--pc": PIN_COLORS[i] } as CSSProperties : undefined}>
+      {i !== null && on ? PIN_LETTERS[i] : ""}
+    </span>
+  );
+}
+
+export function MatchPlay({ date, question, deadline, seconds, offsetMs, onDone, head }: {
   date: string; question: Question; deadline: string; seconds: number; offsetMs: number;
-  onDone: (s: Summary) => void;
+  onDone: (s: Summary) => void; head: (timer: React.ReactNode) => React.ReactNode;
 }) {
   const left = question.left ?? [];
   const right = question.right ?? [];
   const [pairs, setPairs] = useState<(number | null)[]>(left.map(() => null));
+  const [selected, setSelected] = useState<number | null>(0);
   const [error, setError] = useState<string | null>(null);
   const sent = useRef(false);
   const pairsRef = useRef(pairs);
@@ -39,40 +54,58 @@ export function MatchPlay({ date, question, deadline, seconds, offsetMs, onDone 
     }
   }
   const ms = useCountdown(deadline, offsetMs, submit);
+  const over = ms <= 0;
+
+  function pickRight(pos: number) {
+    const owner = pairs.indexOf(pos);
+    const target = selected ?? pairs.findIndex((p) => p === null);
+    if (target < 0) {
+      // everything paired and nothing selected: tapping a right item frees it
+      if (owner >= 0) { setPairs(assignPair(pairs, owner, null)); setSelected(owner); }
+      return;
+    }
+    const next = owner === target ? assignPair(pairs, target, null) : assignPair(pairs, target, pos);
+    setPairs(next);
+    const free = next.findIndex((p, i) => p === null && i !== target);
+    setSelected(owner === target ? target : free >= 0 ? free : null);
+  }
 
   return (
-    <div>
-      <p><strong>{question.text}</strong></p>
-      <TimerDisplay ms={ms} seconds={seconds} />
-      <p><small>Each answer on the right is used once. Rarer items are worth more.</small></p>
-      <table>
-        <tbody>
+    <div className="card">
+      {head(<TimerDisplay ms={ms} seconds={seconds} />)}
+      <h2 className="question-text">{question.text}</h2>
+      <div className="match-grid">
+        <div className="match-col">
           {left.map((l, i) => (
-            <tr key={l.pos}>
-              <td><LeftItem item={l} n={i + 1} /></td>
-              <td>→</td>
-              <td>
-                <select aria-label={l.label ? `Match for ${l.label}` : `Match for picture ${i + 1}`}
-                        value={pairs[i] ?? ""} disabled={ms <= 0}
-                        onChange={(e) => setPairs(assignPair(pairs, i, e.target.value === "" ? null : Number(e.target.value)))}>
-                  <option value="">— choose —</option>
-                  {right.map((r) => (
-                    <option key={r.pos} value={r.pos}>
-                      {r.label}{pairs.includes(r.pos) && pairs[i] !== r.pos ? " (used)" : ""}
-                    </option>
-                  ))}
-                </select>
-              </td>
-            </tr>
+            <button key={l.pos} type="button" className="tile" aria-pressed={selected === i}
+                    data-paired={pairs[i] !== null} disabled={over}
+                    aria-label={`Item ${i + 1}${l.label ? `: ${l.label}` : ""}`}
+                    onClick={() => setSelected(selected === i ? null : i)}>
+              <Pin i={i} />
+              <LeftItem item={l} n={i + 1} />
+            </button>
           ))}
-        </tbody>
-      </table>
-      <p>
-        <button type="button" onClick={submit} disabled={ms <= 0}>
-          {pairsComplete(pairs) ? "Submit pairs" : "Submit (unpaired count as wrong)"}
+        </div>
+        <div className="match-col">
+          {right.map((r) => {
+            const owner = pairs.indexOf(r.pos);
+            return (
+              <button key={r.pos} type="button" className="tile right" data-paired={owner >= 0}
+                      disabled={over} aria-label={r.label} onClick={() => pickRight(r.pos)}>
+                <span>{r.label}</span>
+                <Pin i={owner >= 0 ? owner : null} />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="btn-row" style={{ justifyContent: "space-between" }}>
+        <p className="hint" style={{ margin: 0 }}>Tap an item, then its match. Rarer items are worth more.</p>
+        <button type="button" className="btn" onClick={submit} disabled={over}>
+          {pairsComplete(pairs) ? "Submit pairs" : "Submit anyway"}
         </button>
-      </p>
-      {error && <p role="alert">{error}</p>}
+      </div>
+      {error && <p className="note" role="alert">{error}</p>}
     </div>
   );
 }

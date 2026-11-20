@@ -55,3 +55,26 @@ def test_facts() -> None:
         "The lion is a national animal of Belgium and Kenya."
     assert "UNESCO" in fact("landmark", "Petra", {"kind": "famous", "class": "archaeological site",
                                                   "unesco": True}, "Jordan", names, {})
+
+
+# Questions stay broad (user feedback 2026-11-20: "volcano in Iceland" is too specific, "volcano
+# in Asia" is better). Natural features and sights are asked per continent or worldwide; a single
+# country only where that country is famous for them, and never a small country.
+FEATURE_TYPES = {"mountain", "river", "lake", "island", "landmark"}
+BROAD_COUNTRIES = {
+    "United States", "Canada", "Australia", "China", "India", "Japan", "Indonesia", "Philippines",
+    "Greece", "Italy", "Spain", "France", "United Kingdom", "Germany", "Egypt", "Mexico", "Kenya",
+    "Tanzania", "South Africa",
+}
+
+
+def test_feature_questions_stay_broad():
+    from geo_pipeline.questions import load_templates
+
+    for t in load_templates():
+        if t.entity_type not in FEATURE_TYPES:
+            continue
+        for name, values in t.params.items():
+            for v in values:
+                if "country" in name or "place" in name:
+                    assert v["name"] in BROAD_COUNTRIES, f"{t.id}: {v['name']} is too specific"

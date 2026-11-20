@@ -8,10 +8,11 @@
   ordering round (QUESTIONS.md §2).
 - **Timed (2026-11-20):** the player starts each question; free text gets 20 s, matching and
   ordering 40 s (`QUESTION_SECONDS` in `app/lib/game/answer.ts`). The server's clock decides.
-- **Free text: as many answers as you like within the time** (no autocomplete — it would leak
-  answers). Each distinct right answer scores by its rarity; wrong or unrecognised answers score
-  0 and cost nothing. After the question: your answers, points, and a few of the most common +
-  rarest valid answers.
+- **Free text: one correct answer (second playtest, 2026-11-20).** Wrong places score 0 and the
+  player may try again until time runs out; the **first right answer is final**, scores by its
+  rarity and ends the question. Unrecognised input costs nothing. No autocomplete (it would leak
+  answers). After the question: your answer and stamp, points, a few of the most common + rarest
+  valid answers, a fact card. (Replaces the earlier "as many answers as you like" rule.)
 - The matcher never silently corrects: anything but an exact name/alias hit comes back as
   **"Did you mean X?"** and only counts once confirmed.
 
@@ -223,10 +224,10 @@ Fixtures (`pipeline/tests/match_cases.yaml`): ≥100 cases incl. "Kathmandoo", "
 
 ## 6. Scoring
 
-- `share = n_same_answer / n_total_answers` for that question today, where n_total_answers counts
-  every answer given (right or wrong), not players: with several answers per player a per-player
-  share would push most answers over the tier thresholds, while per-answer shares keep the prior
-  (which sums to 1) and the tiers calibrated (2026-11-20).
+- `share = n_same_answer / n_players_answering` for that question today (players who gave any
+  answer, right or wrong). Back to per-player shares now that each player has at most one right
+  answer per question (2026-11-20, second playtest; the multi-answer rules briefly used
+  per-answer shares).
 - **Cold-start prior** from popularity: for each valid entity,
   `prior_share = softmax(popularity / T)` over the valid set (tune T so the top answer gets ~25–40%).
 - Blend: `w = n_total / (n_total + 50)`; `est_share = w * observed + (1 - w) * prior`.
@@ -371,6 +372,30 @@ Implemented (Phase 6, 2026-11-20):
 - **Admin:** `/admin` (ADMIN_TOKEN; open in dev without one): upcoming 14 days with answer
   samples and stats, mark reviewed, **Replace** (runs `geo_pipeline.replace_question`, also
   `make replace DATE= IDX=`), unrecognised answers with search → add manual alias.
+
+**Phase 6.1 — Second playtest (2026-11-20).**
+- One correct answer per question (§1); a valid answer returns the summary at once
+  (`answers_one_valid` unique index, migration 009). Simulation: 500 players, tiers famous 37 /
+  well-known 28 / familiar 17 / obscure 11 / rarest 7 %, mean day ≈ 250.
+- Matcher: a misspelt type word ("Moun Vesuvius") was stripped and then accepted silently; it now
+  counts as a correction and comes back as "did you mean".
+- **Broad questions** (QUESTIONS.md §2b): nature/landmark questions per continent or world, a
+  single country only from a short list of big ones; enforced by a test. Pool 334 (118 / 182 / 34).
+- **Results load instantly:** per-player cache in localStorage (`lib/client/cache.ts`, keys
+  carry player id + date, pruned after 14 days) for question summaries and the end screen; the
+  end screen also renders straight from what the game screen knows and revalidates in the
+  background. The server stays the source of truth.
+- **Admin portal for writing days:** calendar (35 days, filled/hand-written/reviewed/locked),
+  day editor (six slots: edit wording, auto-replace, clear, write my own, auto-fill the day while
+  keeping hand-written slots), question builder for free text (search, paste a list, "add every
+  X in continent/country"), matching (names/flags/outlines, rarity per pair) and ordering rounds
+  (values + unit, shuffled for players). Hand-written questions use templates `custom_*` and
+  freeze their answers exactly like generated ones; dates in the past or with answers are locked.
+- **Design:** the "expedition journal" look (deviation from "keep UI unstyled": asked for by the
+  user): animated contour-line chart background with flight arcs (canvas, ~24 fps, paused when
+  hidden, still with reduced motion), paper cards, rubber-stamp tiers, the day as a flight route,
+  tap-to-pair matching, the end screen as a passport page. Fonts: Fraunces, Bricolage Grotesque,
+  DM Mono (Google Fonts via next/font, self-hosted at build).
 
 **Phase 7 — Retention.** Stats page, transfer code and optional account upgrade (§10), daily
 leaderboard, endless/practice mode, deploy (Vercel + Supabase).

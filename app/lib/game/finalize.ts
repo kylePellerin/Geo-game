@@ -5,6 +5,7 @@
  * refresh the stats of everyone who played. Instant points shown to players are never changed.
  * Idempotent: running it again gives the same result.
  */
+import { playersOn } from "./answer";
 import type { Pool } from "pg";
 import { loadPuzzle } from "./puzzle";
 import { scoreAnswer } from "./scoring";
@@ -22,9 +23,7 @@ export async function finalizeDay(db: Pool, date: string, today: string) {
       "UPDATE question_plays SET ended_at = deadline WHERE date = $1 AND ended_at IS NULL", [date],
     );
     for (const q of puzzle.filter((x) => x.kind === "free_text")) {
-      const total = Number((await client.query<{ n: string }>(
-        "SELECT count(*) AS n FROM answers WHERE date = $1 AND idx = $2", [date, q.idx],
-      )).rows[0].n);
+      const total = await playersOn(client, { date, idx: q.idx });
       const counts = (await client.query<{ entity_id: string; n: number }>(
         "SELECT entity_id, n FROM answer_counts WHERE date = $1 AND idx = $2", [date, q.idx],
       )).rows;

@@ -1,6 +1,6 @@
 /**
  * Phase 4 "done when": simulate 500 players and check that tiers distribute sensibly
- * (PLAN.md §8), under the timed multi-answer rules of 2026-11-20. Runs against the local
+ * (PLAN.md §8), under the timed one-correct-answer rules of 2026-11-20. Runs against the local
  * database on sandbox dates in 1999 (copies of real generated puzzles) and removes everything it
  * created. Skipped if the database is unreachable.
  */
@@ -8,6 +8,7 @@ import { randomUUID } from "node:crypto";
 import type { Pool } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { closePool, getPool } from "../db";
+import { normalize } from "../normalize";
 import {
   endQuestion, GameError, GRACE_MS, QUESTION_SECONDS, startQuestion, submitAnswer,
   type AnswerResult, type QuestionSummary,
@@ -96,9 +97,9 @@ afterAll(async () => {
 const asAnswer = (r: AnswerResult | QuestionSummary) => r as AnswerResult;
 
 /**
- * A player's answers to one free-text question: 1-5 distinct places drawn the way the scoring's
- * cold-start model assumes (most popular ~30% of answers, falling off with popularity), plus
- * wrong answers, junk and typos.
+ * A player's attempts at one free-text question: sometimes a wrong place or junk first, then one
+ * right answer drawn the way the scoring's cold-start model assumes (most popular ~30% of
+ * answers, falling off with popularity), with typos; some players give up.
  */
 function makeChooser(
   valid: { id: string; name: string }[],
@@ -107,34 +108,25 @@ function makeChooser(
   prior: Map<string, number>,
 ) {
   return (): { text: string; intended?: string }[] => {
-    const k = [1, 2, 2, 3, 3, 3, 4, 4, 5][Math.floor(rand() * 9)];
     const pool = valid.map((v) => ({ v, w: prior.get(v.id) ?? 0 }));
     const out: { text: string; intended?: string }[] = [];
-    for (let n = 0; n < k && pool.length; n++) {
-      const r = rand();
-      if (r < 0.08 && wrong.length) {
-        out.push({ text: wrong[Math.floor(rand() * wrong.length)].name });
-        continue;
-      }
-      if (r < 0.1) {
-        out.push({ text: `qzx${Math.floor(rand() * 1e6)}vv` });
-        continue;
-      }
-      const total = pool.reduce((a, b) => a + b.w, 0);
-      let x = rand() * total;
-      let i = pool.length - 1;
-      for (let j = 0; j < pool.length; j++) {
-        x -= pool[j].w;
-        if (x <= 0) { i = j; break; }
-      }
-      const pick = pool.splice(i, 1)[0].v;
-      // 8% typos: drop one letter (comes back as "did you mean")
-      if (rand() < 0.08 && pick.name.length > 7) {
-        const c = 1 + Math.floor(rand() * (pick.name.length - 2));
-        out.push({ text: pick.name.slice(0, c) + pick.name.slice(c + 1), intended: pick.id });
-      } else {
-        out.push({ text: pick.name, intended: pick.id });
-      }
+    if (rand() < 0.2 && wrong.length) out.push({ text: wrong[Math.floor(rand() * wrong.length)].name });
+    if (rand() < 0.05) out.push({ text: `qzx${Math.floor(rand() * 1e6)}vv` });
+    if (rand() < 0.08) return out; // gives up
+    const total = pool.reduce((a, b) => a + b.w, 0);
+    let x = rand() * total;
+    let i = pool.length - 1;
+    for (let j = 0; j < pool.length; j++) {
+      x -= pool[j].w;
+      if (x <= 0) { i = j; break; }
+    }
+    const pick = pool[i].v;
+    // 8% typos: drop one letter (comes back as "did you mean")
+    if (rand() < 0.08 && pick.name.length > 7) {
+      const c = 1 + Math.floor(rand() * (pick.name.length - 2));
+      out.push({ text: pick.name.slice(0, c) + pick.name.slice(c + 1), intended: pick.id });
+    } else {
+      out.push({ text: pick.name, intended: pick.id });
     }
     return out;
   };
@@ -165,42 +157,48 @@ describe("game API logic (needs the DB)", () => {
     const pub = JSON.stringify(st);
     for (const id of q0.validIds) expect(pub).not.toContain(`"${id}"`);
 
-    // several answers; a duplicate doesn't count twice; junk costs nothing
+    // wrong answers can be retried (a repeat is "duplicate"); junk costs nothing
     const names = (await pool.query<{ id: string; name: string }>(
       "SELECT id, name FROM entities WHERE id = ANY($1) ORDER BY popularity DESC NULLS LAST LIMIT 3",
       [q0.validIds])).rows;
-    const a1 = asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: names[0].name, now: at(2) }));
-    expect(a1.status).toBe("valid");
-    expect(a1.points).toBeGreaterThan(0);
-    const a2 = asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: names[1].name, now: at(4) }));
-    expect(a2.questionPoints).toBe(a1.points + a2.points);
-    expect(asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: names[0].name, now: at(5) })).status)
+    const wrongName = (await pool.query<{ name: string }>(
+      `SELECT name FROM entities WHERE type = $1 AND NOT (id = ANY($2)) AND name ~ '^[A-Za-z ]+$'
+       ORDER BY popularity DESC NULLS LAST LIMIT 1`, [q0.entityType, q0.validIds])).rows[0].name;
+    const w1 = asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: wrongName, now: at(1) }));
+    expect(w1.status).toBe("real_but_wrong");
+    expect(w1.summary).toBeUndefined();
+    expect(asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: wrongName, now: at(2) })).status)
       .toBe("duplicate");
-    expect(asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: "qqqqzzzz", now: at(6) })).status)
+    expect(asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: "qqqqzzzz", now: at(3) })).status)
       .toBe("unrecognised");
 
-    // a misspelling is suggested, not recorded; confirming records it
-    const long = (await pool.query<{ name: string }>(
+    // a misspelling is suggested, not recorded (pick one that isn't itself someone's alias)
+    const longs = (await pool.query<{ name: string }>(
       `SELECT name FROM entities WHERE id = ANY($1) AND length(name) >= 9 AND name ~ '^[A-Za-z ]+$'
-       ORDER BY popularity DESC NULLS LAST LIMIT 1`, [q0.validIds])).rows[0] ?? { name: "Australia" };
-    const typo = long.name.slice(0, 4) + long.name.slice(5);
-    const dym = asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: typo, now: at(7) }));
-    if (dym.status !== "duplicate") {
-      expect(dym.status).toBe("did_you_mean");
-      const conf = asAnswer(await submitAnswer(pool, {
-        ...base, idx: q0.idx, text: typo, confirmEntityId: dym.suggestion!.id, now: at(8),
-      }));
-      expect(["valid", "real_but_wrong", "duplicate"]).toContain(conf.status);
+       ORDER BY popularity DESC NULLS LAST LIMIT 10`, [q0.validIds])).rows;
+    let typo = "";
+    for (const { name } of longs) {
+      const t = name.slice(0, 4) + name.slice(5);
+      const hit = await pool.query("SELECT 1 FROM aliases WHERE alias_norm = $1 LIMIT 1", [normalize(t, q0.entityType)]);
+      if (!hit.rows.length) { typo = t; break; }
     }
+    expect(typo, "no usable typo in this puzzle").not.toBe("");
+    const dym = asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: typo, now: at(7) }));
+    expect(dym.status).toBe("did_you_mean");
+    expect(dym.questionPoints).toBe(0);
 
-    // time's up after deadline + grace; the reveal only comes with the end
-    const late = at(QUESTION_SECONDS.free_text + GRACE_MS / 1000 + 1);
-    await expect(submitAnswer(pool, { ...base, idx: q0.idx, text: names[2].name, now: late }))
+    // the first correct answer is final: it scores, ends the question and brings the reveal
+    const a1 = asAnswer(await submitAnswer(pool, { ...base, idx: q0.idx, text: names[0].name, now: at(8) }));
+    expect(a1.status).toBe("valid");
+    expect(a1.points).toBeGreaterThan(0);
+    expect(a1.summary?.points).toBe(a1.points);
+    expect(a1.summary?.answers.map((a) => a.status)).toEqual(["real_but_wrong", "valid"]);
+    expect(a1.summary?.commonAnswers?.length).toBeGreaterThan(0);
+    await expect(submitAnswer(pool, { ...base, idx: q0.idx, text: names[1].name, now: at(9) }))
       .rejects.toMatchObject({ code: "time_up" });
+    const late = at(QUESTION_SECONDS.free_text + GRACE_MS / 1000 + 1);
     const sum = await endQuestion(pool, { ...base, idx: q0.idx, now: late });
-    expect(sum.answers.length).toBeGreaterThanOrEqual(2);
-    expect(sum.points).toBe(sum.answers.reduce((s, a) => s + a.points, 0));
-    expect(sum.commonAnswers?.length).toBeGreaterThan(0);
+    expect(sum.points).toBe(a1.points);
 
     // next question can start now; a later one can't
     await startQuestion(pool, { ...base, idx: puzzle[1].idx, now: late });
@@ -251,6 +249,7 @@ describe("game API logic (needs the DB)", () => {
           count("order");
           continue;
         }
+        let done = false;
         for (const choice of choosers.get(q.idx)!()) {
           let r = asAnswer(await submitAnswer(pool, { ...base, idx: q.idx, text: choice.text }));
           if (r.status === "did_you_mean") {
@@ -260,8 +259,9 @@ describe("game API logic (needs the DB)", () => {
             }));
           }
           count(r.status);
+          if (r.summary) { done = true; break; }
         }
-        await endQuestion(pool, { ...base, idx: q.idx });
+        if (!done) await endQuestion(pool, { ...base, idx: q.idx });
       }
     };
     const t0 = Date.now();
