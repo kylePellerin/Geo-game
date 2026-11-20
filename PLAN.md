@@ -306,3 +306,9 @@ today's percentile.
   more headroom), then run `cd pipeline && python -m geo_pipeline.popularity --max-minutes 240`
   repeatedly (resumable, cached in `raw/pageviews/`) until complete, then `make load`. Once ≥30
   entities per type have views, the estimate is re-fitted per type automatically.
+- [ ] **Grow the question pool before launch (Phase 6).** With 7 families and the rules in §4
+  (6 families/day, no repeat within 60 days), 30 days needs ~180 distinct questions; the Phase 2
+  templates yield ~220 that pass, so late days fall back (harder/easier slot, repeated family, or
+  even the same template twice). The generator logs every fallback. Hard (slot 6) questions are
+  the scarcest (13): deep-dive data (volcanoes, climate) is the real fix. New families from Phase 6
+  (symbols, landmarks, nature) remove the family-reuse fallbacks.

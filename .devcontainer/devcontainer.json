@@ -13,9 +13,6 @@
       "installDockerBuildx": true
     }
   },
-  "mounts": [
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
-  ],
   "workspaceFolder": "/workspaces/geo-game",
   "forwardPorts": [3000, 5432],
   "postCreateCommand": "python -m pip install --user -e './pipeline[dev]' && npm --prefix app install",

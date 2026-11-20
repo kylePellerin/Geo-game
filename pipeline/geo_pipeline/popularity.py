@@ -31,7 +31,7 @@ API = "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipe
 TYPE_PRIORITY = {"country": 0, "airport": 1, "city": 2}
 # log10(1+views) ~= a + b*log10(1+sitelinks); rough fit (France: ~300 sitelinks, ~3.5M views/yr)
 DEFAULT_FIT = (1.0, 2.0)
-MIN_COVERAGE = 0.9
+MIN_FETCHED_PER_TYPE = 50
 
 
 def period(today: date | None = None) -> tuple[str, str]:
@@ -61,10 +61,15 @@ def fetch_views(title: str, start: str, end: str) -> int:
 
 
 def priority_order(ents: pd.DataFrame) -> list[str]:
-    pop = ents["attrs"].map(lambda a: json.loads(a).get("population") or 0)
-    order = ents.assign(
-        _t=ents["type"].map(lambda t: TYPE_PRIORITY.get(t, 9)), _p=-pop
-    ).sort_values(["_t", "_p"])
+    """Countries, then capitals, then large airports, then everything else by population."""
+    attrs = ents["attrs"].map(json.loads)
+    tier = [
+        0 if t == "country" else 1 if a.get("is_capital") else
+        2 if a.get("airport_type") == "large" else 3 + TYPE_PRIORITY.get(t, 9)
+        for t, a in zip(ents["type"], attrs)
+    ]
+    pop = attrs.map(lambda a: a.get("population") or 0)
+    order = ents.assign(_t=tier, _p=-pop).sort_values(["_t", "_p"])
     return list(dict.fromkeys(order["enwiki"].dropna()))
 
 
@@ -134,11 +139,11 @@ def main(refresh: bool = False, max_minutes: float = 0.0) -> None:
 
     ents["views_12m"] = ents["enwiki"].map(lambda t: cache.get(t) if t else None).astype(float)
     ents.loc[ents["enwiki"].isna(), "views_12m"] = 0.0  # no article: genuinely no views
-    # A type uses real pageviews only once MIN_COVERAGE of its enwiki articles have them;
-    # otherwise the whole type uses the estimate so it is ranked on one consistent scale.
+    # Real pageviews are used wherever fetched, once a type has enough of them to calibrate the
+    # sitelinks fit (so fetched and estimated values share one scale). Below that, the whole type
+    # uses the uncalibrated default estimate.
     fetched = ents["views_12m"].notna() & ents["enwiki"].notna()
-    with_article = ents["enwiki"].notna().groupby(ents["type"]).transform("sum")
-    ready = fetched.groupby(ents["type"]).transform("sum") >= MIN_COVERAGE * with_article
+    ready = fetched.groupby(ents["type"]).transform("sum") >= MIN_FETCHED_PER_TYPE
     ents.loc[~ready & ents["enwiki"].notna(), "views_12m"] = None
     est = estimate_from_sitelinks(ents)
     has_views = ents["views_12m"].notna()

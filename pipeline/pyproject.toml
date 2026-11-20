@@ -22,6 +22,7 @@ dev = ["pytest>=8.0", "ruff>=0.6"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+markers = ["db: needs the local Postgres (skipped if unreachable)"]
 
 [tool.ruff]
 line-length = 100

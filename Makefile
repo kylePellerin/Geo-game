@@ -1,4 +1,4 @@
-.PHONY: db db-down db-reset migrate psql test lint data ingest popularity flags load report
+.PHONY: db db-down db-reset migrate psql test lint data ingest popularity flags load report generate
 
 db:
 	docker compose up -d --wait db
@@ -48,3 +48,9 @@ report:
 	$(PY) geo_pipeline.report
 
 data: ingest popularity load report
+
+# Generate puzzles (FROM defaults to tomorrow UTC). Add GEN_ARGS="--print" to see them,
+# "--dry-run" to not write, "--replace" to regenerate unreviewed, unanswered future dates.
+DAYS ?= 30
+generate:
+	$(PY) geo_pipeline.generate_puzzles --days $(DAYS) $(if $(FROM),--from $(FROM)) $(GEN_ARGS)

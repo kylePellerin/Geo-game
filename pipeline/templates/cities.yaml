@@ -1,0 +1,253 @@
+# Capitals & cities (QUESTIONS.md §3.2, §3.3) and map surprises (§3.6). Answer type: city.
+# Cities in dependent territories (Puerto Rico, Hong Kong...) count for their territory only, not
+# for "a city in <sovereign country>" (filter on e.attrs->>'territory' IS NULL).
+
+- id: capital_in_continent
+  family: cities
+  kind: membership
+  entity_type: city
+  universe: "(e.attrs->>'is_capital')::boolean"
+  difficulty: 1
+  text: "Name a capital city in {continent.name}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+      - {name: North America}
+  filter: "(e.attrs->>'is_capital')::boolean AND c.attrs->>'continent' = :continent.name"
+
+- id: capital_starts_with
+  family: cities
+  kind: name_twist
+  entity_type: city
+  universe: "(e.attrs->>'is_capital')::boolean"
+  difficulty: 1
+  text: "Name a capital city whose name starts with the letter {letter.l}"
+  params:
+    letter:
+      - {l: A}
+      - {l: B}
+      - {l: C}
+      - {l: D}
+      - {l: E}
+      - {l: F}
+      - {l: G}
+      - {l: H}
+      - {l: I}
+      - {l: J}
+      - {l: K}
+      - {l: L}
+      - {l: M}
+      - {l: N}
+      - {l: O}
+      - {l: P}
+      - {l: Q}
+      - {l: R}
+      - {l: S}
+      - {l: T}
+      - {l: U}
+      - {l: V}
+      - {l: W}
+      - {l: X}
+      - {l: Y}
+      - {l: Z}
+  filter: "(e.attrs->>'is_capital')::boolean AND upper(left(e.name, 1)) = :letter.l"
+
+- id: city_population_over
+  family: cities
+  kind: threshold
+  entity_type: city
+  difficulty: 1
+  text: "Name a city with more than {n.text} people"
+  params:
+    n:
+      - {value: 5000000, text: "5 million"}
+      - {value: 10000000, text: "10 million"}
+  filter: "(e.attrs->>'population')::float > :n.value"
+
+- id: city_in_country_over
+  family: cities
+  kind: intersection
+  entity_type: city
+  difficulty: 1
+  text: "Name a city in {country.text} with more than {n.text} people"
+  params:
+    country:
+      - {iso2: US, text: "the United States"}
+      - {iso2: CN, text: "China"}
+      - {iso2: IN, text: "India"}
+      - {iso2: BR, text: "Brazil"}
+      - {iso2: RU, text: "Russia"}
+      - {iso2: JP, text: "Japan"}
+      - {iso2: MX, text: "Mexico"}
+      - {iso2: DE, text: "Germany"}
+      - {iso2: GB, text: "the United Kingdom"}
+      - {iso2: FR, text: "France"}
+      - {iso2: IT, text: "Italy"}
+      - {iso2: ES, text: "Spain"}
+      - {iso2: CA, text: "Canada"}
+      - {iso2: AU, text: "Australia"}
+      - {iso2: TR, text: "Turkey"}
+      - {iso2: NG, text: "Nigeria", difficulty: 2}
+      - {iso2: ID, text: "Indonesia", difficulty: 2}
+      - {iso2: PK, text: "Pakistan", difficulty: 2}
+      - {iso2: IR, text: "Iran", difficulty: 2}
+      - {iso2: AR, text: "Argentina", difficulty: 2}
+      - {iso2: CO, text: "Colombia", difficulty: 2}
+      - {iso2: PL, text: "Poland", difficulty: 2}
+      - {iso2: ZA, text: "South Africa", difficulty: 2}
+      - {iso2: KR, text: "South Korea"}
+      - {iso2: EG, text: "Egypt", difficulty: 2}
+      - {iso2: VN, text: "Vietnam", difficulty: 2}
+      - {iso2: PH, text: "the Philippines", difficulty: 2}
+      - {iso2: TH, text: "Thailand", difficulty: 2}
+      - {iso2: UA, text: "Ukraine", difficulty: 2}
+      - {iso2: SA, text: "Saudi Arabia", difficulty: 2}
+      - {iso2: BD, text: "Bangladesh", difficulty: 2}
+      - {iso2: PE, text: "Peru", difficulty: 2}
+      - {iso2: VE, text: "Venezuela", difficulty: 2}
+      - {iso2: CL, text: "Chile", difficulty: 2}
+      - {iso2: MA, text: "Morocco", difficulty: 2}
+      - {iso2: DZ, text: "Algeria", difficulty: 2}
+      - {iso2: IQ, text: "Iraq", difficulty: 2}
+      - {iso2: KE, text: "Kenya", difficulty: 2}
+      - {iso2: NL, text: "the Netherlands"}
+      - {iso2: SE, text: "Sweden"}
+      - {iso2: NZ, text: "New Zealand"}
+    n:
+      - {value: 200000, text: "200,000"}
+      - {value: 500000, text: "500,000"}
+      - {value: 1000000, text: "1 million"}
+  filter: >-
+    c.attrs->>'iso2' = :country.iso2 AND e.attrs->>'territory' IS NULL
+    AND (e.attrs->>'population')::float > :n.value
+
+# ---- map surprises (§3.6): generated from coordinates, phrased with well-known reference cities
+
+- id: capital_north_of
+  family: map_surprises
+  kind: threshold
+  entity_type: city
+  universe: "(e.attrs->>'is_capital')::boolean"
+  difficulty: 2
+  text: "Name a European capital city further north than {ref.name}"
+  params:
+    ref:
+      - {name: New York, lat: 40.7128}
+      - {name: Chicago, lat: 41.8781}
+      - {name: Toronto, lat: 43.6532}
+      - {name: Montreal, lat: 45.5019}
+      - {name: London, lat: 51.5072}
+  filter: >-
+    (e.attrs->>'is_capital')::boolean AND c.attrs->>'continent' = 'Europe' AND e.lat > :ref.lat
+
+- id: capital_north_of_asia
+  family: map_surprises
+  kind: threshold
+  entity_type: city
+  universe: "(e.attrs->>'is_capital')::boolean"
+  difficulty: 2
+  text: "Name an Asian capital city further north than {ref.name}"
+  params:
+    ref:
+      - {name: Tokyo, lat: 35.6762}
+      - {name: Madrid, lat: 40.4168}
+      - {name: Los Angeles, lat: 34.0522}
+  filter: >-
+    (e.attrs->>'is_capital')::boolean AND c.attrs->>'continent' = 'Asia' AND e.lat > :ref.lat
+
+- id: capital_west_of
+  family: map_surprises
+  kind: threshold
+  entity_type: city
+  universe: "(e.attrs->>'is_capital')::boolean"
+  difficulty: 2
+  text: "Name a European capital city further west than {ref.name}"
+  params:
+    ref:
+      - {name: Berlin, lon: 13.4050}
+      - {name: Rome, lon: 12.4964}
+      - {name: Vienna, lon: 16.3738}
+      - {name: Stockholm, lon: 18.0686}
+  filter: >-
+    (e.attrs->>'is_capital')::boolean AND c.attrs->>'continent' = 'Europe' AND e.lon < :ref.lon
+
+- id: capital_south_of
+  family: map_surprises
+  kind: threshold
+  entity_type: city
+  universe: "(e.attrs->>'is_capital')::boolean"
+  difficulty: 2
+  text: "Name a capital city {ref.text}"
+  params:
+    ref:
+      - {text: "south of the Equator", lat: 0.0}
+      - {text: "further south than Rio de Janeiro", lat: -22.9068}
+  filter: "(e.attrs->>'is_capital')::boolean AND e.lat < :ref.lat"
+
+- id: capital_east_of
+  family: map_surprises
+  kind: threshold
+  entity_type: city
+  universe: "(e.attrs->>'is_capital')::boolean"
+  difficulty: 2
+  text: "Name {scope.text} capital city that lies east of {ref.name}"
+  params:
+    scope:
+      - {continent: South America, text: "a South American"}
+      - {continent: North America, text: "a North or Central American"}
+    ref:
+      - {name: New York, lon: -74.0060}
+      - {name: Miami, lon: -80.1918}
+  filter: >-
+    (e.attrs->>'is_capital')::boolean AND c.attrs->>'continent' = :scope.continent
+    AND e.lon > :ref.lon
+
+- id: capital_higher_than
+  family: map_surprises
+  kind: threshold
+  entity_type: city
+  universe: "(e.attrs->>'is_capital')::boolean"
+  difficulty: 3
+  text: "Name a capital city more than {m.text} above sea level"
+  params:
+    m:
+      - {value: 1000, text: "1,000 m (3,300 ft)"}
+      - {value: 1500, text: "1,500 m (4,900 ft)"}
+  filter: "(e.attrs->>'is_capital')::boolean AND (e.attrs->>'elevation_m')::float > :m.value"
+
+- id: city_big_not_capital
+  family: cities
+  kind: intersection
+  entity_type: city
+  difficulty: 3
+  text: "Name a city in {continent.name} with more than 1 million people that is not a capital"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: South America}
+      - {name: Europe}
+      - {name: North America, difficulty: 2}
+  filter: >-
+    c.attrs->>'continent' = :continent.name AND NOT (e.attrs->>'is_capital')::boolean
+    AND (e.attrs->>'population')::float > 1000000
+
+- id: city_continent_over
+  family: cities
+  kind: intersection
+  entity_type: city
+  difficulty: 1
+  text: "Name a city in {continent.name} with more than {n.text} people"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+      - {name: North America}
+      - {name: South America}
+    n:
+      - {value: 2000000, text: "2 million"}
+      - {value: 3000000, text: "3 million"}
+      - {value: 5000000, text: "5 million"}
+  filter: "c.attrs->>'continent' = :continent.name AND (e.attrs->>'population')::float > :n.value"

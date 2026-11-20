@@ -1,0 +1,129 @@
+# Flags (QUESTIONS.md §3.1). Answer type: country. Uses attrs.flag from flags_tags.yaml.
+#
+# Template format (all files in pipeline/templates/):
+#   id, family, kind, entity_type, difficulty (1-3), text (str.format with {param.field}),
+#   params: {name: [value, ...]} -- every combination is a candidate question; a value is a mapping
+#           whose fields are used in `text` and in `filter` as :name.field (bound, not interpolated).
+#           A value may carry `difficulty` to override the template's.
+#   filter: SQL boolean over `e` (the candidate entity) and `c` (e's country, LEFT JOINed).
+#   min_answers / max_answers: default 10 / 300.
+
+- id: flag_feature
+  family: flags
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose flag has {feature.text}"
+  params:
+    feature:
+      - {key: has_star, text: "a star"}
+      - {key: has_sun, text: "a sun"}
+      - {key: has_crescent, text: "a moon or crescent"}
+      - {key: has_cross, text: "a cross"}
+      - {key: has_animal, text: "an animal"}
+      - {key: has_bird, text: "a bird"}
+      - {key: has_plant, text: "a plant or tree"}
+      - {key: has_text, text: "writing on it", difficulty: 2}
+      - {key: has_weapon, text: "a weapon", difficulty: 2}
+  filter: "coalesce((e.attrs->'flag'->>:feature.key)::boolean, false)"
+
+- id: flag_two_colours
+  family: flags
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose flag has exactly two colours"
+  filter: "(e.attrs->'flag'->>'n_colors')::int = 2"
+
+- id: flag_contains_colours
+  family: flags
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose flag includes {colours.text}"
+  params:
+    colours:
+      - {json: '["green", "yellow", "red"]', text: "green, yellow and red"}
+      - {json: '["red", "white", "blue"]', text: "red, white and blue"}
+      - {json: '["black", "red", "green"]', text: "black, red and green"}
+      - {json: '["blue", "yellow"]', text: "both blue and yellow"}
+      - {json: '["green", "white"]', text: "both green and white"}
+      - {json: '["orange"]', text: "orange"}
+      - {json: '["red", "white"]', text: "both red and white"}
+      - {json: '["red", "yellow"]', text: "both red and yellow"}
+      - {json: '["blue", "white"]', text: "both blue and white"}
+      - {json: '["green", "red"]', text: "both green and red"}
+      - {json: '["black"]', text: "black"}
+      - {json: '["yellow"]', text: "yellow"}
+  filter: "e.attrs->'flag'->'colors' @> (:colours.json)::jsonb"
+
+- id: flag_without_colour
+  family: flags
+  kind: membership
+  entity_type: country
+  difficulty: 2
+  text: "Name a country whose flag has no {colour.text} in it"
+  params:
+    colour:
+      - {name: red, text: "red"}
+      - {name: white, text: "white"}
+  filter: >-
+    e.attrs ? 'flag'
+    AND NOT (e.attrs->'flag'->'colors' ? :colour.name)
+    AND NOT (e.attrs->'flag'->'colors_minor' ? :colour.name)
+
+- id: flag_stripes
+  family: flags
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose flag has {direction.text} stripes"
+  params:
+    direction:
+      - {key: horizontal, text: "horizontal"}
+      - {key: vertical, text: "vertical"}
+  filter: "e.attrs->'flag'->>'stripes' IN (:direction.key, 'both')"
+
+- id: flag_feature_in_continent
+  family: flags
+  kind: intersection
+  entity_type: country
+  difficulty: 2
+  text: "Name a country in {continent.name} whose flag has {feature.text}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+      - {name: North America}
+      - {name: South America}
+      - {name: Oceania}
+    feature:
+      - {key: has_star, text: "a star"}
+      - {key: has_cross, text: "a cross"}
+      - {key: has_crescent, text: "a moon or crescent"}
+      - {key: has_animal, text: "an animal"}
+  filter: >-
+    e.attrs->>'continent' = :continent.name
+    AND coalesce((e.attrs->'flag'->>:feature.key)::boolean, false)
+
+- id: flag_colours_in_continent
+  family: flags
+  kind: intersection
+  entity_type: country
+  difficulty: 2
+  text: "Name a country in {continent.name} whose flag includes {colours.text}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+      - {name: North America}
+    colours:
+      - {json: '["red", "white"]', text: "red and white"}
+      - {json: '["green"]', text: "green"}
+      - {json: '["blue"]', text: "blue"}
+      - {json: '["yellow"]', text: "yellow"}
+  filter: >-
+    e.attrs->>'continent' = :continent.name
+    AND e.attrs->'flag'->'colors' @> (:colours.json)::jsonb

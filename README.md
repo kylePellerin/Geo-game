@@ -54,3 +54,16 @@ make report       # data-quality report -> pipeline/out/quality_report.md
 Pass `ARGS=--refresh` to `make ingest` to re-download sources. A cold run takes ~30–40 min, mostly
 Wikidata SPARQL; cached runs take a couple of minutes. Inside the devcontainer the pipeline reaches
 Postgres at `host.docker.internal`; set `DATABASE_URL` to override.
+
+## Question engine (Phase 2)
+
+Templates live in `pipeline/templates/*.yaml` (format notes at the top of `flags.yaml`).
+
+```sh
+make generate GEN_ARGS="--dry-run --print"   # preview 30 days from tomorrow
+make generate                                # write them to daily_puzzles / puzzle_questions
+make generate FROM=2027-01-01 DAYS=90
+```
+
+Each puzzle question stores its frozen answer set plus generation stats (answer count, rarity
+category counts, per-answer category) in `puzzle_questions.stats`.

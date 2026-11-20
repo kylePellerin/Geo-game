@@ -20,12 +20,29 @@ This file defines *what* we ask. `PLAN.md` defines how it's built. Templates in
 Every generated question must pass all of these:
 
 - **Answer count:** 10–300 valid answers.
-- **Floor:** at least **5 valid answers in the top 20% of global popularity** for that entity type
-  (popularity = Wikipedia pageviews, already in `entities.popularity`). This guarantees well-known
-  answers exist.
-- **Tail:** at least **5 valid answers in the bottom 50% of popularity** (so rare answers exist).
+- **Rarity categories.** Each valid answer is placed in one of five categories by its popularity
+  percentile *within the question's pool* (see below):
+
+  | Category | Share of the pool |
+  |---|---|
+  | Famous | top 15% |
+  | Well known | next 25% |
+  | Familiar | next 30% |
+  | Obscure | next 28% |
+  | Rarest | bottom 2% |
+
+- **Floor:** at least **5 valid answers that are Famous or Well known**. This guarantees answers a
+  casual player knows.
+- **Tail:** at least **5 valid answers that are not Famous**, so rare answers exist to score big.
+- **Pool:** percentiles are measured against the entities a player would plausibly draw from, not
+  the whole type (every capital is "famous" among 31k cities). Defaults: all countries; cities with
+  100k+ people or capitals; large airports. Templates can set their own `universe` (capital
+  questions use all capitals). Popularity = `entities.popularity`.
 - **Wording:** plain English, no jargon in the prompt ("meets two other countries at a single point",
   not "tripoint"). Jargon can appear in the fact card.
+
+(Revised 2026-11-20: the original rule, ≥5 answers in the top 20% and ≥5 in the bottom 50% of the
+whole type, rejected "Name a country in Africa" and most capital questions.)
 
 ### Daily mix
 | Slot | Difficulty | Typical families |

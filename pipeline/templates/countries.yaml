@@ -1,0 +1,279 @@
+# Countries (QUESTIONS.md §3.2) and names (§3.9). Answer type: country.
+
+- id: country_in_continent
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country in {continent.name}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+      - {name: North America}
+      - {name: South America}
+      - {name: Oceania}
+  filter: "e.attrs->>'continent' = :continent.name"
+
+- id: country_in_subregion
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country in {region.text}"
+  params:
+    region:
+      - {name: Caribbean, text: "the Caribbean"}
+      - {name: Southern Europe, text: "Southern Europe"}
+      - {name: Northern Europe, text: "Northern Europe"}
+      - {name: Eastern Europe, text: "Eastern Europe"}
+      - {name: Western Europe, text: "Western Europe"}
+      - {name: Western Africa, text: "West Africa"}
+      - {name: Eastern Africa, text: "East Africa"}
+      - {name: South-Eastern Asia, text: "Southeast Asia"}
+      - {name: Western Asia, text: "the Middle East or Caucasus", difficulty: 2}
+  filter: "e.attrs->>'subregion' = :region.name"
+
+- id: country_landlocked
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a landlocked country (no coastline)"
+  filter: "(e.attrs->>'landlocked')::boolean"
+
+- id: country_landlocked_in_continent
+  family: countries
+  kind: intersection
+  entity_type: country
+  difficulty: 2
+  text: "Name a landlocked country in {continent.name}"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+  filter: "(e.attrs->>'landlocked')::boolean AND e.attrs->>'continent' = :continent.name"
+
+- id: country_island
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country that is an island or made up of islands"
+  filter: "(e.attrs->>'island_nation')::boolean"
+
+- id: country_population_over
+  family: countries
+  kind: threshold
+  entity_type: country
+  difficulty: 1
+  text: "Name a country with more than {n.text} people"
+  params:
+    n:
+      - {value: 50000000, text: "50 million"}
+      - {value: 100000000, text: "100 million"}
+  filter: "(e.attrs->>'population')::float > :n.value"
+
+- id: country_bigger_than
+  family: countries
+  kind: threshold
+  entity_type: country
+  difficulty: 1
+  text: "Name a country that is bigger than {ref.name} by area"
+  params:
+    ref:
+      - {name: France}
+      - {name: Egypt}
+      - {name: Mexico}
+      - {name: Germany}
+  filter: >-
+    (e.attrs->>'area_km2')::float > (SELECT (r.attrs->>'area_km2')::float FROM entities r
+                                     WHERE r.type = 'country' AND r.name = :ref.name)
+
+- id: country_drives_left
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country where people drive on the left"
+  filter: "e.attrs->>'drives_on' = 'left'"
+
+- id: country_official_language
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country where {language.name} is an official language"
+  params:
+    language:
+      - {name: English}
+      - {name: French}
+      - {name: Spanish}
+      - {name: Arabic}
+      - {name: Portuguese}
+  filter: "e.attrs->'languages' ? :language.name"
+
+- id: country_uses_euro
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country that uses the euro"
+  filter: "e.attrs->'currencies' ? 'EUR'"
+
+- id: country_capital_not_largest
+  family: countries
+  kind: relational
+  entity_type: country
+  difficulty: 3
+  text: "Name a country whose capital is not its biggest city"
+  filter: >-
+    EXISTS (SELECT 1 FROM entities big WHERE big.type = 'city' AND big.country_id = e.id
+            AND big.attrs->>'territory' IS NULL
+            AND (big.attrs->>'population')::float > (
+              SELECT max((cap.attrs->>'population')::float) FROM entities cap
+              WHERE cap.type = 'city' AND cap.country_id = e.id
+              AND (cap.attrs->>'is_capital')::boolean))
+
+- id: country_smaller_than
+  family: countries
+  kind: threshold
+  entity_type: country
+  difficulty: 3
+  text: "Name a country smaller than {area.text}"
+  params:
+    area:
+      - {value: 1000, text: "1,000 km² (about 400 square miles)"}
+      - {value: 30000, text: "30,000 km² (about the size of Belgium)", difficulty: 2}
+  filter: "(e.attrs->>'area_km2')::float < :area.value"
+
+# ---- names & language (§3.9)
+
+- id: country_starts_with
+  family: names
+  kind: name_twist
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose name starts with the letter {letter.l}"
+  params:
+    letter:
+      - {l: A}
+      - {l: B}
+      - {l: C}
+      - {l: D}
+      - {l: E}
+      - {l: F}
+      - {l: G}
+      - {l: H}
+      - {l: I}
+      - {l: J}
+      - {l: K}
+      - {l: L}
+      - {l: M}
+      - {l: N}
+      - {l: O}
+      - {l: P}
+      - {l: Q}
+      - {l: R}
+      - {l: S}
+      - {l: T}
+      - {l: U}
+      - {l: V}
+      - {l: W}
+      - {l: X}
+      - {l: Y}
+      - {l: Z}
+  filter: "upper(left(e.name, 1)) = :letter.l"
+
+- id: country_ends_with
+  family: names
+  kind: name_twist
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose name ends in {suffix.text}"
+  params:
+    suffix:
+      - {pattern: "%ia", text: '"-ia" (like Australia)'}
+      - {pattern: "%a", text: "the letter A"}
+      - {pattern: "%n", text: "the letter N"}
+      - {pattern: "%o", text: "the letter O"}
+  filter: "lower(e.name) LIKE :suffix.pattern"
+
+- id: country_name_words
+  family: names
+  kind: name_twist
+  entity_type: country
+  difficulty: 2
+  text: "Name a country whose name is more than one word"
+  filter: "e.name LIKE '% %'"
+
+- id: country_population_under
+  family: countries
+  kind: threshold
+  entity_type: country
+  difficulty: 3
+  text: "Name a country with fewer than {n.text} people"
+  params:
+    n:
+      - {value: 1000000, text: "1 million", difficulty: 2}
+      - {value: 200000, text: "200,000"}
+  filter: "(e.attrs->>'population')::float < :n.value"
+
+- id: country_capital_starts_with
+  family: names
+  kind: name_twist
+  entity_type: country
+  difficulty: 1
+  text: "Name a country whose capital city starts with the letter {letter.l}"
+  params:
+    letter:
+      - {l: A}
+      - {l: B}
+      - {l: C}
+      - {l: D}
+      - {l: E}
+      - {l: F}
+      - {l: G}
+      - {l: H}
+      - {l: I}
+      - {l: J}
+      - {l: K}
+      - {l: L}
+      - {l: M}
+      - {l: N}
+      - {l: O}
+      - {l: P}
+      - {l: Q}
+      - {l: R}
+      - {l: S}
+      - {l: T}
+      - {l: U}
+      - {l: V}
+      - {l: W}
+      - {l: X}
+      - {l: Y}
+      - {l: Z}
+  filter: >-
+    EXISTS (SELECT 1 FROM entities cap WHERE cap.type = 'city' AND cap.country_id = e.id
+            AND (cap.attrs->>'is_capital')::boolean AND upper(left(cap.name, 1)) = :letter.l)
+
+- id: country_continent_population
+  family: countries
+  kind: intersection
+  entity_type: country
+  difficulty: 1
+  text: "Name a country in {continent.name} with more than {n.text} people"
+  params:
+    continent:
+      - {name: Africa}
+      - {name: Asia}
+      - {name: Europe}
+      - {name: North America}
+      - {name: South America}
+    n:
+      - {value: 10000000, text: "10 million"}
+      - {value: 20000000, text: "20 million"}
+      - {value: 50000000, text: "50 million"}
+  filter: "e.attrs->>'continent' = :continent.name AND (e.attrs->>'population')::float > :n.value"
