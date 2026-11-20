@@ -113,7 +113,7 @@ VARIANTS = [
                     WHERE c.type = 'country'
                     -- still names the country after stripping ("New Taiwan dollar"): skip
                     AND NOT EXISTS (SELECT 1 FROM regexp_split_to_table(unaccent(c.name), '[^A-Za-z]+') w
-                                    WHERE length(w) >= 4 AND unaccent(bare) ~* left(w, 4))
+                                    WHERE length(w) >= 4 AND unaccent(bare) ~* ('\\m' || left(w, 3)))
                     AND jsonb_array_length(c.attrs->'currencies') = 1
                     AND (SELECT count(*) FROM entities o WHERE o.type = 'country'
                          AND o.attrs->'currencies' ? (c.attrs->'currencies'->>0)) = 1""",

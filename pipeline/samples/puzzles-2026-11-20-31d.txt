@@ -1,53 +1,53 @@
 
 === 2026-11-20 ===
-1. [names/d1] Name a country whose name ends in the letter A  (74 answers)
-     common: Russia, India, China | rare: Saint Lucia, Micronesia
+1. [countries/d1] Name a country in Asia with more than 10 million people  (31 answers)
+     common: Türkiye, Japan, India | rare: Uzbekistan, Tajikistan
 2. [flags/d1] Name a country whose flag uses only red, white and blue  (29 answers)
      common: France, United States, Russia | rare: Dominican Republic, Fiji
-3. [cities/d1] Name a capital city whose name starts with the letter M  (18 answers)
-     common: Moscow, Monaco, Madrid | rare: Mbabane, Majuro
+3. [cities/d1] Name a city in South Korea with more than 1 million people  (10 answers)
+     common: Seoul, Busan, Incheon | rare: Changwon, Goyang
 4. [matching/d2] Match each country to its currency  (4 pairs)
-     Paraguay -> guaraní (familiar) | Sri Lanka -> rupee (familiar) | New Zealand -> dollar (well_known) | Rwanda -> franc (obscure)
-5. [flags/d2] Name a country in Asia whose flag includes red and white  (31 answers)
-     common: Türkiye, Japan, Iran | rare: Timor-Leste, Palestine
-6. [countries/d3] Name a country whose capital is not its biggest city  (38 answers)
-     common: Türkiye, United States, India | rare: Saint Lucia, Palestine
+     New Zealand -> dollar (well_known) | South Sudan -> pound (obscure) | Paraguay -> guaraní (familiar) | Sri Lanka -> rupee (familiar)
+5. [flags/d2] Name a country in Europe whose flag includes red and white  (22 answers)
+     common: France, Russia, Italy | rare: Malta, Monaco
+6. [nature/d3] Name a country with a mountain higher than 6,000 m (19,700 ft)  (15 answers)
+     common: United States, India, China | rare: Tajikistan, Bhutan
 
 === 2026-11-21 ===
-1. [cities/d1] Name a city in Turkey with more than 200,000 people  (57 answers)
-     common: Istanbul, Ankara, İzmir | rare: Esenyurt, Zeytinburnu district
-2. [olympics/d1] Name a country that has hosted the Olympic Games  (23 answers)
+1. [olympics/d1] Name a country that has hosted the Olympic Games  (23 answers)
      common: France, United States, Russia | rare: South Korea, Bosnia and Herzegovina
-3. [flags/d1] Name a country whose flag is mostly white  (15 answers)
+2. [flags/d1] Name a country whose flag is mostly white  (15 answers)
      common: Japan, Finland, Poland | rare: Panama, Burundi
+3. [countries/d1] Name a country in Southeast Asia  (11 answers)
+     common: Vietnam, Indonesia, Thailand | rare: Brunei, Timor-Leste
 4. [matching/d2] Match each flag to its country  (4 pairs)
      Palau -> Palau (obscure) | Angola -> Angola (familiar) | Cyprus -> Cyprus (familiar) | Belarus -> Belarus (well_known)
-5. [borders/d2] Name a country that borders China or India  (14 answers)
-     common: Russia, Vietnam, Afghanistan | rare: Tajikistan, Bhutan
+5. [borders/d2] Name a country that borders Russia or China  (23 answers)
+     common: India, Finland, Norway | rare: Tajikistan, Bhutan
 6. [map_surprises/d3] Name a capital city more than 1,000 m (3,300 ft) above sea level  (33 answers)
      common: Bogotá, Mexico City, Tehran | rare: Mbabane, Gitega
 
 === 2026-11-22 ===
-1. [cities/d1] Name a city in Mexico with more than 200,000 people  (81 answers)
-     common: Mexico City, Guadalajara, Oaxaca | rare: Tlalnepantla, La Magdalena Contreras
-2. [flags/d1] Name a country whose flag includes both blue and yellow  (47 answers)
+1. [flags/d1] Name a country whose flag includes both blue and yellow  (47 answers)
      common: Ukraine, Brazil, Sweden | rare: Marshall Islands, Saint Lucia
-3. [names/d1] Name a country whose capital city starts with the letter A  (17 answers)
+2. [names/d1] Name a country whose capital city starts with the letter A  (17 answers)
      common: Türkiye, Greece, Netherlands | rare: Turkmenistan, Samoa
+3. [cities/d1] Name a capital city whose name starts with the letter S  (19 answers)
+     common: Singapore, Stockholm, Santiago | rare: Sri Jayawardenepura Kotte, South Tarawa
 4. [matching/d2] Match each capital city to its country  (4 pairs)
      Panama City -> Panama (familiar) | Gitega -> Burundi (rarest) | Thimphu -> Bhutan (familiar) | Tehran -> Iran (well_known)
-5. [nature/d2] Name a city on the Nile  (14 answers)
-     common: Cairo, Khartoum, Juba | rare: Maghagha, Tima
+5. [map_surprises/d2] Name a capital city south of the Equator  (44 answers)
+     common: Buenos Aires, Santiago, Jakarta | rare: Gitega, Yaren
 6. [borders/d3] Name a country that borders eight or more other countries  (11 answers)
      common: Türkiye, France, Russia | rare: Tanzania, Zambia
 
 === 2026-11-23 ===
 1. [olympics/d1] Name a city that has hosted the Olympic Games  (44 answers)
      common: Paris, London, Rome | rare: Lake Placid, Squaw Valley
-2. [countries/d1] Name a country with more than 100 million people  (16 answers)
-     common: United States, Russia, Japan | rare: Philippines, DR Congo
-3. [flags/d1] Name a country whose flag is mostly blue  (34 answers)
+2. [flags/d1] Name a country whose flag is mostly blue  (34 answers)
      common: Australia, Ukraine, Greece | rare: Saint Lucia, Micronesia
+3. [countries/d1] Name a country that is an island or made up of islands  (43 answers)
+     common: Japan, United Kingdom, Indonesia | rare: Saint Lucia, Micronesia
 4. [matching/d2] Match each city to its continent  (4 pairs)
      Heroica Puebla de Zaragoza -> North America (familiar) | Perth -> Oceania (well_known) | Touba -> Africa (obscure) | Incheon -> Asia (familiar)
 5. [ordering/d2] Order these countries by population, largest first  (5 items)
@@ -56,379 +56,379 @@
      common: Rio de Janeiro, Curitiba, São Paulo | rare: Guarulhos, Barquisimeto
 
 === 2026-11-24 ===
-1. [countries/d1] Name a country that is bigger than Germany by area  (61 answers)
-     common: Türkiye, France, United States | rare: Papua New Guinea, South Sudan
-2. [cities/d1] Name a city in Canada with more than 200,000 people  (28 answers)
-     common: Ottawa, Toronto, Montreal | rare: Oakville, Richmond Hill
-3. [flags/d1] Name a country whose flag has vertical stripes  (32 answers)
-     common: France, Italy, Mexico | rare: Barbados, Saint Vincent and the Grenadines
+1. [flags/d1] Name a country whose flag has exactly two colours  (44 answers)
+     common: Türkiye, Japan, Finland | rare: Palau, Micronesia
+2. [cities/d1] Name a capital city whose name starts with the letter M  (18 answers)
+     common: Moscow, Monaco, Madrid | rare: Mbabane, Majuro
+3. [names/d1] Name a country whose name starts with the letter C  (16 answers)
+     common: China, Canada, Chile | rare: Cape Verde, Comoros
 4. [matching/d2] Match each country to its internet domain  (4 pairs)
-     Yemen -> .ye (familiar) | Azerbaijan -> .az (well_known) | Costa Rica -> .cr (obscure) | San Marino -> .sm (familiar)
-5. [map_surprises/d2] Name a European capital city further north than London  (15 answers)
-     common: London, Moscow, Berlin | rare: Riga, Reykjavík
+     Moldova -> .md (familiar) | Azerbaijan -> .az (well_known) | Chad -> .td (familiar) | Niger -> .ne (obscure)
+5. [borders/d2] Name a country that borders Germany or Austria  (13 answers)
+     common: France, Italy, Poland | rare: Slovenia, Liechtenstein
 6. [nature/d3] Name a country whose highest point is lower than 500 m (1,600 ft)  (23 answers)
      common: Denmark, Belarus, Estonia | rare: Kiribati, Marshall Islands
 
 === 2026-11-25 ===
-1. [cities/d1] Name a city in Africa with more than 2 million people  (29 answers)
-     common: Cairo, Nairobi, Cape Town | rare: Port Harcourt, Mbuji-Mayi
-2. [flags/d1] Name a country whose flag has a star  (66 answers)
+1. [cities/d1] Name a city in India with more than 1 million people  (50 answers)
+     common: Mumbai, New Delhi, Kolkata | rare: Nabarangpur, Najafgarh
+2. [countries/d1] Name a country with more than 50 million people  (31 answers)
+     common: Türkiye, France, United States | rare: Myanmar, Uganda
+3. [flags/d1] Name a country whose flag has a star  (66 answers)
      common: Türkiye, United States, China | rare: Marshall Islands, Micronesia
-3. [countries/d1] Name a landlocked country (no coastline)  (45 answers)
-     common: Switzerland, Austria, Azerbaijan | rare: South Sudan, Lesotho
 4. [matching/d2] Match each city to a year it hosted the Olympics  (4 pairs)
      Seoul -> 1988 Summer (well_known) | Montreal -> 1976 Summer (familiar) | St. Louis -> 1904 Summer (obscure) | Vancouver -> 2010 Winter (familiar)
 5. [airports/d2] Name an airport in the United Kingdom  (40 answers)
      common: London Heathrow Airport, London Gatwick Airport, London Stansted Airport | rare: Islay Airport, Eday Airport
-6. [nature/d3] Name a country with a mountain higher than 6,000 m (19,700 ft)  (15 answers)
-     common: United States, India, China | rare: Tajikistan, Bhutan
-
-=== 2026-11-26 ===
-1. [countries/d1] Name a country that uses the euro  (28 answers)
-     common: France, Italy, Germany | rare: San Marino, Kosovo
-2. [cities/d1] Name a city in South Korea with more than 500,000 people  (19 answers)
-     common: Seoul, Busan, Incheon | rare: Anyang, Cheonan
-3. [flags/d1] Name a country whose flag is mostly green  (15 answers)
-     common: Brazil, Algeria, Pakistan | rare: São Tomé and Príncipe, Dominica
-4. [matching/d2] Match each country to its highest mountain  (4 pairs)
-     Lesotho -> Thabana Ntlenyana (rarest) | DR Congo -> Mount Stanley (familiar) | Kazakhstan -> Khan Tengri (well_known) | Sudan -> Deriba Caldera (familiar)
-5. [nature/d2] Name a country where more than half of the land is covered by forest  (52 answers)
-     common: Russia, Japan, Finland | rare: Saint Lucia, Micronesia
 6. [map_surprises/d3] Name a capital city more than 1,500 m (4,900 ft) above sea level  (16 answers)
      common: Bogotá, Mexico City, Nairobi | rare: Sucre, Gitega
 
-=== 2026-11-27 ===
-1. [countries/d1] Name a country in Asia with more than 50 million people  (13 answers)
-     common: Türkiye, Japan, India | rare: Philippines, Myanmar
-2. [flags/d1] Name a country whose flag uses only red and white  (16 answers)
-     common: Türkiye, Japan, Canada | rare: Bahrain, Tonga
-3. [cities/d1] Name a capital city in Africa  (56 answers)
-     common: Cairo, Nairobi, Cape Town | rare: Lobamba, Gitega
-4. [matching/d2] Match each country to what its people are called  (4 pairs)
-     Madagascar -> Malagasy (familiar) | Tajikistan -> Tadzhik (obscure) | Philippines -> Filipino (well_known) | Kyrgyzstan -> Kirghiz (familiar)
-5. [ordering/d2] Order these countries by the height of their highest mountain, highest first  (5 items)
-     Afghanistan (7,492 m) > Argentina (6,962 m) > United States (6,190 m) > Tanzania (5,895 m) > Mexico (5,636 m)
-6. [borders/d2] Name a country that borders exactly one other country (by land)  (17 answers)
-     common: Canada, United Kingdom, Portugal | rare: Dominican Republic, Lesotho
+=== 2026-11-26 ===
+1. [cities/d1] Name a city in Turkey with more than 500,000 people  (21 answers)
+     common: Istanbul, Ankara, İzmir | rare: Nilüfer, Esenyurt
+2. [countries/d1] Name a country where English is an official language  (59 answers)
+     common: United States, India, Australia | rare: Saint Lucia, Micronesia
+3. [flags/d1] Name a country whose flag is mostly green  (15 answers)
+     common: Brazil, Algeria, Pakistan | rare: São Tomé and Príncipe, Dominica
+4. [matching/d2] Match each country to its highest mountain  (4 pairs)
+     Tajikistan -> Ismoil Somoni Peak (obscure) | DR Congo -> Mount Stanley (familiar) | Kazakhstan -> Khan Tengri (well_known) | Lebanon -> Qurnat as Sawda' (familiar)
+5. [nature/d2] Name a country with a mountain higher than 4,000 m (13,100 ft)  (43 answers)
+     common: Türkiye, France, United States | rare: Papua New Guinea, Guatemala
+6. [airports/d2] Name a major international airport in Oceania  (38 answers)
+     common: Sydney Kingsford Smith International Airport, Melbourne Airport, Perth International Airport | rare: Nadzab Tomodachi International Airport, Toowoomba Wellcamp Airport
 
-=== 2026-11-28 ===
-1. [flags/d1] Name a country whose flag includes both green and white  (51 answers)
-     common: Italy, India, Mexico | rare: Saint Kitts and Nevis, Palestine
-2. [countries/d1] Name a country that is an island or made up of islands  (43 answers)
-     common: Japan, United Kingdom, Indonesia | rare: Saint Lucia, Micronesia
-3. [names/d1] Name a country whose name starts with the letter C  (16 answers)
-     common: China, Canada, Chile | rare: Cape Verde, Comoros
-4. [matching/d2] Match each country to its currency  (4 pairs)
-     Jamaica -> dollar (obscure) | United Arab Emirates -> dirham (familiar) | Hungary -> forint (well_known) | Mongolia -> tögrög (familiar)
-5. [flags/d2] Name a country in Africa whose flag has a star  (26 answers)
-     common: Algeria, Ethiopia, Morocco | rare: South Sudan, São Tomé and Príncipe
+=== 2026-11-27 ===
+1. [flags/d1] Name a country whose flag includes both green and red  (66 answers)
+     common: Italy, Mexico, Iran | rare: Saint Kitts and Nevis, Palestine
+2. [countries/d1] Name a country in Africa  (54 answers)
+     common: Egypt, Algeria, South Africa | rare: Seychelles, São Tomé and Príncipe
+3. [names/d1] Name a country whose name ends in the letter N  (25 answers)
+     common: Japan, Spain, Iran | rare: Gabon, South Sudan
+4. [matching/d2] Match each country to what its people are called  (4 pairs)
+     Myanmar -> Burmese (familiar) | Madagascar -> Malagasy (familiar) | Vanuatu -> Ni-Vanuatu (obscure) | Philippines -> Filipino (well_known)
+5. [ordering/d2] Order these cities by distance from Rio de Janeiro, nearest first  (5 items)
+     São Paulo (360 km) > Asunción (1,491 km) > Buenos Aires (1,967 km) > Santiago (2,925 km) > Caracas (4,522 km)
 6. [cities/d3] Name a city in Africa with more than 1 million people that is not a capital  (40 answers)
      common: Lagos, Johannesburg, Alexandria | rare: Pikine, Abobo
 
-=== 2026-11-29 ===
-1. [flags/d1] Name a country whose flag has exactly two colours  (44 answers)
-     common: Türkiye, Japan, Finland | rare: Palau, Micronesia
-2. [countries/d1] Name a country where Arabic is an official language  (25 answers)
-     common: Egypt, Israel, Algeria | rare: Comoros, Palestine
-3. [names/d1] Name a country whose name ends in the letter N  (25 answers)
-     common: Japan, Spain, Iran | rare: Gabon, South Sudan
-4. [matching/d2] Match each city to a year it hosted the Olympics  (4 pairs)
-     Munich -> 1972 Summer (familiar) | Sydney -> 2000 Summer (well_known) | Lake Placid -> 1980 Winter (obscure) | Turin -> 2006 Winter (familiar)
-5. [ordering/d2] Order these cities by distance from Tokyo, nearest first  (5 items)
-     Kyoto (365 km) > Seoul (1,153 km) > Taipei (2,100 km) > Guangzhou (2,904 km) > Hanoi (3,667 km)
-6. [map_surprises/d2] Name a European capital city further west than Stockholm  (25 answers)
-     common: Paris, London, Rome | rare: San Marino, Valletta
-
-=== 2026-11-30 ===
-1. [flags/d1] Name a country whose flag includes both red and yellow  (68 answers)
-     common: Germany, China, Spain | rare: Kiribati, Saint Kitts and Nevis
-2. [names/d1] Name a country whose name starts with the letter S  (26 answers)
-     common: Spain, Switzerland, Sweden | rare: Saint Vincent and the Grenadines, Saint Lucia
-3. [countries/d1] Name a country in Africa  (54 answers)
-     common: Egypt, Algeria, South Africa | rare: Seychelles, São Tomé and Príncipe
-4. [matching/d2] Match each country to its official language  (4 pairs)
-     Nigeria -> English (well_known) | Mali -> French (familiar) | Suriname -> Dutch (obscure) | Brunei -> Malay (familiar)
-5. [map_surprises/d2] Name a South American capital city that lies east of Miami  (13 answers)
-     common: Bogotá, Buenos Aires, Santiago | rare: Sucre, Georgetown
-6. [borders/d2] Name a country that borders Germany or Poland  (13 answers)
-     common: France, Russia, Ukraine | rare: Slovakia, Luxembourg
-
-=== 2026-12-01 ===
-1. [countries/d1] Name a country that is bigger than Egypt by area  (28 answers)
-     common: United States, Russia, India | rare: Mauritania, Niger
-2. [names/d1] Name a country whose capital city starts with the letter T  (11 answers)
-     common: Japan, Albania, Iran | rare: Bhutan, Honduras
-3. [flags/d1] Name a country whose flag has a bird  (15 answers)
-     common: Mexico, Egypt, Albania | rare: Dominica, Kiribati
-4. [matching/d2] Match each flag to its country  (4 pairs)
-     Guinea -> Guinea (obscure) | Jordan -> Jordan (familiar) | Kenya -> Kenya (well_known) | Montenegro -> Montenegro (familiar)
-5. [ordering/d2] Order these cities in Saudi Arabia by population, largest first  (5 items)
-     Riyadh (4,205,961 people) > Mecca (1,578,722 people) > Dammam (1,252,523 people) > Burayda (745,353 people) > Abha (210,886 people)
-6. [map_surprises/d2] Name a capital city further south than Rio de Janeiro  (14 answers)
-     common: Santiago, Buenos Aires, Cape Town | rare: Bloemfontein, Lobamba
-
-=== 2026-12-02 ===
+=== 2026-11-28 ===
 1. [cities/d1] Name a city in Asia with more than 3 million people  (96 answers)
      common: Singapore, Beijing, Hong Kong | rare: Wuzhong, Puyang Subdistrict
-2. [flags/d1] Name a country whose flag includes both red and white  (98 answers)
-     common: Türkiye, France, United States | rare: Saint Kitts and Nevis, Palestine
-3. [countries/d1] Name a country that has a king, queen or other monarch  (43 answers)
-     common: Japan, Australia, Canada | rare: Saint Vincent and the Grenadines, Saint Lucia
-4. [matching/d2] Match each capital city to its country  (4 pairs)
-     Bern -> Switzerland (well_known) | San José -> Costa Rica (obscure) | Amman -> Jordan (familiar) | Phnom Penh -> Cambodia (familiar)
-5. [ordering/d2] Order these countries by area, largest first  (5 items)
-     Mongolia (1,564,110 km²) > Peru (1,285,216 km²) > Egypt (1,002,450 km²) > Chile (756,102 km²) > Somalia (637,657 km²)
-6. [borders/d2] Name a country that borders France or Austria  (13 answers)
-     common: Italy, Germany, Spain | rare: Monaco, Liechtenstein
+2. [flags/d1] Name a country whose flag has horizontal stripes  (99 answers)
+     common: United States, Russia, Germany | rare: Kiribati, Palestine
+3. [countries/d1] Name a country that is bigger than Germany by area  (61 answers)
+     common: Türkiye, France, United States | rare: Papua New Guinea, South Sudan
+4. [matching/d2] Match each country to its currency  (4 pairs)
+     Jamaica -> dollar (obscure) | Burundi -> franc (familiar) | Hungary -> forint (well_known) | Tunisia -> dinar (familiar)
+5. [flags/d2] Name a country in Africa whose flag has a star  (26 answers)
+     common: Algeria, Ethiopia, Morocco | rare: South Sudan, São Tomé and Príncipe
+6. [map_surprises/d2] Name a European capital city further west than Berlin  (18 answers)
+     common: Paris, London, Rome | rare: Luxembourg, San Marino
 
-=== 2026-12-03 ===
+=== 2026-11-29 ===
+1. [cities/d1] Name a capital city in Africa  (56 answers)
+     common: Cairo, Nairobi, Cape Town | rare: Lobamba, Gitega
+2. [flags/d1] Name a country whose flag has a bird  (15 answers)
+     common: Mexico, Egypt, Albania | rare: Dominica, Kiribati
+3. [names/d1] Name a country whose capital city starts with the letter C  (10 answers)
+     common: Australia, Egypt, Denmark | rare: Equatorial Guinea, Saint Lucia
+4. [matching/d2] Match each city to a year it hosted the Olympics  (4 pairs)
+     Munich -> 1972 Summer (familiar) | Sydney -> 2000 Summer (well_known) | Lake Placid -> 1980 Winter (obscure) | Turin -> 2006 Winter (familiar)
+5. [ordering/d2] Order these Olympic host cities by when they last hosted, most recent first  (5 items)
+     Tokyo (2021) > London (2012) > Sydney (2000) > Moscow (1980) > Mexico City (1968)
+6. [countries/d3] Name a country whose capital is not its biggest city  (38 answers)
+     common: Türkiye, United States, India | rare: Saint Lucia, Palestine
+
+=== 2026-11-30 ===
+1. [flags/d1] Name a country whose flag has vertical stripes  (32 answers)
+     common: France, Italy, Mexico | rare: Barbados, Saint Vincent and the Grenadines
+2. [names/d1] Name a country whose name starts with the letter B  (17 answers)
+     common: Brazil, Belgium, Bulgaria | rare: Bahamas, Barbados
+3. [countries/d1] Name a country in South America  (12 answers)
+     common: Brazil, Chile, Argentina | rare: Suriname, Guyana
+4. [matching/d2] Match each country to its official language  (4 pairs)
+     Nigeria -> English (well_known) | Senegal -> French (familiar) | Cape Verde -> Portuguese (obscure) | Bhutan -> Dzongkha (familiar)
+5. [nature/d2] Name a city on the Seine  (71 answers)
+     common: Paris, Rouen, Le Havre | rare: Villeneuve-le-Roi, Limay
+6. [map_surprises/d2] Name a European capital city further north than New York  (41 answers)
+     common: Paris, London, Rome | rare: Pristina, San Marino
+
+=== 2026-12-01 ===
 1. [cities/d1] Name a city with more than 5 million people  (67 answers)
      common: London, Moscow, Singapore | rare: Weifang, Wuzhong
-2. [flags/d1] Name a country whose flag has a cross  (20 answers)
-     common: Finland, Australia, United Kingdom | rare: Tonga, Tuvalu
-3. [countries/d1] Name a country in Northern Europe  (10 answers)
-     common: Finland, United Kingdom, Norway | rare: Ireland, Latvia
+2. [countries/d1] Name a country in Europe  (46 answers)
+     common: France, Russia, Italy | rare: San Marino, Kosovo
+3. [flags/d1] Name a country whose flag includes both red and yellow  (68 answers)
+     common: Germany, China, Spain | rare: Kiribati, Saint Kitts and Nevis
+4. [matching/d2] Match each flag to its country  (4 pairs)
+     Gambia -> Gambia (obscure) | Jordan -> Jordan (familiar) | Mauritania -> Mauritania (familiar) | Kenya -> Kenya (well_known)
+5. [ordering/d2] Order these countries by area, largest first  (5 items)
+     Armenia (29,743 km²) > North Macedonia (25,713 km²) > Slovenia (20,273 km²) > Singapore (710 km²) > Malta (316 km²)
+6. [borders/d2] Name a country that borders France or Germany  (12 answers)
+     common: Italy, Spain, Poland | rare: Andorra, Monaco
+
+=== 2026-12-02 ===
+1. [cities/d1] Name a capital city in Europe  (46 answers)
+     common: Paris, London, Rome | rare: San Marino, Valletta
+2. [countries/d1] Name a country that has a king, queen or other monarch  (43 answers)
+     common: Japan, Australia, Canada | rare: Saint Vincent and the Grenadines, Saint Lucia
+3. [flags/d1] Name a country whose flag has a moon or crescent  (18 answers)
+     common: Türkiye, Algeria, Azerbaijan | rare: Comoros, Palau
+4. [matching/d2] Match each capital city to its country  (4 pairs)
+     Bern -> Switzerland (well_known) | San José -> Costa Rica (obscure) | Amman -> Jordan (familiar) | Phnom Penh -> Cambodia (familiar)
+5. [ordering/d2] Order these cities in Kenya by population, largest first  (5 items)
+     Nairobi (4,397,073 people) > Kakamega (1,867,579 people) > Mombasa (1,208,333 people) > Nakuru (570,674 people) > Kikuyu (323,881 people)
+6. [nature/d2] Name a city on the Dnieper  (26 answers)
+     common: Kyiv, Dnipro, Smolensk | rare: Dniprorudne, Verkhnodniprovsk
+
+=== 2026-12-03 ===
+1. [countries/d1] Name a landlocked country (no coastline)  (45 answers)
+     common: Switzerland, Austria, Azerbaijan | rare: South Sudan, Lesotho
+2. [cities/d1] Name a city in Mexico with more than 1 million people  (13 answers)
+     common: Mexico City, Guadalajara, Monterrey | rare: Ciudad Nezahualcóyotl, Ecatepec de Morelos
+3. [flags/d1] Name a country whose flag uses only green, white and red  (11 answers)
+     common: Italy, Mexico, Iran | rare: Burundi, Oman
 4. [matching/d2] Match each country to its internet domain  (4 pairs)
-     Saudi Arabia -> .sa (well_known) | Guyana -> .gy (obscure) | Burundi -> .bi (familiar) | Zimbabwe -> .zw (familiar)
-5. [flags/d2] Name a country in Asia whose flag includes green  (22 answers)
-     common: India, Iran, Afghanistan | rare: Maldives, Palestine
-6. [nature/d2] Name a city on the Loire  (19 answers)
-     common: Nantes, Saint-Étienne, Orléans | rare: Saint-Jean-de-Braye, Saint-Jean-de-la-Ruelle
+     Namibia -> .na (familiar) | Djibouti -> .dj (obscure) | Sudan -> .sd (well_known) | Monaco -> .mc (familiar)
+5. [flags/d2] Name a country in Europe whose flag is mostly red  (16 answers)
+     common: Spain, United Kingdom, Norway | rare: Monaco, Liechtenstein
+6. [map_surprises/d2] Name an Asian capital city further north than Tokyo  (15 answers)
+     common: Beijing, Tokyo, Seoul | rare: Ashgabat, Dushanbe
 
 === 2026-12-04 ===
-1. [flags/d1] Name a country whose flag has horizontal stripes  (99 answers)
-     common: United States, Russia, Germany | rare: Kiribati, Palestine
-2. [cities/d1] Name a capital city whose name starts with the letter B  (26 answers)
-     common: Berlin, Beijing, Bogotá | rare: Bloemfontein, Basseterre
-3. [countries/d1] Name a country where French is an official language  (31 answers)
-     common: France, Canada, Switzerland | rare: Seychelles, Vanuatu
+1. [cities/d1] Name a city in Japan with more than 200,000 people  (105 answers)
+     common: Tokyo, Kyoto, Osaka | rare: Sōka, Minato
+2. [names/d1] Name a country whose name ends in "-ia" (like Australia)  (39 answers)
+     common: Russia, India, Australia | rare: Saint Lucia, Micronesia
+3. [flags/d1] Name a country whose flag includes both green and white  (51 answers)
+     common: Italy, India, Mexico | rare: Saint Kitts and Nevis, Palestine
 4. [matching/d2] Match each city to its country  (4 pairs)
      Soweto -> South Africa (obscure) | Luoyang -> China (familiar) | Makassar -> Indonesia (familiar) | Patna -> India (well_known)
 5. [airports/d2] Name a major airport in Africa that is named after a person  (40 answers)
      common: Jomo Kenyatta International Airport, O.R. Tambo International Airport, Addis Ababa Bole International Airport | rare: Simon Mwansa Kapwepwe International Airport, Sir Abubakar Tafawa Balewa Bauchi State International Airport
-6. [map_surprises/d2] Name an Asian capital city further north than Los Angeles  (16 answers)
-     common: Beijing, Tokyo, Seoul | rare: Ashgabat, Dushanbe
+6. [map_surprises/d2] Name a South American capital city that lies east of New York  (10 answers)
+     common: Buenos Aires, Santiago, Brasília | rare: Sucre, Georgetown
 
 === 2026-12-05 ===
-1. [cities/d1] Name a city in Brazil with more than 500,000 people  (45 answers)
-     common: Rio de Janeiro, Curitiba, São Paulo | rare: Serra, Osasco
-2. [countries/d1] Name a country where people drive on the left  (54 answers)
-     common: Japan, India, Australia | rare: Saint Vincent and the Grenadines, Saint Lucia
-3. [flags/d1] Name a country whose flag uses only green, white and red  (11 answers)
-     common: Italy, Mexico, Iran | rare: Burundi, Oman
+1. [flags/d1] Name a country whose flag includes red, white and blue  (49 answers)
+     common: France, United States, Russia | rare: Tuvalu, Kiribati
+2. [countries/d1] Name a country in Africa with more than 20 million people  (23 answers)
+     common: Egypt, Algeria, South Africa | rare: Niger, Malawi
+3. [names/d1] Name a country whose capital city starts with the letter S  (19 answers)
+     common: Chile, Sweden, Bulgaria | rare: Grenada, Kiribati
 4. [matching/d2] Match each city to a year it hosted the Olympics  (4 pairs)
      Rio de Janeiro -> 2016 Summer (well_known) | St. Moritz -> 1948 Winter (obscure) | Oslo -> 1952 Winter (familiar) | Sarajevo -> 1984 Winter (familiar)
-5. [ordering/d2] Order these countries by the height of their highest mountain, highest first  (5 items)
-     DR Congo (5,109 m) > France (4,806 m) > Azerbaijan (4,466 m) > Malaysia (4,095 m) > Japan (3,777 m)
+5. [ordering/d2] Order these cities by distance from Johannesburg, nearest first  (5 items)
+     Gaborone (275 km) > Windhoek (1,181 km) > Antananarivo (2,156 km) > Kinshasa (2,784 km) > Libreville (3,566 km)
+6. [borders/d2] Name a country that borders Russia or Iran  (20 answers)
+     common: Türkiye, Finland, China | rare: North Korea, Turkmenistan
+
+=== 2026-12-06 ===
+1. [flags/d1] Name a country whose flag uses only red and white  (16 answers)
+     common: Türkiye, Japan, Canada | rare: Bahrain, Tonga
+2. [cities/d1] Name a capital city whose name starts with the letter T  (11 answers)
+     common: Tokyo, Tirana, Tehran | rare: Thimphu, Tegucigalpa
+3. [countries/d1] Name a country where French is an official language  (31 answers)
+     common: France, Canada, Switzerland | rare: Seychelles, Vanuatu
+4. [matching/d2] Match each capital city to its country  (4 pairs)
+     Manila -> Philippines (well_known) | Dakar -> Senegal (familiar) | Georgetown -> Guyana (obscure) | Kingston -> Jamaica (familiar)
+5. [flags/d2] Name a country in Asia whose flag includes red and white  (31 answers)
+     common: Türkiye, Japan, Iran | rare: Timor-Leste, Palestine
+6. [borders/d2] Name a country that borders China  (14 answers)
+     common: Russia, India, Vietnam | rare: Tajikistan, Bhutan
+
+=== 2026-12-07 ===
+1. [cities/d1] Name a city in Africa with more than 2 million people  (29 answers)
+     common: Cairo, Nairobi, Cape Town | rare: Port Harcourt, Mbuji-Mayi
+2. [names/d1] Name a country whose name starts with the letter S  (26 answers)
+     common: Spain, Switzerland, Sweden | rare: Saint Vincent and the Grenadines, Saint Lucia
+3. [flags/d1] Name a country whose flag has a sun  (17 answers)
+     common: Japan, Argentina, Kazakhstan | rare: Antigua and Barbuda, Kiribati
+4. [matching/d2] Match each city to its continent  (4 pairs)
+     Ciudad Nezahualcóyotl -> North America (obscure) | Ibadan -> Africa (familiar) | Guayaquil -> South America (familiar) | Chittagong -> Asia (well_known)
+5. [map_surprises/d2] Name a European capital city further north than Montreal  (28 answers)
+     common: Paris, London, Moscow | rare: Vaduz, Luxembourg
 6. [olympics/d2] Name a country that has hosted the Winter Olympics  (13 answers)
      common: France, United States, Russia | rare: South Korea, Bosnia and Herzegovina
 
-=== 2026-12-06 ===
-1. [names/d1] Name a country whose name ends in "-ia" (like Australia)  (39 answers)
-     common: Russia, India, Australia | rare: Saint Lucia, Micronesia
-2. [flags/d1] Name a country whose flag includes black  (45 answers)
-     common: Germany, Egypt, Albania | rare: Saint Lucia, Palestine
-3. [cities/d1] Name a capital city whose name starts with the letter S  (19 answers)
-     common: Singapore, Stockholm, Santiago | rare: Sri Jayawardenepura Kotte, South Tarawa
-4. [matching/d2] Match each capital city to its country  (4 pairs)
-     Manila -> Philippines (well_known) | Dakar -> Senegal (familiar) | Georgetown -> Guyana (obscure) | Kingston -> Jamaica (familiar)
-5. [flags/d2] Name a country in Europe whose flag includes blue  (24 answers)
-     common: France, Russia, Finland | rare: San Marino, Kosovo
-6. [airports/d2] Name a major international airport in South America  (86 answers)
-     common: Ezeiza International Airport - Ministro Pistarini, São Paulo/Guarulhos–Governor André Franco Montoro International Airport, Rio de Janeiro Galeão – Tom Jobim International Airport | rare: Alcantarí International Airport, La Araucanía International Airport
-
-=== 2026-12-07 ===
-1. [flags/d1] Name a country whose flag has a sun  (17 answers)
-     common: Japan, Argentina, Kazakhstan | rare: Antigua and Barbuda, Kiribati
-2. [countries/d1] Name a country in Southeast Asia  (11 answers)
-     common: Vietnam, Indonesia, Thailand | rare: Brunei, Timor-Leste
-3. [names/d1] Name a country whose capital city starts with the letter K  (11 answers)
-     common: Ukraine, Afghanistan, Malaysia | rare: Jamaica, Saint Vincent and the Grenadines
-4. [matching/d2] Match each city to its continent  (4 pairs)
-     Ciudad Nezahualcóyotl -> North America (obscure) | Ibadan -> Africa (familiar) | Guayaquil -> South America (familiar) | Chittagong -> Asia (well_known)
-5. [borders/d2] Name a country that borders China  (14 answers)
-     common: Russia, India, Vietnam | rare: Tajikistan, Bhutan
-6. [nature/d2] Name a city on the Elbe  (30 answers)
-     common: Hamburg, Dresden, Magdeburg | rare: Brandýs nad Labem-Stará Boleslav, Neratovice
-
 === 2026-12-08 ===
-1. [cities/d1] Name a city in Russia with more than 200,000 people  (91 answers)
-     common: Moscow, Saint Petersburg, Krasnodar | rare: Shakhty, Prokopyevsk
+1. [countries/d1] Name a country that is bigger than Egypt by area  (28 answers)
+     common: United States, Russia, India | rare: Mauritania, Niger
 2. [flags/d1] Name a country whose flag is mostly red  (47 answers)
      common: Türkiye, China, Canada | rare: Trinidad and Tobago, Kiribati
-3. [names/d1] Name a country whose capital city starts with the letter S  (19 answers)
-     common: Chile, Sweden, Bulgaria | rare: Grenada, Kiribati
+3. [names/d1] Name a country whose capital city starts with the letter K  (11 answers)
+     common: Ukraine, Afghanistan, Malaysia | rare: Jamaica, Saint Vincent and the Grenadines
 4. [matching/d2] Match each country to its currency  (4 pairs)
-     Guatemala -> quetzal (obscure) | Eritrea -> nakfa (familiar) | Laos -> Lao kip (familiar) | Bangladesh -> taka (well_known)
+     Guinea -> franc (obscure) | Eritrea -> nakfa (familiar) | Cuba -> peso (familiar) | Bangladesh -> taka (well_known)
 5. [ordering/d2] Order these countries by population, largest first  (5 items)
-     North Macedonia (1,820,909 people) > Estonia (1,366,475 people) > Luxembourg (686,970 people) > Andorra (82,904 people) > Vatican City (949 people)
+     Uruguay (3,384,688 people) > Albania (2,349,580 people) > Estonia (1,366,475 people) > Luxembourg (686,970 people) > Iceland (392,404 people)
 6. [nature/d2] Name a city on the Rhine  (29 answers)
      common: Strasbourg, Cologne, Vaduz | rare: Waldshut-Tiengen, Eltville am Rhein
 
 === 2026-12-09 ===
-1. [nature/d1] Name a country with a mountain higher than 3,000 m (9,800 ft)  (66 answers)
-     common: Türkiye, France, United States | rare: Lesotho, Dominican Republic
-2. [flags/d1] Name a country whose flag has a moon or crescent  (18 answers)
-     common: Türkiye, Algeria, Azerbaijan | rare: Comoros, Palau
-3. [countries/d1] Name a country in South America  (12 answers)
-     common: Brazil, Chile, Argentina | rare: Suriname, Guyana
+1. [cities/d1] Name a city in Asia with more than 5 million people  (49 answers)
+     common: Singapore, Beijing, Hong Kong | rare: Weifang, Wuzhong
+2. [flags/d1] Name a country whose flag has a cross  (20 answers)
+     common: Finland, Australia, United Kingdom | rare: Tonga, Tuvalu
+3. [names/d1] Name a country whose capital city starts with the letter T  (11 answers)
+     common: Japan, Albania, Iran | rare: Bhutan, Honduras
 4. [matching/d2] Match each city to a year it hosted the Olympics  (4 pairs)
      Sochi -> 2014 Winter (familiar) | Sapporo -> 1972 Winter (familiar) | Barcelona -> 1992 Summer (well_known) | Grenoble -> 1968 Winter (obscure)
 5. [ordering/d2] Order these Olympic host cities by when they last hosted, most recent first  (5 items)
-     Barcelona (1992) > Munich (1972) > Melbourne (1956) > Helsinki (1952) > Berlin (1936)
-6. [map_surprises/d2] Name a capital city south of the Equator  (44 answers)
-     common: Buenos Aires, Santiago, Jakarta | rare: Gitega, Yaren
+     Seoul (1988) > Munich (1972) > Stockholm (1956) > Berlin (1936) > Amsterdam (1928)
+6. [countries/d2] Name a landlocked country in Europe  (15 answers)
+     common: Switzerland, Austria, Belarus | rare: San Marino, Kosovo
 
 === 2026-12-10 ===
-1. [cities/d1] Name a capital city in Asia  (50 answers)
-     common: Singapore, Beijing, Tokyo | rare: Sri Jayawardenepura Kotte, Aden
-2. [flags/d1] Name a country whose flag includes red, white and blue  (49 answers)
-     common: France, United States, Russia | rare: Tuvalu, Kiribati
-3. [countries/d1] Name a country in Africa with more than 20 million people  (23 answers)
-     common: Egypt, Algeria, South Africa | rare: Niger, Malawi
-4. [matching/d2] Match each country to its highest mountain  (4 pairs)
-     Papua New Guinea -> Mount Wilhelm (obscure) | Slovenia -> Triglav (familiar) | Colombia -> Pico Simón Bolívar (well_known) | Andorra -> Coma Pedrosa (familiar)
-5. [ordering/d2] Order these countries by area, largest first  (5 items)
-     Taiwan (36,193 km²) > Armenia (29,743 km²) > Israel (20,770 km²) > Montenegro (13,812 km²) > Singapore (710 km²)
-6. [borders/d2] Name a country that borders Russia  (14 answers)
-     common: Finland, China, Norway | rare: Mongolia, North Korea
-
-=== 2026-12-11 ===
-1. [countries/d1] Name a country with more than 50 million people  (31 answers)
-     common: Türkiye, France, United States | rare: Myanmar, Uganda
-2. [flags/d1] Name a country whose flag includes yellow  (91 answers)
-     common: Germany, China, Spain | rare: Marshall Islands, Saint Lucia
-3. [names/d1] Name a country whose capital city starts with the letter M  (18 answers)
-     common: Russia, Mexico, Spain | rare: Lesotho, Marshall Islands
-4. [matching/d2] Match each city to its continent  (4 pairs)
-     Santiago de los Caballeros -> North America (obscure) | Barranquilla -> South America (familiar) | Ashgabat -> Asia (well_known) | Gqeberha -> Africa (familiar)
-5. [cities/d2] Name a city in Iran with more than 500,000 people  (15 answers)
-     common: Tehran, Isfahan, Tabriz | rare: Arak, Zahedan
-6. [flags/d2] Name a country in Europe whose flag has a cross  (10 answers)
-     common: Finland, United Kingdom, Norway | rare: Slovakia, Malta
-
-=== 2026-12-12 ===
-1. [flags/d1] Name a country whose flag includes both green and red  (66 answers)
-     common: Italy, Mexico, Iran | rare: Saint Kitts and Nevis, Palestine
-2. [cities/d1] Name a capital city whose name starts with the letter A  (17 answers)
-     common: Athens, Amsterdam, Ankara | rare: Apia, Aden
-3. [names/d1] Name a country whose name starts with the letter B  (17 answers)
-     common: Brazil, Belgium, Bulgaria | rare: Bahamas, Barbados
-4. [matching/d2] Match each city to its country  (4 pairs)
-     Biên Hòa -> Vietnam (familiar) | Changwon -> South Korea (familiar) | Zhanjiang -> China (obscure) | Hyderabad -> India (well_known)
-5. [ordering/d2] Order these cities by distance from Rio de Janeiro, nearest first  (5 items)
-     Curitiba (678 km) > Brasília (936 km) > Buenos Aires (1,967 km) > Paramaribo (3,455 km) > Bogotá (4,541 km)
-6. [map_surprises/d2] Name a European capital city further west than Vienna  (24 answers)
-     common: Paris, London, Rome | rare: San Marino, Valletta
-
-=== 2026-12-13 ===
-1. [names/d1] Name a country whose name starts with the letter A  (11 answers)
-     common: Australia, Albania, Algeria | rare: Angola, Antigua and Barbuda
-2. [flags/d1] Name a country whose flag has an animal  (20 answers)
-     common: Mexico, Spain, Egypt | rare: Dominica, Kiribati
+1. [cities/d1] Name a city in China with more than 500,000 people  (255 answers)
+     common: Beijing, Shanghai, Wuhan | rare: Wanxian, Puyang Subdistrict
+2. [flags/d1] Name a country whose flag includes black, red and green  (23 answers)
+     common: South Africa, Afghanistan, Iraq | rare: Saint Kitts and Nevis, Palestine
 3. [countries/d1] Name a country where Spanish is an official language  (21 answers)
      common: Mexico, Spain, Chile | rare: Belize, Dominican Republic
+4. [matching/d2] Match each country to its highest mountain  (4 pairs)
+     São Tomé and Príncipe -> Pico de São Tomé (rarest) | Somalia -> Shimbiris (familiar) | Colombia -> Pico Simón Bolívar (well_known) | Nepal -> Mount Everest (familiar)
+5. [ordering/d2] Order these countries by area, largest first  (5 items)
+     Bosnia and Herzegovina (51,209 km²) > Netherlands (41,850 km²) > Moldova (33,846 km²) > Israel (20,770 km²) > Cyprus (9,251 km²)
+6. [borders/d2] Name a country that borders Serbia or Hungary  (11 answers)
+     common: Ukraine, Austria, Bulgaria | rare: Montenegro, Kosovo
+
+=== 2026-12-11 ===
+1. [nature/d1] Name a country with a mountain higher than 3,000 m (9,800 ft)  (66 answers)
+     common: Türkiye, France, United States | rare: Lesotho, Dominican Republic
+2. [flags/d1] Name a country whose flag includes yellow  (91 answers)
+     common: Germany, China, Spain | rare: Marshall Islands, Saint Lucia
+3. [countries/d1] Name a country where people drive on the left  (54 answers)
+     common: Japan, India, Australia | rare: Saint Vincent and the Grenadines, Saint Lucia
+4. [matching/d2] Match each city to its continent  (4 pairs)
+     Santiago de los Caballeros -> North America (obscure) | Barranquilla -> South America (familiar) | Ashgabat -> Asia (well_known) | Gqeberha -> Africa (familiar)
+5. [borders/d2] Name a country that borders exactly one other country (by land)  (17 answers)
+     common: Canada, United Kingdom, Portugal | rare: Dominican Republic, Lesotho
+6. [flags/d2] Name a country whose flag has no white in it  (52 answers)
+     common: Germany, China, Ukraine | rare: Grenada, Saint Vincent and the Grenadines
+
+=== 2026-12-12 ===
+1. [flags/d1] Name a country whose flag includes both red and white  (98 answers)
+     common: Türkiye, France, United States | rare: Saint Kitts and Nevis, Palestine
+2. [cities/d1] Name a capital city in Asia  (50 answers)
+     common: Singapore, Beijing, Tokyo | rare: Sri Jayawardenepura Kotte, Aden
+3. [countries/d1] Name a country with more than 100 million people  (16 answers)
+     common: United States, Russia, Japan | rare: Philippines, DR Congo
+4. [matching/d2] Match each city to its country  (4 pairs)
+     Biên Hòa -> Vietnam (familiar) | Changwon -> South Korea (familiar) | Zhanjiang -> China (obscure) | Hyderabad -> India (well_known)
+5. [ordering/d2] Order these cities by distance from Tokyo, nearest first  (5 items)
+     Nagoya (259 km) > Kyoto (365 km) > Sapporo (833 km) > Shanghai (1,760 km) > Wuhan (2,427 km)
+6. [nature/d2] Name a city on the Nile  (14 answers)
+     common: Cairo, Khartoum, Juba | rare: Maghagha, Tima
+
+=== 2026-12-13 ===
+1. [cities/d1] Name a city in Asia with more than 2 million people  (135 answers)
+     common: Singapore, Beijing, Tokyo | rare: Ordos City, Puyang Subdistrict
+2. [countries/d1] Name a country in Northern Europe  (10 answers)
+     common: Finland, United Kingdom, Norway | rare: Ireland, Latvia
+3. [flags/d1] Name a country whose flag has an animal  (20 answers)
+     common: Mexico, Spain, Egypt | rare: Dominica, Kiribati
 4. [matching/d2] Match each flag to its country  (4 pairs)
-     Sri Lanka -> Sri Lanka (familiar) | Lebanon -> Lebanon (familiar) | South Korea -> South Korea (well_known) | Micronesia -> Micronesia (rarest)
+     Sri Lanka -> Sri Lanka (familiar) | Yemen -> Yemen (familiar) | Saudi Arabia -> Saudi Arabia (well_known) | Comoros -> Comoros (obscure)
 5. [flags/d2] Name a country whose flag has no red in it  (43 answers)
      common: India, Finland, Ukraine | rare: Saint Lucia, Micronesia
 6. [airports/d2] Name an airport in Australia  (116 answers)
      common: Sydney Kingsford Smith International Airport, Melbourne Airport, Perth International Airport | rare: Normanton Airport, Learmonth Airport
 
 === 2026-12-14 ===
-1. [cities/d1] Name a city in Japan with more than 200,000 people  (105 answers)
-     common: Tokyo, Kyoto, Osaka | rare: Sōka, Minato
-2. [flags/d1] Name a country whose flag includes both blue and white  (72 answers)
-     common: France, United States, Russia | rare: Saint Lucia, Micronesia
-3. [countries/d1] Name a country in Asia  (48 answers)
-     common: Türkiye, Japan, India | rare: Maldives, Palestine
+1. [cities/d1] Name a city in the United States with more than 200,000 people  (123 answers)
+     common: New York City, Washington, D.C., Los Angeles | rare: Arlington, Meads
+2. [flags/d1] Name a country whose flag includes black  (45 answers)
+     common: Germany, Egypt, Albania | rare: Saint Lucia, Palestine
+3. [names/d1] Name a country whose capital city starts with the letter M  (18 answers)
+     common: Russia, Mexico, Spain | rare: Lesotho, Marshall Islands
 4. [matching/d2] Match each country to its internet domain  (4 pairs)
-     Ivory Coast -> .ci (familiar) | El Salvador -> .sv (obscure) | Vatican City -> .va (well_known) | Paraguay -> .py (familiar)
-5. [names/d2] Name a country whose name is more than one word  (33 answers)
-     common: United States, United Kingdom, South Africa | rare: Saint Vincent and the Grenadines, Saint Lucia
-6. [olympics/d2] Name a city that has hosted the Winter Olympics  (22 answers)
-     common: Beijing, Oslo, Milan | rare: Lake Placid, Squaw Valley
+     Laos -> .la (familiar) | Kosovo -> .xk (obscure) | Uruguay -> .uy (familiar) | Romania -> .ro (well_known)
+5. [borders/d2] Name a country that borders China or India  (14 answers)
+     common: Russia, Vietnam, Afghanistan | rare: Tajikistan, Bhutan
+6. [nature/d2] Name a country where more than half of the land is covered by forest  (52 answers)
+     common: Russia, Japan, Finland | rare: Saint Lucia, Micronesia
 
 === 2026-12-15 ===
-1. [cities/d1] Name a city in the United Kingdom with more than 200,000 people  (39 answers)
-     common: London, Edinburgh, Manchester | rare: Barking, Archway district
-2. [countries/d1] Name a country that is bigger than France by area  (47 answers)
-     common: Türkiye, United States, Russia | rare: Niger, South Sudan
-3. [flags/d1] Name a country whose flag includes black, red and green  (23 answers)
-     common: South Africa, Afghanistan, Iraq | rare: Saint Kitts and Nevis, Palestine
+1. [cities/d1] Name a city in India with more than 200,000 people  (234 answers)
+     common: Mumbai, New Delhi, Kolkata | rare: Punasa, Narela
+2. [flags/d1] Name a country whose flag includes both blue and white  (72 answers)
+     common: France, United States, Russia | rare: Saint Lucia, Micronesia
+3. [countries/d1] Name a country that uses the euro  (28 answers)
+     common: France, Italy, Germany | rare: San Marino, Kosovo
 4. [matching/d2] Match each country to what its people are called  (4 pairs)
      San Marino -> Sammarinese (familiar) | Botswana -> Motswana (familiar) | Kiribati -> I-Kiribati (rarest) | Netherlands -> Dutch (well_known)
 5. [ordering/d2] Order these countries by the height of their highest mountain, highest first  (5 items)
-     Pakistan (8,611 m) > Kazakhstan (7,010 m) > Ecuador (6,263 m) > Russia (5,642 m) > Georgia (5,193 m)
-6. [map_surprises/d2] Name a South American capital city that lies east of New York  (10 answers)
-     common: Buenos Aires, Santiago, Brasília | rare: Sucre, Georgetown
+     India (8,586 m) > Afghanistan (7,492 m) > Kazakhstan (7,010 m) > Ecuador (6,263 m) > Canada (5,959 m)
+6. [airports/d2] Name an airport in Spain  (42 answers)
+     common: Adolfo Suárez Madrid–Barajas Airport, Melilla Airport, Josep Tarradellas Barcelona-El Prat Airport | rare: Córdoba Airport, Santiago-Rosalía de Castro Airport
 
 === 2026-12-16 ===
-1. [cities/d1] Name a city in Australia with more than 200,000 people  (15 answers)
-     common: Sydney, Canberra, Melbourne | rare: Logan City, Central Coast
-2. [countries/d1] Name a country in Africa with more than 10 million people  (32 answers)
-     common: Egypt, Algeria, South Africa | rare: Malawi, South Sudan
-3. [names/d1] Name a country whose capital city starts with the letter C  (10 answers)
-     common: Australia, Egypt, Denmark | rare: Equatorial Guinea, Saint Lucia
+1. [cities/d1] Name a capital city whose name starts with the letter B  (26 answers)
+     common: Berlin, Beijing, Bogotá | rare: Bloemfontein, Basseterre
+2. [countries/d1] Name a country where Arabic is an official language  (25 answers)
+     common: Egypt, Israel, Algeria | rare: Comoros, Palestine
+3. [names/d1] Name a country whose name starts with the letter A  (11 answers)
+     common: Australia, Albania, Algeria | rare: Angola, Antigua and Barbuda
 4. [matching/d2] Match each city to its continent  (4 pairs)
      Sokoto -> Africa (obscure) | Guadalajara -> North America (well_known) | Cali -> South America (familiar) | Sendai -> Asia (familiar)
-5. [map_surprises/d2] Name a European capital city further north than Toronto  (33 answers)
-     common: Paris, London, Moscow | rare: Luxembourg, San Marino
-6. [flags/d2] Name a country in Europe whose flag includes yellow  (18 answers)
-     common: Germany, Spain, Ukraine | rare: San Marino, Kosovo
+5. [map_surprises/d2] Name a European capital city further west than Stockholm  (25 answers)
+     common: Paris, London, Rome | rare: San Marino, Valletta
+6. [flags/d2] Name a country in Europe whose flag has a cross  (10 answers)
+     common: Finland, United Kingdom, Norway | rare: Slovakia, Malta
 
 === 2026-12-17 ===
-1. [cities/d1] Name a city in Asia with more than 2 million people  (135 answers)
-     common: Singapore, Beijing, Tokyo | rare: Ordos City, Puyang Subdistrict
-2. [names/d1] Name a country whose capital city starts with the letter B  (26 answers)
+1. [cities/d1] Name a city in Spain with more than 200,000 people  (29 answers)
+     common: Madrid, Barcelona, Seville | rare: Móstoles, Elche
+2. [countries/d1] Name a country in Asia with more than 20 million people  (25 answers)
+     common: Türkiye, Japan, India | rare: Sri Lanka, Uzbekistan
+3. [names/d1] Name a country whose capital city starts with the letter B  (26 answers)
      common: Germany, China, Switzerland | rare: Barbados, Saint Kitts and Nevis
-3. [countries/d1] Name a country where English is an official language  (59 answers)
-     common: United States, India, Australia | rare: Saint Lucia, Micronesia
 4. [matching/d2] Match each capital city to its country  (4 pairs)
      South Tarawa -> Kiribati (obscure) | Tallinn -> Estonia (well_known) | Podgorica -> Montenegro (familiar) | Abu Dhabi -> United Arab Emirates (familiar)
 5. [ordering/d2] Order these countries by population, largest first  (5 items)
-     Brazil (212,812,405 people) > Bangladesh (175,686,899 people) > Philippines (116,786,962 people) > Iran (92,417,681 people) > Italy (58,915,656 people)
-6. [nature/d2] Name a city on the Volga  (17 answers)
-     common: Kazan, Volgograd, Saratov | rare: Bor, Oktyabrsk
-
-=== 2026-12-18 ===
-1. [cities/d1] Name a city in Russia with more than 500,000 people  (37 answers)
-     common: Moscow, Saint Petersburg, Krasnodar | rare: Novokuznetsk, Naberezhnye Chelny
-2. [countries/d1] Name a country in Asia with more than 10 million people  (31 answers)
-     common: Türkiye, Japan, India | rare: Uzbekistan, Tajikistan
-3. [borders/d2] Name a country that borders France or Germany  (12 answers)
-     common: Italy, Spain, Poland | rare: Andorra, Monaco
-4. [matching/d2] Match each country to its currency  (4 pairs)
-     Zambia -> kwacha (familiar) | Kyrgyzstan -> som (familiar) | Armenia -> dram (well_known) | Comoros -> franc (obscure)
-5. [ordering/d2] Order these Olympic host cities by when they last hosted, most recent first  (5 items)
-     London (2012) > Athens (2004) > Sarajevo (1984) > Moscow (1980) > Montreal (1976)
+     Bangladesh (175,686,899 people) > Russia (143,513,328 people) > Egypt (118,365,995 people) > Vietnam (101,598,527 people) > Thailand (71,619,863 people)
 6. [nature/d2] Name a country whose highest point is lower than 1,000 m (3,300 ft)  (40 answers)
      common: Belgium, Netherlands, Denmark | rare: Saint Lucia, Micronesia
 
+=== 2026-12-18 ===
+1. [cities/d1] Name a city in Turkey with more than 200,000 people  (57 answers)
+     common: Istanbul, Ankara, İzmir | rare: Esenyurt, Zeytinburnu district
+2. [names/d1] Name a country whose name ends in the letter A  (74 answers)
+     common: Russia, India, China | rare: Saint Lucia, Micronesia
+3. [countries/d1] Name a country that is bigger than France by area  (47 answers)
+     common: Türkiye, United States, Russia | rare: Niger, South Sudan
+4. [matching/d2] Match each country to its currency  (4 pairs)
+     Kuwait -> dinar (familiar) | Ghana -> cedi (familiar) | Azerbaijan -> manat (well_known) | Malawi -> kwacha (obscure)
+5. [ordering/d2] Order these Olympic host cities by when they last hosted, most recent first  (5 items)
+     Vancouver (2010) > Athens (2004) > Atlanta (1996) > Rome (1960) > Oslo (1952)
+6. [borders/d2] Name a country that borders seven or more other countries  (19 answers)
+     common: Türkiye, France, Russia | rare: Zambia, Niger
+
 === 2026-12-19 ===
-1. [countries/d1] Name a country in Europe  (46 answers)
-     common: France, Russia, Italy | rare: San Marino, Kosovo
-2. [flags/d2] Name a country whose flag has no white in it  (52 answers)
-     common: Germany, China, Ukraine | rare: Grenada, Saint Vincent and the Grenadines
-3. [cities/d1] Name a city in South Korea with more than 1 million people  (10 answers)
-     common: Seoul, Busan, Incheon | rare: Changwon, Goyang
+1. [cities/d1] Name a city in Mexico with more than 500,000 people  (32 answers)
+     common: Mexico City, Guadalajara, Monterrey | rare: Tlalnepantla, Ecatepec de Morelos
+2. [countries/d1] Name a country in Africa with more than 10 million people  (32 answers)
+     common: Egypt, Algeria, South Africa | rare: Malawi, South Sudan
+3. [flags/d2] Name a country in Asia whose flag has a star  (17 answers)
+     common: Türkiye, China, Israel | rare: Turkmenistan, Timor-Leste
 4. [matching/d2] Match each country to its internet domain  (4 pairs)
-     Uzbekistan -> .uz (familiar) | Namibia -> .na (familiar) | Central African Republic -> .cf (obscure) | Lithuania -> .lt (well_known)
-5. [ordering/d2] Order these cities in Taiwan by population, largest first  (5 items)
-     New Taipei City (4,004,367 people) > Taichung (2,850,285 people) > Tainan (1,856,642 people) > Taoyuan (475,798 people) > Chiayi City (263,188 people)
-6. [airports/d2] Name a major airport in South America that is named after a person  (39 answers)
-     common: São Paulo/Guarulhos–Governor André Franco Montoro International Airport, Rio de Janeiro Galeão – Tom Jobim International Airport, Comodoro Arturo Merino Benítez International Airport | rare: Capitán FAP José A. Quiñones González International Airport, General Ulpiano Paez International Airport
+     Bahrain -> .bh (familiar) | Mozambique -> .mz (familiar) | Solomon Islands -> .sb (obscure) | Lithuania -> .lt (well_known)
+5. [ordering/d2] Order these cities by distance from Seoul, nearest first  (5 items)
+     Hiroshima (605 km) > Yokohama (1,156 km) > Taipei (1,484 km) > Manila (2,621 km) > Bangkok (3,722 km)
+6. [borders/d2] Name a country that borders Germany or Hungary  (15 answers)
+     common: France, Poland, Ukraine | rare: Luxembourg, Slovenia
 
 === 2026-12-20 ===
-1. [countries/d1] Name a country in Asia with more than 20 million people  (25 answers)
-     common: Türkiye, Japan, India | rare: Sri Lanka, Uzbekistan
-2. [names/d2] Name a country whose name in its own language starts with a different letter (like Germany: Deutschland)  (17 answers)
-     common: Germany, Spain, Albania | rare: Equatorial Guinea, Dominican Republic
-3. [cities/d1] Name a capital city whose name starts with the letter T  (11 answers)
-     common: Tokyo, Tirana, Tehran | rare: Thimphu, Tegucigalpa
+1. [countries/d1] Name a country in Asia  (48 answers)
+     common: Türkiye, Japan, India | rare: Maldives, Palestine
+2. [olympics/d2] Name a city that has hosted the Winter Olympics  (22 answers)
+     common: Beijing, Oslo, Milan | rare: Lake Placid, Squaw Valley
+3. [cities/d1] Name a capital city whose name starts with the letter A  (17 answers)
+     common: Athens, Amsterdam, Ankara | rare: Apia, Aden
 4. [matching/d2] Match each flag to its country  (4 pairs)
-     Palau -> Palau (obscure) | Iceland -> Iceland (well_known) | Uruguay -> Uruguay (familiar) | Cuba -> Cuba (familiar)
-5. [ordering/d2] Order these countries by area, largest first  (5 items)
-     United States (9,372,610 km²) > India (3,287,590 km²) > Argentina (2,780,400 km²) > Libya (1,759,540 km²) > Angola (1,246,700 km²)
-6. [map_surprises/d2] Name an Asian capital city further north than Tokyo  (15 answers)
-     common: Beijing, Tokyo, Seoul | rare: Ashgabat, Dushanbe
+     Saint Kitts and Nevis -> Saint Kitts and Nevis (obscure) | Iceland -> Iceland (well_known) | Montenegro -> Montenegro (familiar) | Benin -> Benin (familiar)
+5. [ordering/d2] Order these cities in Australia by population, largest first  (5 items)
+     Melbourne (5,435,590 people) > Perth (2,384,371 people) > Adelaide (1,469,163 people) > Newcastle (508,437 people) > Canberra (367,752 people)
+6. [names/d2] Name a country whose name is more than one word  (33 answers)
+     common: United States, United Kingdom, South Africa | rare: Saint Vincent and the Grenadines, Saint Lucia
