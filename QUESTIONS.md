@@ -150,13 +150,27 @@ Generated purely from coordinates.
 - Name a capital city with a desert climate (Köppen-Geiger 1 km map, CC BY 4.0)
 - Name an airport with a runway longer than 4,000 m
 
-### 3.12 Matching rounds (E–M) ⭐ visual switch-up
-Four items ↔ four items, the player pairs them. Not rarity-scored (see PLAN.md §1).
-- Match four **flags** to four **countries** (most common variant; flags are the daily favourite)
-- Match four **capital cities** to four **countries**
-- Match four **cities** to four **continents** (each continent used once)
-- Easy rounds use famous/well-known items; medium rounds include one or two familiar/obscure ones.
-- Avoid look-alike traps in easy rounds (Chad/Romania, Indonesia/Monaco); they're fine in medium.
+### 3.12 Matching rounds (E–M) ⭐ visual switch-up, every day
+Four items ↔ four items, the player pairs them. Not rarity-scored (see PLAN.md §1). One per day,
+in slot 3 (easy) or 4 (medium). Variants (`pipeline/geo_pipeline/matching.py`), flags most often:
+- **flags ↔ countries** · **capitals ↔ countries** · **big cities ↔ countries**
+- **cities ↔ continents** · **countries ↔ continents** (easy only)
+- **countries ↔ currencies** (bare names: "lira", "krone"; only currencies unique to one country)
+- **countries ↔ official language** and **countries ↔ what the people are called**: only
+  non-giveaways (Brazil–Portuguese, Netherlands–Dutch; not Poland–Polish)
+- **countries ↔ internet domain** (.jp, .de)
+- **countries ↔ highest mountain** (medium; peaks over 2,000 m)
+- **Olympic host cities ↔ year** (medium)
+- Easy rounds: 2 famous + 2 well-known items; medium: 2 famous/well-known + 2 rarer.
+- No round may contain two items that could match the same right-hand item (e.g. Stockholm,
+  which hosted in 1912 and 1956, never appears beside a 1956 Melbourne).
+- Look-alike flags (Chad/Romania, Indonesia/Monaco) never share an easy round.
+- A variant doesn't repeat within 4 days; an item doesn't repeat within 21 days.
+
+### 3.12b Attribute-based questions added 2026-11-20
+Monarchies, King Charles III realms, countries named after a person, native-name first letter,
+highest mountain over N m / highest point under N m, forest cover, Olympic host countries and
+cities (curated list in `pipeline/data/olympics.yaml`), cities on famous rivers.
 
 ### 3.13 Parked (too niche for the daily game — endless/expert mode only)
 - Sister cities, tripoints of specific minor countries, runway surfaces, volcano types,

@@ -68,6 +68,9 @@ class Template:
     max_answers: int = 300
     # Pool of entities a player draws answers from, for the floor/tail percentiles (SQL over e, c).
     universe: str | None = None
+    # Per-template override of TAIL_MIN, for questions whose answers are all famous by nature
+    # (Olympic hosts) where rarity among players still separates common and rare answers.
+    tail_min: int | None = None
 
     @property
     def universe_sql(self) -> str:
@@ -115,8 +118,9 @@ class Candidate:
             return f"too many answers ({n} > {t.max_answers})"
         if self.n_floor < FLOOR_MIN:
             return f"easy floor failed ({self.n_floor} famous/well-known answers < {FLOOR_MIN})"
-        if self.n_tail < TAIL_MIN:
-            return f"tail failed ({self.n_tail} non-famous answers < {TAIL_MIN})"
+        tail_min = TAIL_MIN if t.tail_min is None else t.tail_min
+        if self.n_tail < tail_min:
+            return f"tail failed ({self.n_tail} non-famous answers < {tail_min})"
         return None
 
 
@@ -180,6 +184,9 @@ def compile_filter(t: Template, params: dict[str, dict[str, Any]]) -> tuple[str,
     return sql, binds
 
 
+# City districts (part_of_city, see ingest/enrich.py) are never valid answers to city questions.
+DISTRICT_FILTER = "AND NOT (e.type = 'city' AND e.attrs ? 'part_of_city')"
+
 _universe_cache: dict[tuple[str, str], list[float]] = {}
 
 
@@ -190,7 +197,7 @@ def universe_popularity(cur, t: Template) -> list[float]:
         cur.execute(
             f"""SELECT coalesce(e.popularity, 0) FROM entities e
                 LEFT JOIN entities c ON c.id = e.country_id
-                WHERE e.type = %(etype)s AND ({t.universe_sql})""",
+                WHERE e.type = %(etype)s AND ({t.universe_sql}) {DISTRICT_FILTER}""",
             {"etype": t.entity_type},
         )
         _universe_cache[key] = sorted(r[0] for r in cur.fetchall())
@@ -207,7 +214,7 @@ def evaluate(cur, cand: Candidate) -> Candidate:
     cur.execute(
         f"""SELECT e.id, coalesce(e.popularity, 0) FROM entities e
             LEFT JOIN entities c ON c.id = e.country_id
-            WHERE e.type = %(etype)s AND ({sql}) ORDER BY e.id""",
+            WHERE e.type = %(etype)s AND ({sql}) {DISTRICT_FILTER} ORDER BY e.id""",
         binds,
     )
     rows = cur.fetchall()

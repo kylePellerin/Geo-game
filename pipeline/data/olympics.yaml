@@ -1,0 +1,66 @@
+# Olympic Games host cities (curated: Wikidata's host data mixes venues and cancelled Games).
+# iso2 = today's country. qid pins small towns that aren't in cities15000.
+# Games after the current year are stored as olympics_future, not as hosted.
+# Co-hosts are listed as separate entries with the same year.
+summer:
+  - {year: 1896, city: Athens, iso2: GR}
+  - {year: 1900, city: Paris, iso2: FR}
+  - {year: 1904, city: St. Louis, iso2: US}
+  - {year: 1908, city: London, iso2: GB}
+  - {year: 1912, city: Stockholm, iso2: SE}
+  - {year: 1920, city: Antwerp, iso2: BE}
+  - {year: 1924, city: Paris, iso2: FR}
+  - {year: 1928, city: Amsterdam, iso2: NL}
+  - {year: 1932, city: Los Angeles, iso2: US}
+  - {year: 1936, city: Berlin, iso2: DE}
+  - {year: 1948, city: London, iso2: GB}
+  - {year: 1952, city: Helsinki, iso2: FI}
+  - {year: 1956, city: Melbourne, iso2: AU}
+  - {year: 1956, city: Stockholm, iso2: SE}  # equestrian events
+  - {year: 1960, city: Rome, iso2: IT}
+  - {year: 1964, city: Tokyo, iso2: JP}
+  - {year: 1968, city: Mexico City, iso2: MX}
+  - {year: 1972, city: Munich, iso2: DE}
+  - {year: 1976, city: Montreal, iso2: CA}
+  - {year: 1980, city: Moscow, iso2: RU}
+  - {year: 1984, city: Los Angeles, iso2: US}
+  - {year: 1988, city: Seoul, iso2: KR}
+  - {year: 1992, city: Barcelona, iso2: ES}
+  - {year: 1996, city: Atlanta, iso2: US}
+  - {year: 2000, city: Sydney, iso2: AU}
+  - {year: 2004, city: Athens, iso2: GR}
+  - {year: 2008, city: Beijing, iso2: CN}
+  - {year: 2012, city: London, iso2: GB}
+  - {year: 2016, city: Rio de Janeiro, iso2: BR}
+  - {year: 2021, city: Tokyo, iso2: JP}  # the 2020 Games, held in 2021
+  - {year: 2024, city: Paris, iso2: FR}
+  - {year: 2028, city: Los Angeles, iso2: US}
+  - {year: 2032, city: Brisbane, iso2: AU}
+winter:
+  - {year: 1924, city: Chamonix, qid: Q83236, iso2: FR}
+  - {year: 1928, city: St. Moritz, qid: Q68986, iso2: CH}
+  - {year: 1932, city: Lake Placid, qid: Q192700, iso2: US}
+  - {year: 1936, city: Garmisch-Partenkirchen, iso2: DE}
+  - {year: 1948, city: St. Moritz, qid: Q68986, iso2: CH}
+  - {year: 1952, city: Oslo, iso2: "NO"}
+  - {year: 1956, city: Cortina d'Ampezzo, qid: Q41158, iso2: IT}
+  - {year: 1960, city: Squaw Valley, qid: Q822230, iso2: US}  # now Olympic Valley
+  - {year: 1964, city: Innsbruck, iso2: AT}
+  - {year: 1968, city: Grenoble, iso2: FR}
+  - {year: 1972, city: Sapporo, iso2: JP}
+  - {year: 1976, city: Innsbruck, iso2: AT}
+  - {year: 1980, city: Lake Placid, qid: Q192700, iso2: US}
+  - {year: 1984, city: Sarajevo, iso2: BA}
+  - {year: 1988, city: Calgary, iso2: CA}
+  - {year: 1992, city: Albertville, iso2: FR}
+  - {year: 1994, city: Lillehammer, iso2: "NO"}
+  - {year: 1998, city: Nagano, iso2: JP}
+  - {year: 2002, city: Salt Lake City, iso2: US}
+  - {year: 2006, city: Turin, iso2: IT}
+  - {year: 2010, city: Vancouver, iso2: CA}
+  - {year: 2014, city: Sochi, iso2: RU}
+  - {year: 2018, city: Pyeongchang, qid: Q188624, iso2: KR}
+  - {year: 2022, city: Beijing, iso2: CN}
+  - {year: 2026, city: Milan, iso2: IT}
+  - {year: 2026, city: Cortina d'Ampezzo, qid: Q41158, iso2: IT}
+  - {year: 2034, city: Salt Lake City, iso2: US}

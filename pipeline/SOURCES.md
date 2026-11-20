@@ -14,6 +14,9 @@ Raw downloads are cached in `pipeline/raw/` (gitignored); re-download with `--re
 | [OurAirports](https://ourairports.com/data/) `airports.csv` | Airports (large/medium, IATA, scheduled service), codes, elevation, municipality | Public domain | No (courtesy credit) | 2026-11-19 |
 | [Wikidata](https://www.wikidata.org/) SPARQL | QIDs, labels/aliases (18 languages), driving side (P1622), capitals (P36), island nations, GeoNames IDs (P1566), airport codes (P238/P239), passengers (P3872 + P585), named after (P138), population fallback (Taiwan, Vatican) | CC0 | No | 2026-11-19 |
 | [Wikimedia pageviews API](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/) | Popularity = log10(1 + enwiki user pageviews, Nov 2025 – Oct 2026) | CC0 (data); follow Wikimedia API etiquette | No | 2026-11-19 |
+| [World Bank API](https://data.worldbank.org/indicator/AG.LND.FRST.ZS) `AG.LND.FRST.ZS` | Forest cover % of land (latest year) | CC BY 4.0 | **Yes** | 2026-11-20 |
+| Wikidata (enrichment) | King Charles realms (P35), highest points (P610/P2044), countries named after people (P138), rivers cities are on (P206), city districts (P131), small Olympic host towns | CC0 | No | 2026-11-20 |
+| Curated lists (`pipeline/data/`) | Monarchies, Olympic host cities, flag feature drafts | Own work from public knowledge | No | 2026-11-20 |
 | [flag-icons](https://github.com/lipis/flag-icons) v7.6.0 (npm) | Flag SVGs for display and for measuring flag colours | MIT | Keep licence notice | 2026-11-19 |
 
 Notes:

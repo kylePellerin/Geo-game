@@ -33,6 +33,7 @@ ingest:
 	$(PY) geo_pipeline.ingest.countries $(ARGS)
 	$(PY) geo_pipeline.ingest.cities $(ARGS)
 	$(PY) geo_pipeline.ingest.airports $(ARGS)
+	$(PY) geo_pipeline.ingest.enrich $(ARGS)
 
 popularity:
 	$(PY) geo_pipeline.popularity

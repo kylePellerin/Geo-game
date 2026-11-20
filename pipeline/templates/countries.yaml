@@ -277,3 +277,105 @@
       - {value: 20000000, text: "20 million"}
       - {value: 50000000, text: "50 million"}
   filter: "e.attrs->>'continent' = :continent.name AND (e.attrs->>'population')::float > :n.value"
+
+# ---- added 2026-11-20 from the enrichment step (geo_pipeline/ingest/enrich.py)
+
+- id: country_monarchy
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country that has a king, queen or other monarch"
+  filter: "(e.attrs->>'monarchy')::boolean"
+
+- id: country_king_charles
+  family: countries
+  kind: membership
+  entity_type: country
+  difficulty: 2
+  text: "Name a country where King Charles III is head of state"
+  filter: "(e.attrs->>'king_charles')::boolean"
+
+- id: country_named_after_person
+  family: names
+  kind: membership
+  entity_type: country
+  difficulty: 2
+  text: "Name a country that is named after a person"
+  filter: "jsonb_array_length(coalesce(e.attrs->'named_after_person', '[]')) > 0"
+  min_answers: 10
+
+- id: country_native_name_differs
+  family: names
+  kind: name_twist
+  entity_type: country
+  difficulty: 2
+  text: "Name a country whose name in its own language starts with a different letter (like Germany: Deutschland)"
+  # every Latin-script native name starts with a different letter from the English name
+  filter: >-
+    EXISTS (SELECT 1 FROM jsonb_array_elements_text(e.attrs->'native_names') n
+            WHERE unaccent(n) ~ '^[A-Za-z]')
+    AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements_text(e.attrs->'native_names') n
+                    WHERE upper(left(unaccent(n), 1)) = upper(left(e.name, 1)))
+
+- id: country_mountain_over
+  family: nature
+  kind: threshold
+  entity_type: country
+  difficulty: 2
+  text: "Name a country with a mountain higher than {m.text}"
+  params:
+    m:
+      - {value: 3000, text: "3,000 m (9,800 ft)", difficulty: 1}
+      - {value: 4000, text: "4,000 m (13,100 ft)"}
+      - {value: 5000, text: "5,000 m (16,400 ft)"}
+      - {value: 6000, text: "6,000 m (19,700 ft)", difficulty: 3}
+  filter: "(e.attrs->'highest_point'->>'elevation_m')::float > :m.value"
+
+- id: country_flat
+  family: nature
+  kind: threshold
+  entity_type: country
+  difficulty: 3
+  text: "Name a country whose highest point is lower than {m.text}"
+  params:
+    m:
+      - {value: 500, text: "500 m (1,600 ft)"}
+      - {value: 1000, text: "1,000 m (3,300 ft)", difficulty: 2}
+  filter: "(e.attrs->'highest_point'->>'elevation_m')::float < :m.value"
+
+- id: country_forest
+  family: nature
+  kind: threshold
+  entity_type: country
+  difficulty: 2
+  text: "Name a country where {pct.text} of the land is covered by forest"
+  params:
+    pct:
+      - {value: 50, text: "more than half"}
+      - {value: 66, text: "more than two thirds", difficulty: 3}
+  filter: "(e.attrs->>'forest_pct')::float > :pct.value"
+
+- id: country_hosted_olympics
+  family: olympics
+  tail_min: 3  # every host is famous; rarity among players still differs
+  kind: membership
+  entity_type: country
+  difficulty: 1
+  text: "Name a country that has hosted the Olympic Games"
+  filter: "jsonb_array_length(coalesce(e.attrs->'olympics_hosted', '[]')) > 0"
+  min_answers: 10
+
+- id: country_hosted_olympics_season
+  family: olympics
+  tail_min: 3  # every host is famous; rarity among players still differs
+  kind: membership
+  entity_type: country
+  difficulty: 2
+  text: "Name a country that has hosted the {season.text} Olympics"
+  params:
+    season:
+      - {key: summer, text: "Summer"}
+      - {key: winter, text: "Winter"}
+  filter: >-
+    e.attrs->'olympics_hosted' @> jsonb_build_array(jsonb_build_object('season', (:season.key)::text))

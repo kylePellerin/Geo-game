@@ -103,7 +103,8 @@ def main(allow_unreviewed_flags: bool = False, prune: bool = False) -> None:
         source = ents["id"].map(pop["popularity_source"])
         ents["attrs"] = [
             json.dumps(
-                {**json.loads(a), "popularity_source": s,
+                {**json.loads(a),
+                 **({"popularity_source": s} if isinstance(s, str) else {}),
                  **({"views_12m": int(v)} if pd.notna(v) else {})},
                 ensure_ascii=False,
             )

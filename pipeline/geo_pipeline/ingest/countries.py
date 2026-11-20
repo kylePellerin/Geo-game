@@ -152,6 +152,14 @@ def main(refresh: bool = False) -> None:
             "currencies": sorted(c.get("currencies", {}).keys()),
             "currency_names": sorted(v["name"] for v in c.get("currencies", {}).values()),
             "flag_emoji": c.get("flag"),
+            "demonym": (c.get("demonyms", {}).get("eng") or {}).get("m"),
+            "tld": (c.get("tld") or [None])[0],
+            "calling_code": (
+                c["idd"]["root"] + c["idd"]["suffixes"][0]
+                if c.get("idd", {}).get("root") and len(c["idd"].get("suffixes", [])) == 1
+                else c.get("idd", {}).get("root")
+            ),
+            "native_names": sorted({t["common"] for t in c["name"].get("native", {}).values()}),
             "wikidata_sitelinks": wd["sitelinks"],
         }
         entities.append({

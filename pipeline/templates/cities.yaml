@@ -251,3 +251,61 @@
       - {value: 3000000, text: "3 million"}
       - {value: 5000000, text: "5 million"}
   filter: "c.attrs->>'continent' = :continent.name AND (e.attrs->>'population')::float > :n.value"
+
+# ---- added 2026-11-20 from the enrichment step
+
+- id: city_hosted_olympics
+  family: olympics
+  tail_min: 3  # every host is famous; rarity among players still differs
+  kind: membership
+  entity_type: city
+  universe: "(e.attrs->>'population')::float >= 100000 OR e.attrs ? 'olympics'"
+  difficulty: 1
+  text: "Name a city that has hosted the {season.text}"
+  params:
+    season:
+      - {key: null, text: "Olympic Games"}
+      - {key: summer, text: "Summer Olympics"}
+      - {key: winter, text: "Winter Olympics", difficulty: 2}
+  filter: >-
+    jsonb_array_length(coalesce(e.attrs->'olympics', '[]')) > 0
+    AND ((:season.key)::text IS NULL OR e.attrs->'olympics'
+         @> jsonb_build_array(jsonb_build_object('season', (:season.key)::text)))
+
+- id: city_on_river
+  family: nature
+  kind: relational
+  entity_type: city
+  difficulty: 2
+  text: "Name a city on the {river.text}"
+  params:
+    river:
+      - {name: Danube, text: "Danube"}
+      - {name: Rhine, text: "Rhine"}
+      - {name: Nile, text: "Nile"}
+      - {name: Volga, text: "Volga"}
+      - {name: Yangtze River, text: "Yangtze"}
+      - {name: Vistula, text: "Vistula"}
+      - {name: Dnieper, text: "Dnieper"}
+      - {name: Mississippi River, text: "Mississippi"}
+      - {name: Seine, text: "Seine"}
+      - {name: Ganges, text: "Ganges"}
+      - {name: Amazon River, text: "Amazon"}
+      - {name: Elbe, text: "Elbe"}
+      - {name: Rhône, text: "Rhône"}
+      - {name: Loire, text: "Loire"}
+      - {name: Po, text: "Po"}
+      - {name: Tigris, text: "Tigris"}
+      - {name: Euphrates, text: "Euphrates"}
+      - {name: Mekong, text: "Mekong"}
+      - {name: Indus River, text: "Indus"}
+      - {name: Niger River, text: "Niger river"}
+      - {name: Oder, text: "Oder"}
+      - {name: Main, text: "Main (in Germany)"}
+      - {name: Paraná River, text: "Paraná"}
+      - {name: St. Lawrence River, text: "St. Lawrence"}
+      - {name: Missouri River, text: "Missouri river"}
+      - {name: Ohio River, text: "Ohio river"}
+      - {name: Don, text: "Don (in Russia)"}
+  filter: >-
+    e.attrs->'rivers' ? :river.name

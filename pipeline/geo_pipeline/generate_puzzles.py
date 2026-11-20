@@ -40,7 +40,8 @@ FAMILY_MAX_PER_DAY = {"flags": 2}  # only on "second flag" days; otherwise 1
 FAMILY_MAX_PER_WEEK = {"airports": 2}  # airports kept occasional (2026-11-20)
 # Relative frequency of families in the daily mix (default 1.0).
 FAMILY_WEIGHT = {"flags": 1.5, "airports": 0.15}
-MATCH_PROBABILITY = 0.6  # days with a matching round
+MATCH_PROBABILITY = 1.0  # a matching round every day (2026-11-20)
+MATCH_VARIANT_GAP_DAYS = 4  # don't repeat a matching variant within this many days
 MATCH_FRESH_DAYS = 21  # don't reuse a matching item within this many days
 # If a slot has no candidate at its difficulty, borrow from these (logged as a fallback).
 FALLBACK_DIFFICULTY = {1: [2], 2: [1, 3], 3: [2]}
@@ -150,13 +151,20 @@ def weight(c: Candidate, day: date, history: list[Past], today_sets: list[list[s
 
 def pick_match(day: date, slot_diff: int, pools: dict, history: list[Past],
                rng: random.Random) -> MatchRound | None:
-    recent = set().union(*[p.answers for p in history if p.family == "matching"
-                           and (day - p.day).days < MATCH_FRESH_DAYS] or [set()])
-    # flags are the favourite variant: twice as likely as each of the others
-    variants = rng.choices(VARIANTS, weights=[2 if v.id == "match_flag_country" else 1
-                                              for v in VARIANTS], k=len(VARIANTS))
-    for v in dict.fromkeys(variants):
-        r = build_round(v, pools[v.id], slot_diff, rng, recent)
+    recent_items = set().union(*[p.answers for p in history if p.family == "matching"
+                                 and (day - p.day).days < MATCH_FRESH_DAYS] or [set()])
+    recent_variants = {p.template_id for p in history if p.family == "matching"
+                       and (day - p.day).days < MATCH_VARIANT_GAP_DAYS}
+    options = [v for v in VARIANTS if slot_diff in v.difficulties]
+    fresh = [v for v in options if v.id not in recent_variants] or options
+    # weighted order without replacement (flags most often)
+    order = []
+    while fresh:
+        v = rng.choices(fresh, weights=[x.weight for x in fresh])[0]
+        order.append(v)
+        fresh.remove(v)
+    for v in order:
+        r = build_round(v, pools[v.id], slot_diff, rng, recent_items)
         if r:
             return r
     return None

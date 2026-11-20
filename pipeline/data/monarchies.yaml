@@ -1,0 +1,15 @@
+# Sovereign states with a monarch as head of state (2026), by ISO alpha-2. Curated: Wikidata's
+# "basic form of government" data is too inconsistent to derive this reliably.
+# Commonwealth realms (King Charles III) are tagged separately from Wikidata P35.
+monarchies: [
+  # Europe
+  AD, BE, DK, LI, LU, MC, NL, "NO", ES, SE, GB, VA,
+  # Asia
+  BH, BT, BN, KH, JP, JO, KW, MY, OM, QA, SA, TH, AE,
+  # Africa
+  SZ, LS, MA,
+  # Oceania
+  TO, AU, NZ, PG, SB, TV,
+  # Americas (Commonwealth realms)
+  AG, BS, BZ, CA, GD, JM, KN, LC, VC,
+]

@@ -203,3 +203,22 @@ def test_flags_twice_only_on_second_flag_days() -> None:
     used = Counter({"flags": 1})
     assert not eligible(c, day, [], [], used, day_limits={"flags": 1})
     assert eligible(c, day, [], [], used, day_limits={"flags": 2})
+
+
+def test_match_round_rejects_ambiguous_pairs() -> None:
+    import random
+
+    from geo_pipeline.matching import VARIANTS, MatchItem, build_round
+
+    # Stockholm hosted 1912 and 1956; Melbourne 1956. Shown together, Stockholm would also
+    # match Melbourne's "1956", so they must never share a round.
+    pool = [MatchItem("sto", "1912 summer", "1912 Summer", "famous", "SE", frozenset(
+                {"1912 summer", "1956 summer"})),
+            MatchItem("mel", "1956 summer", "1956 Summer", "famous", "AU",
+                      frozenset({"1956 summer"})),
+            MatchItem("a", "1", "1", "famous", "A"), MatchItem("b", "2", "2", "well_known", "B"),
+            MatchItem("c", "3", "3", "well_known", "C"), MatchItem("d", "4", "4", "famous", "D")]
+    for seed in range(30):
+        r = build_round(VARIANTS[0], pool, 1, random.Random(seed), set())
+        assert r is not None
+        assert not {"sto", "mel"} <= set(r.answers)
