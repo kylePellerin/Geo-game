@@ -27,7 +27,7 @@ export function databaseUrl(): string {
 let pool: Pool | null = null;
 
 export function getPool(): Pool {
-  pool ??= new Pool({ connectionString: databaseUrl(), max: 10, connectionTimeoutMillis: 5000 });
+  pool ??= new Pool({ connectionString: databaseUrl(), max: 20, connectionTimeoutMillis: 5000 });
   return pool;
 }
 

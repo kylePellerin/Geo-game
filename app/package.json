@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run --passWithNoTests",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "finalize": "tsx scripts/finalize.ts",
+    "rebuild-stats": "tsx scripts/rebuild-stats.ts"
   },
   "dependencies": {
     "flag-icons": "^7.6.0",
@@ -25,6 +27,7 @@
     "@types/react-dom": "^19.0.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.3.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.8.0",
     "vite": "^8.0.0",
     "vitest": "^5.1.1"

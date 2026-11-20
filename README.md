@@ -74,3 +74,16 @@ category counts, per-answer category) in `puzzle_questions.stats`.
 `unrecognised`); see PLAN.md §5. Fixtures are in `pipeline/tests/match_cases.yaml` and run with
 `npm --prefix app test` (they need the local database; they're skipped if it isn't running).
 To fix a missed alias, add it to `pipeline/data/aliases_curated.yaml` and run `make load`.
+
+## Game API (Phase 4)
+
+```sh
+make dev                                  # http://localhost:3000, API under /api
+GAME_TODAY=2026-11-21 npm --prefix app run dev   # play a generated date (dev only)
+make finalize                             # nightly: finalise yesterday's scores
+make rebuild-stats                        # rebuild all player stats from answers
+```
+
+Endpoints: `GET /api/daily`, `POST /api/answer`, `GET /api/results/:date`, `GET /api/stats`,
+`POST /api/identity/reconcile`, `GET /api/flag/:date/:idx/:pos`. See PLAN.md §7. The 500-player
+simulation is `app/lib/game/game.integration.test.ts` (runs with `make test`, needs the DB).

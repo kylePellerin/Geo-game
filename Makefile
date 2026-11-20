@@ -1,4 +1,4 @@
-.PHONY: db db-down db-reset migrate psql test lint data ingest popularity flags load report generate
+.PHONY: db db-down db-reset migrate psql test lint data ingest popularity flags load report generate finalize rebuild-stats dev
 
 db:
 	docker compose up -d --wait db
@@ -55,3 +55,14 @@ data: ingest popularity load report
 DAYS ?= 30
 generate:
 	$(PY) geo_pipeline.generate_puzzles --days $(DAYS) $(if $(FROM),--from $(FROM)) $(GEN_ARGS)
+
+# ---- game (Phase 4)
+dev:
+	npm --prefix app run dev
+
+# Nightly: finalise yesterday's scores (DATE=YYYY-MM-DD for another finished day)
+finalize:
+	npm --prefix app run finalize -- $(DATE)
+
+rebuild-stats:
+	npm --prefix app run rebuild-stats

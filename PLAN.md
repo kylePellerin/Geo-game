@@ -238,6 +238,25 @@ Fixtures (`pipeline/tests/match_cases.yaml`): ≥100 cases incl. "Kathmandoo", "
 - Anonymous `player_id` (UUID, httpOnly cookie). Unique constraint enforces one answer per question.
 - Basic rate limiting on `/api/answer`.
 
+Implemented (Phase 4, 2026-11-20; `app/app/api/*`, logic in `app/lib/game/*`):
+- `GET /api/daily[?date=]` also returns the player's progress; future puzzles are 404. Matching
+  rounds return `left` (labels, or `/api/flag/<date>/<idx>/<pos>` images for flag rounds, so the
+  URL never names the country) and `right` labels in display order.
+- `POST /api/answer` takes `text` (+ `confirm_entity_id`) or, for matching rounds, `pairs`
+  (`pairs[leftPos] = rightPos`); returns `correct` and `solution` for matching rounds.
+- **Unrecognised input** gets 3 tries before it counts as a 0-point answer (decided 2026-11-20;
+  it can't leak answers since "unrecognised" says nothing about validity). Every unrecognised
+  input is logged to `unmatched_log`. "Did you mean" never uses up the question.
+- Share denominator = every player who answered the question (wrong answers included).
+- Prior: softmax over valid answers' popularity with T solved per question so the top answer
+  gets 30%.
+- `GET /api/stats` returns the player's stats; `POST /api/identity/reconcile` keeps whichever
+  id has history. Transfer codes / claim come with the stats page in Phase 7.
+- Nightly: `make finalize` (yesterday by default) writes final points/tiers next to instant
+  ones, totals `daily_scores` and refreshes stats. `make rebuild-stats` rebuilds every player's
+  stats from `answers`.
+- Rate limits: 30 answers/min per player, 120/min per IP (in memory, per server instance).
+
 ## 8. Phases
 
 **Phase 0 — Scaffold.** Repo layout (`/pipeline`, `/app`), Docker Compose for local Postgres with
