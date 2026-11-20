@@ -159,7 +159,12 @@
       - {name: green}
       - {name: white}
       - {name: yellow}
-  filter: "e.attrs->'flag'->>'dominant' = :colour.name"
+  # "mostly" = at least 40% of the flag's area and the biggest colour (ties within 2 points
+  # allowed, e.g. Ukraine). Excludes three-equal-stripe near-ties (Italy) and Finland (57% white).
+  filter: >-
+    (e.attrs->'flag'->'color_shares'->>:colour.name)::float >= 0.4
+    AND NOT EXISTS (SELECT 1 FROM jsonb_each_text(e.attrs->'flag'->'color_shares') s
+                    WHERE s.value::float > (e.attrs->'flag'->'color_shares'->>:colour.name)::float + 0.02)
 
 - id: flag_mostly_colour_in_continent
   family: flags
@@ -178,4 +183,7 @@
       - {name: blue}
       - {name: green}
   filter: >-
-    e.attrs->>'continent' = :continent.name AND e.attrs->'flag'->>'dominant' = :colour.name
+    e.attrs->>'continent' = :continent.name
+    AND (e.attrs->'flag'->'color_shares'->>:colour.name)::float >= 0.4
+    AND NOT EXISTS (SELECT 1 FROM jsonb_each_text(e.attrs->'flag'->'color_shares') s
+                    WHERE s.value::float > (e.attrs->'flag'->'color_shares'->>:colour.name)::float + 0.02)

@@ -14,3 +14,5 @@ app/coverage/
 *.py[cod]
 *.egg-info/
 *.tsbuildinfo
+app/test-results/
+app/playwright-report/

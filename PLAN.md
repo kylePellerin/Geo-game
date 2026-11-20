@@ -284,6 +284,36 @@ integration tests simulate 500 players and tiers distribute sensibly.
 **Phase 5 — Minimal UI.** Question → input → result → next; end screen with share text
 (e.g. emoji tiers). *Done when:* playable end to end locally.
 
+Implemented (Phase 5, 2026-11-20; `app/app/page.tsx`, components in `app/app/_components/`,
+pure helpers in `app/lib/client/`):
+- One page: progress strip (one emoji per question) → question → result → "Next question" →
+  end screen (per-question table, percentile once ≥2 players finished, share text + copy,
+  countdown to 00:00 UTC). Reload resumes at the first unanswered question, or the end screen.
+- Free text: "Did you mean X?" (plus the `alternative` when there is one) with confirm / retype;
+  unrecognised input shows tries left, or the wrong-type hint ("That looks like a city…").
+- Matching rounds: one dropdown per left item, each right item usable once (picking it again
+  moves it); the result marks each pair ✓/✗ with the right answer. Flag images by position only.
+- Identity: on load the client always calls `/api/identity/reconcile` with its localStorage copy
+  of the player id (one request; covers both "cookie missing" and "they disagree").
+- Browser test: `make e2e` (Playwright + Chromium) plays a whole day on a sandbox date, including
+  a flag matching round, an unrecognised try, reload/resume and revisiting an answer.
+
+Deviations from the plan (2026-11-20), for review:
+- **Questions can be answered in any order** (tap a number in the strip) and answered ones can be
+  revisited (the server returns the stored result for a repeat submit). Skipping a hard question
+  and coming back felt friendlier than a forced order; it can't leak anything.
+- **No timer.** §1 says optional; it penalises slow typists and phone players, the opposite of
+  the "playable by non-experts" goal. Revisit as an opt-in "speed mode" later.
+- **"How to play" panel** (collapsed) explains rarity scoring in plain words with the tier table,
+  since "rarer = more points" is the one non-obvious rule.
+- **Shares are worded as estimates** ("about 31% of players give this answer"): before many
+  people have played, the share is mostly the popularity prior (§6), not a head count.
+- **"Mostly <colour>" flags** now mean ≥40% of the flag and the biggest colour (2-point ties
+  allowed). The old `dominant` field broke three-stripe near-ties (Italy "mostly green").
+- **Cities with no Wikidata QID are never valid answers** (GeoNames-only rows are mostly city
+  districts, e.g. Shanghai's Minhang, plus junk like a 2,000,000-person "Amua Ichemidiara"). They
+  stay in the entity table, so the matcher still recognises them.
+
 **Phase 6 — More categories.** Add one at a time, easy families first: national symbols (needs the
 non-place entity types + relation qualifiers), landmarks/UNESCO, national parks, mountains,
 rivers/lakes, map-surprise templates, names & language, borders, then deep dives (volcanoes,
@@ -378,3 +408,15 @@ today's percentile.
   even the same template twice). The generator logs every fallback. Hard (slot 6) questions are
   the scarcest (13): deep-dive data (volcanoes, climate) is the real fix. New families from Phase 6
   (symbols, landmarks, nature) remove the family-reuse fallbacks.
+- [ ] **Flag colour shares come from flag-icons' 4:3 crops**, which distort non-4:3 flags (the
+  Union Jack measures 44% red, so the UK counts as "mostly red"). Measure on true-aspect SVGs
+  (Wikimedia) during the flag-tag review.
+- [ ] **Messy display names from Wikidata** ("Puyang Subdistrict", "Ordos City" as rare answers).
+  Strip Chinese admin suffixes (Subdistrict/Town/Jiedao) from display names (keep as aliases),
+  or exclude subdistrict-level items from city questions.
+- [ ] **UI ideas for Phase 7:** play past days read-only (`/api/daily?date=` already works),
+  remember the player's own matching picks so a revisit can show the wrong ones, fact card
+  after each answer (Phase 6 `entity_facts`), opt-in timer.
+- [ ] **Browser test gaps:** the "Did you mean" buttons and the wrong-type hint are covered by
+  the matcher fixtures and API tests but not clicked through in Playwright yet.
+

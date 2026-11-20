@@ -10,7 +10,8 @@
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit",
     "finalize": "tsx scripts/finalize.ts",
-    "rebuild-stats": "tsx scripts/rebuild-stats.ts"
+    "rebuild-stats": "tsx scripts/rebuild-stats.ts",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "flag-icons": "^7.6.0",
@@ -21,6 +22,7 @@
     "yaml": "^2.9.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.0.0",

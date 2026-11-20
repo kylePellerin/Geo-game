@@ -22,6 +22,11 @@ test:
 	python -m pytest -c pipeline/pyproject.toml pipeline/tests
 	npm --prefix app test
 
+# Browser test: plays a whole day in headless Chromium (needs `make db` + generated puzzles).
+# First time: cd app && npx playwright install --with-deps chromium
+e2e:
+	npm --prefix app run e2e
+
 lint:
 	python -m ruff check pipeline
 	npm --prefix app run lint

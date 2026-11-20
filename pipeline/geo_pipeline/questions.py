@@ -185,7 +185,12 @@ def compile_filter(t: Template, params: dict[str, dict[str, Any]]) -> tuple[str,
 
 
 # City districts (part_of_city, see ingest/enrich.py) are never valid answers to city questions.
-DISTRICT_FILTER = "AND NOT (e.type = 'city' AND e.attrs ? 'part_of_city')"
+# Cities that are districts of a bigger city, or that only exist in GeoNames (no Wikidata QID:
+# mostly districts like Shanghai's Minhang, plus junk like a 2,000,000-person "Amua Ichemidiara"),
+# are never valid answers. They stay in the entity table, so the matcher still recognises them.
+DISTRICT_FILTER = (
+    "AND NOT (e.type = 'city' AND (e.attrs ? 'part_of_city' OR e.id LIKE 'geonames:%%'))"
+)
 
 _universe_cache: dict[tuple[str, str], list[float]] = {}
 
