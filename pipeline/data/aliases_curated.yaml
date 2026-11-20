@@ -1,0 +1,25 @@
+# Curated aliases: everyday names missing from the sources. Loaded with kind "curated".
+# entity: display name, "Name|ISO2", or a QID. (Aliases added from the admin page later are
+# stored in the database with kind "manual" and survive reloads.)
+country:
+  United Kingdom: [Britain, "U.K."]
+  United States: ["U.S.", "U.S.A."]
+  United Arab Emirates: [Emirates]
+  DR Congo: [Congo-Kinshasa, Zaire]
+  Congo: [Congo-Brazzaville]
+city:
+  New York City: [NYC, "New York, NY", Big Apple]
+  Los Angeles: [LA, L.A.]
+  Rio de Janeiro: [Rio]
+  "Washington, D.C.": [DC, Washington]
+  Istanbul: [Constantinople]
+  Las Vegas: [Vegas]
+  Philadelphia: [Philly]
+  San Francisco: [SF]
+  Saint Petersburg: [Leningrad]
+  Ho Chi Minh City: [HCMC]
+  New Delhi: [Delhi]  # GeoNames merges Delhi into the New Delhi row (11M people)
+airport:
+  John F. Kennedy International Airport: [Kennedy, Kennedy Airport, Idlewild]
+  Charles de Gaulle International Airport: [Paris CDG, Roissy]
+  London Heathrow Airport: [London Heathrow]

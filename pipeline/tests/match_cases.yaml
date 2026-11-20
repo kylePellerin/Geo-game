@@ -1,0 +1,286 @@
+# Matcher fixtures (PLAN.md §5, Phase 3). Run by app/lib/matcher.test.ts against the local DB.
+#
+#   in:      what the player typed
+#   type:    the question's answer type
+#   expect:  the entity the matcher should land on: display name, "Name|ISO2" to disambiguate,
+#            or a QID
+#   valid:   the question's valid set (defaults to [expect]); lets us test real-but-wrong answers
+#   status:  expected status (default: valid when expect is in valid, else real_but_wrong);
+#            may be a list of acceptable statuses
+#   wrong:   true = a wrong answer; it must NEVER come back "valid" (anti-fishing / snapping)
+#   other_type: expected "that's a <type>, not a <type>" hint
+#
+# Done when (PLAN §8): >= 95% pass, and no `wrong: true` case returns valid.
+
+# ---------------- countries: official names, short names, aliases ----------------
+- {in: "France", type: country, expect: France}
+- {in: "france", type: country, expect: France}
+- {in: "  FRANCE  ", type: country, expect: France}
+- {in: "Côte d'Ivoire", type: country, expect: Ivory Coast}
+- {in: "Cote dIvoire", type: country, expect: Ivory Coast}
+- {in: "Ivory Coast", type: country, expect: Ivory Coast}
+- {in: "Czechia", type: country, expect: Czechia}
+- {in: "Czech Republic", type: country, expect: Czechia}
+- {in: "DRC", type: country, expect: DR Congo}
+- {in: "Democratic Republic of the Congo", type: country, expect: DR Congo}
+- {in: "Republic of the Congo", type: country, expect: Congo}
+- {in: "USA", type: country, expect: United States}
+- {in: "US", type: country, expect: United States}
+- {in: "United States of America", type: country, expect: United States}
+- {in: "America", type: country, expect: United States}
+- {in: "UK", type: country, expect: United Kingdom}
+- {in: "Great Britain", type: country, expect: United Kingdom}
+- {in: "Britain", type: country, expect: United Kingdom}
+- {in: "Holland", type: country, expect: Netherlands}
+- {in: "The Netherlands", type: country, expect: Netherlands}
+- {in: "Burma", type: country, expect: Myanmar}
+- {in: "Swaziland", type: country, expect: Eswatini}
+- {in: "East Timor", type: country, expect: Timor-Leste}
+- {in: "Turkey", type: country, expect: Türkiye}
+- {in: "Turkiye", type: country, expect: Türkiye}
+- {in: "South Korea", type: country, expect: South Korea}
+- {in: "North Korea", type: country, expect: North Korea}
+- {in: "Macedonia", type: country, expect: North Macedonia}
+- {in: "Cape Verde", type: country, expect: Cape Verde}
+- {in: "Cabo Verde", type: country, expect: Cape Verde}
+- {in: "Vatican", type: country, expect: Vatican City}
+- {in: "Bosnia", type: country, expect: Bosnia and Herzegovina}
+- {in: "Bosnia & Herzegovina", type: country, expect: Bosnia and Herzegovina}
+- {in: "UAE", type: country, expect: United Arab Emirates}
+- {in: "The Gambia", type: country, expect: Gambia}
+- {in: "Deutschland", type: country, expect: Germany}
+- {in: "España", type: country, expect: Spain}
+- {in: "Nippon", type: country, expect: Japan}
+- {in: "Persia", type: country, status: [real_but_wrong, valid, unrecognised], expect: Iran, note: "historic name; nice to have"}
+- {in: "Saint Lucia", type: country, expect: Saint Lucia}
+- {in: "St Lucia", type: country, expect: Saint Lucia}
+- {in: "St. Kitts and Nevis", type: country, expect: Saint Kitts and Nevis}
+- {in: "Sao Tome and Principe", type: country, expect: São Tomé and Príncipe}
+
+# ---------------- countries: typos ----------------
+- {in: "Austrlia", type: country, expect: Australia, status: [valid, did_you_mean], note: "1 edit from Australia and Austria: asking is right"}
+- {in: "Germny", type: country, expect: Germany}
+- {in: "Phillipines", type: country, expect: Philippines}
+- {in: "Philipines", type: country, expect: Philippines}
+- {in: "Columbia", type: country, expect: Colombia}
+- {in: "Argentinia", type: country, expect: Argentina}
+- {in: "Venezuala", type: country, expect: Venezuela}
+- {in: "Kazakstan", type: country, expect: Kazakhstan}
+- {in: "Kyrgystan", type: country, expect: Kyrgyzstan}
+- {in: "Uzbekhistan", type: country, expect: Uzbekistan}
+- {in: "Lichtenstein", type: country, expect: Liechtenstein}
+- {in: "Luxemburg", type: country, expect: Luxembourg}
+- {in: "Portugual", type: country, expect: Portugal}
+- {in: "Ukrane", type: country, expect: Ukraine}
+- {in: "Belgum", type: country, expect: Belgium}
+- {in: "Sweeden", type: country, expect: Sweden}
+- {in: "Denmakr", type: country, expect: Denmark}
+- {in: "Isreal", type: country, expect: Israel}
+- {in: "Tailand", type: country, expect: Thailand}
+- {in: "Bangledesh", type: country, expect: Bangladesh}
+- {in: "Afganistan", type: country, expect: Afghanistan}
+- {in: "Mongolai", type: country, expect: Mongolia}
+- {in: "Malysia", type: country, expect: Malaysia}
+- {in: "Singapure", type: country, expect: Singapore}
+- {in: "Morrocco", type: country, expect: Morocco}
+- {in: "Camaroon", type: country, expect: Cameroon}
+- {in: "Zimbabwae", type: country, expect: Zimbabwe}
+- {in: "Nicaragau", type: country, expect: Nicaragua}
+- {in: "Nigera", type: country, expect: Nigeria, status: [valid, did_you_mean]}
+
+# ---------------- countries: real but wrong / anti-snapping ----------------
+# A typo of a wrong answer must land on the wrong answer, not on a similar valid one.
+- {in: "Austrlia", type: country, expect: Australia, valid: [Austria, Germany], wrong: true, status: [real_but_wrong, did_you_mean]}
+- {in: "Austria", type: country, expect: Austria, valid: [Australia], wrong: true}
+- {in: "Australia", type: country, expect: Australia, valid: [Austria], wrong: true}
+- {in: "Iran", type: country, expect: Iran, valid: [Iraq], wrong: true}
+- {in: "Iraq", type: country, expect: Iraq, valid: [Iran], wrong: true}
+- {in: "Niger", type: country, expect: Niger, valid: [Nigeria], wrong: true}
+- {in: "Nigeria", type: country, expect: Nigeria, valid: [Niger], wrong: true}
+- {in: "Guinea", type: country, expect: Guinea, valid: [Guinea-Bissau, Equatorial Guinea], wrong: true}
+- {in: "Slovenia", type: country, expect: Slovenia, valid: [Slovakia], wrong: true}
+- {in: "Slovenija", type: country, expect: Slovenia, valid: [Slovakia], wrong: true, status: [real_but_wrong, did_you_mean]}
+- {in: "Dominica", type: country, expect: Dominica, valid: [Dominican Republic], wrong: true}
+- {in: "Sudan", type: country, expect: Sudan, valid: [South Sudan], wrong: true}
+- {in: "Mali", type: country, expect: Mali, valid: [Malawi], wrong: true}
+- {in: "Malawi", type: country, expect: Malawi, valid: [Mali], wrong: true}
+- {in: "Gambia", type: country, expect: Gambia, valid: [Zambia], wrong: true}
+- {in: "Zambia", type: country, expect: Zambia, valid: [Gambia], wrong: true}
+- {in: "Mauritius", type: country, expect: Mauritius, valid: [Mauritania], wrong: true}
+- {in: "Mauritanya", type: country, expect: Mauritania, valid: [Mauritius], wrong: true}
+- {in: "Latvia", type: country, expect: Latvia, valid: [Lithuania], wrong: true}
+- {in: "Swizerland", type: country, expect: Switzerland, valid: [Sweden], wrong: true}
+- {in: "Congo", type: country, expect: Congo, valid: [DR Congo], wrong: true}
+- {in: "Nigr", type: country, valid: [Niger], wrong: true, status: unrecognised, note: "<=4 chars: exact only"}
+- {in: "Chad", type: country, expect: Chad, valid: [Chile], wrong: true}
+
+# ---------------- countries: junk and cross-type ----------------
+- {in: "asdfgh", type: country, status: unrecognised, wrong: true}
+- {in: "", type: country, status: unrecognised, wrong: true}
+- {in: "???", type: country, status: unrecognised, wrong: true}
+- {in: "Atlantis", type: country, status: unrecognised, wrong: true}
+- {in: "Europe", type: country, status: unrecognised, wrong: true}
+- {in: "Paris", type: country, status: unrecognised, other_type: city, wrong: true}
+- {in: "Tokyo", type: country, status: unrecognised, other_type: city, wrong: true}
+- {in: "England", type: country, status: [unrecognised, real_but_wrong, did_you_mean], wrong: true, note: "not a sovereign country in our data"}
+
+# ---------------- cities ----------------
+- {in: "Kathmandu", type: city, expect: Kathmandu}
+- {in: "Kathmandoo", type: city, expect: Kathmandu}
+- {in: "Katmandu", type: city, expect: Kathmandu}
+- {in: "Reykjavik", type: city, expect: Reykjavík}
+- {in: "Reykavik", type: city, expect: Reykjavík}
+- {in: "Bombay", type: city, expect: Mumbai}
+- {in: "Peking", type: city, expect: Beijing}
+- {in: "Saigon", type: city, expect: Ho Chi Minh City}
+- {in: "Ho Chi Minh", type: city, expect: Ho Chi Minh City}
+- {in: "Constantinople", type: city, expect: Istanbul, status: [valid, unrecognised]}
+- {in: "New York", type: city, expect: New York City}
+- {in: "NYC", type: city, expect: New York City}
+- {in: "LA", type: city, expect: Los Angeles, status: [valid, unrecognised]}
+- {in: "St Petersburg", type: city, expect: Saint Petersburg}
+- {in: "Saint Petersburg", type: city, expect: Saint Petersburg}
+- {in: "Washington DC", type: city, expect: "Washington, D.C."}
+- {in: "Washington D.C.", type: city, expect: "Washington, D.C."}
+- {in: "Mexico City", type: city, expect: Mexico City}
+- {in: "Kuwait City", type: city, expect: Kuwait City}
+- {in: "Kuwait", type: city, expect: Kuwait City}
+- {in: "Quebec", type: city, expect: Quebec City}
+- {in: "Rio", type: city, expect: Rio de Janeiro, status: [valid, unrecognised]}
+- {in: "Sao Paulo", type: city, expect: São Paulo}
+- {in: "Zürich", type: city, expect: Zurich}
+- {in: "Munchen", type: city, expect: Munich}
+- {in: "München", type: city, expect: Munich}
+- {in: "Koln", type: city, expect: Cologne}
+- {in: "Köln", type: city, expect: Cologne}
+- {in: "Firenze", type: city, expect: Florence}
+- {in: "Kiev", type: city, expect: Kyiv}
+- {in: "Calcutta", type: city, expect: Kolkata}
+- {in: "Madras", type: city, expect: Chennai}
+- {in: "Rangoon", type: city, expect: Yangon}
+- {in: "Lisboa", type: city, expect: Lisbon}
+- {in: "Wien", type: city, expect: Vienna}
+- {in: "Praha", type: city, expect: Prague}
+- {in: "Bruxelles", type: city, expect: Brussels}
+- {in: "Den Haag", type: city, expect: The Hague}
+- {in: "The Hague", type: city, expect: The Hague}
+- {in: "Amsterdan", type: city, expect: Amsterdam}
+- {in: "Barcelonna", type: city, expect: Barcelona}
+- {in: "Edinburg", type: city, expect: Edinburgh, status: [valid, did_you_mean], note: "Edinburg TX exists: ask"}
+- {in: "Pittsburg", type: city, expect: Pittsburgh, status: [valid, did_you_mean], note: "Pittsburg KS/CA exist: ask"}
+- {in: "Copenhagan", type: city, expect: Copenhagen}
+- {in: "Buenos Aries", type: city, expect: Buenos Aires}
+- {in: "Montréal", type: city, expect: Montreal}
+- {in: "Addis Abeba", type: city, expect: Addis Ababa}
+- {in: "Ulan Bator", type: city, expect: Ulaanbaatar}
+- {in: "Tiblisi", type: city, expect: Tbilisi}
+- {in: "Nairobbi", type: city, expect: Nairobi}
+- {in: "Canbera", type: city, expect: Canberra}
+# namesakes: valid if any entity with that name is valid (Springfield rule)
+- {in: "Birmingham", type: city, expect: "Birmingham|US", valid: ["Birmingham|US"]}
+- {in: "Birmingham", type: city, expect: "Birmingham|GB", valid: ["Birmingham|GB"]}
+- {in: "Rome", type: city, expect: "Rome|IT", valid: ["Rome|IT"]}
+# districts are real places but not valid city answers
+- {in: "Brooklyn", type: city, expect: Brooklyn, valid: [New York City], wrong: true}
+# wrong cities don't snap to valid ones
+- {in: "Vienna", type: city, expect: Vienna, valid: [Venice], wrong: true}
+- {in: "Sidney", type: city, expect: Sydney, valid: [Sidon], wrong: true, status: [real_but_wrong, did_you_mean]}
+- {in: "Geneva", type: city, expect: Geneva, valid: [Genoa], wrong: true}
+- {in: "France", type: city, status: unrecognised, other_type: country, wrong: true}
+- {in: "zzzzzzzz", type: city, status: unrecognised, wrong: true}
+
+# ---------------- airports ----------------
+- {in: "JFK", type: airport, expect: John F. Kennedy International Airport}
+- {in: "jfk", type: airport, expect: John F. Kennedy International Airport}
+- {in: "John F Kennedy", type: airport, expect: John F. Kennedy International Airport}
+- {in: "Kennedy airport", type: airport, expect: John F. Kennedy International Airport, status: [valid, unrecognised, did_you_mean]}
+- {in: "LHR", type: airport, expect: London Heathrow Airport}
+- {in: "Heathrow", type: airport, expect: London Heathrow Airport}
+- {in: "Heathrow airport", type: airport, expect: London Heathrow Airport}
+- {in: "London Heathrow", type: airport, expect: London Heathrow Airport}
+- {in: "Heathrow Aiport", type: airport, expect: London Heathrow Airport}
+- {in: "CDG", type: airport, expect: Charles de Gaulle International Airport}
+- {in: "Charles de Gaulle", type: airport, expect: Charles de Gaulle International Airport}
+- {in: "Charles de Gaule", type: airport, expect: Charles de Gaulle International Airport}
+- {in: "Paris CDG", type: airport, expect: Charles de Gaulle International Airport, status: [valid, unrecognised, did_you_mean]}
+- {in: "Schiphol", type: airport, expect: Amsterdam Airport Schiphol}
+- {in: "Schipol", type: airport, expect: Amsterdam Airport Schiphol}
+- {in: "Changi", type: airport, expect: Singapore Changi Airport}
+- {in: "O'Hare", type: airport, expect: Chicago O'Hare International Airport}
+- {in: "Ohare", type: airport, expect: Chicago O'Hare International Airport}
+- {in: "Dubai International", type: airport, expect: Dubai International Airport}
+- {in: "DXB", type: airport, expect: Dubai International Airport}
+- {in: "LAX", type: airport, expect: Los Angeles International Airport}
+- {in: "Narita", type: airport, expect: Narita International Airport}
+- {in: "Haneda", type: airport, expect: Tokyo Haneda International Airport}
+- {in: "Frankfurt Airport", type: airport, expect: Frankfurt Main Airport}
+- {in: "Barajas", type: airport, expect: Adolfo Suárez Madrid–Barajas Airport}
+- {in: "Dulles", type: airport, expect: Washington Dulles International Airport}
+- {in: "Logan", type: airport, expect: Boston Logan International Airport}
+- {in: "Pearson", type: airport, expect: Toronto Pearson International Airport}
+- {in: "Fiumicino", type: airport, expect: Rome–Fiumicino Leonardo da Vinci International Airport}
+- {in: "El Prat", type: airport, expect: Josep Tarradellas Barcelona-El Prat Airport}
+- {in: "Istanbul Airport", type: airport, expect: İstanbul Airport}
+- {in: "Hartsfield-Jackson", type: airport, expect: Hartsfield Jackson Atlanta International Airport}
+- {in: "Indira Gandhi", type: airport, expect: Indira Gandhi International Airport}
+- {in: "Heathrow", type: airport, expect: London Heathrow Airport, valid: [Charles de Gaulle International Airport], wrong: true}
+- {in: "XYZ", type: airport, status: [unrecognised, real_but_wrong], valid: [London Heathrow Airport], wrong: true}
+- {in: "Gatwik", type: airport, valid: [London Heathrow Airport], wrong: true, status: [real_but_wrong, did_you_mean]}
+
+# ---------------- held-out batch (written after tuning, run once to check generalisation) ----
+- {in: "Brasil", type: country, expect: Brazil}
+- {in: "Brazill", type: country, expect: Brazil}
+- {in: "Mexiko", type: country, expect: Mexico}
+- {in: "Egipt", type: country, expect: Egypt}
+- {in: "Grece", type: country, expect: Greece}
+- {in: "Hungry", type: country, expect: Hungary, status: [valid, did_you_mean]}
+- {in: "Fillipines", type: country, expect: Philippines, status: [valid, did_you_mean]}
+- {in: "Equador", type: country, expect: Ecuador}
+- {in: "Peru", type: country, expect: Peru}
+- {in: "Paraguai", type: country, expect: Paraguay}
+- {in: "Tanzanya", type: country, expect: Tanzania}
+- {in: "Etiopia", type: country, expect: Ethiopia}
+- {in: "Somalya", type: country, expect: Somalia}
+- {in: "Russian Federation", type: country, expect: Russia}
+- {in: "Republic of Korea", type: country, expect: South Korea}
+- {in: "Lao", type: country, expect: Laos, status: [valid, unrecognised]}
+- {in: "New Zeland", type: country, expect: New Zealand}
+- {in: "Saudia Arabia", type: country, expect: Saudi Arabia}
+- {in: "Papua new guinea", type: country, expect: Papua New Guinea}
+- {in: "Trinidad", type: country, expect: Trinidad and Tobago, status: [valid, did_you_mean, unrecognised]}
+- {in: "Iceland", type: country, expect: Iceland, valid: [Ireland], wrong: true}
+- {in: "Irland", type: country, expect: Ireland, valid: [Iceland], wrong: true, status: [real_but_wrong, did_you_mean]}
+- {in: "Austalia", type: country, expect: Australia, valid: [Austria], wrong: true, status: [real_but_wrong, did_you_mean]}
+- {in: "Serbia", type: country, expect: Serbia, valid: [Syria], wrong: true}
+- {in: "Lybia", type: country, expect: Libya, valid: [Liberia], wrong: true, status: [real_but_wrong, did_you_mean]}
+- {in: "Berlinn", type: city, expect: Berlin}
+- {in: "Lodnon", type: city, expect: London}
+- {in: "Madird", type: city, expect: Madrid}
+- {in: "Tokio", type: city, expect: Tokyo}
+- {in: "Moskva", type: city, expect: Moscow}
+- {in: "Napoli", type: city, expect: Naples}
+- {in: "Venezia", type: city, expect: Venice}
+- {in: "Milano", type: city, expect: Milan}
+- {in: "Sevilla", type: city, expect: Seville}
+- {in: "Marrakesh", type: city, expect: Marrakech}
+- {in: "Jo'burg", type: city, expect: Johannesburg, status: [valid, unrecognised]}
+- {in: "Johannesberg", type: city, expect: Johannesburg}
+- {in: "Capetown", type: city, expect: Cape Town}
+- {in: "San Fransisco", type: city, expect: San Francisco, status: [valid, did_you_mean], note: "exact alias of San Francisco Gotera: ask"}
+- {in: "Chicago", type: city, expect: Chicago}
+- {in: "Toronot", type: city, expect: Toronto}
+- {in: "Melbourn", type: city, expect: Melbourne}
+- {in: "Dehli", type: city, expect: New Delhi, status: [valid, did_you_mean]}
+- {in: "Delhi", type: city, expect: New Delhi}
+- {in: "Shangai", type: city, expect: Shanghai}
+- {in: "Hong Kong", type: city, expect: Hong Kong}
+- {in: "Berlin", type: city, expect: Berlin, valid: [Bern], wrong: true}
+- {in: "Gatwick", type: airport, expect: London Gatwick Airport}
+- {in: "Stansted", type: airport, expect: London Stansted Airport}
+- {in: "SFO", type: airport, expect: San Francisco International Airport}
+- {in: "Incheon", type: airport, expect: Incheon International Airport}
+- {in: "Hamad", type: airport, expect: Hamad International Airport}
+- {in: "Sydney Airport", type: airport, expect: Sydney Kingsford Smith International Airport}
+- {in: "Munich airport", type: airport, expect: Munich Airport}
+- {in: "Zurich Airport", type: airport, expect: Zürich Airport}
+- {in: "Heathroe", type: airport, expect: London Heathrow Airport, status: [valid, did_you_mean]}

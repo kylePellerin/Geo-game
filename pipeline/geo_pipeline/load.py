@@ -56,13 +56,35 @@ def merge_flags(ents: pd.DataFrame, allow_unreviewed: bool) -> pd.DataFrame:
     return ents
 
 
+def curated_aliases(ents: pd.DataFrame) -> pd.DataFrame:
+    """data/aliases_curated.yaml -> (entity_id, alias, kind='curated') rows."""
+    path = PIPELINE_DIR / "data" / "aliases_curated.yaml"
+    doc = yaml.safe_load(path.read_text(encoding="utf-8")) if path.exists() else {}
+    iso2 = ents["attrs"].map(lambda a: json.loads(a).get("iso2"))
+    rows = []
+    for etype, entries in (doc or {}).items():
+        for ref, aliases in entries.items():
+            if ref.startswith("Q") and ref[1:].isdigit():
+                ids = [ref] if ref in set(ents["id"]) else []
+            else:
+                name, _, cc = ref.partition("|")
+                m = (ents["type"] == etype) & (ents["name"] == name) & ((iso2 == cc) if cc else True)
+                ids = list(ents.loc[m].sort_values("popularity", ascending=False)["id"][:1])
+            if not ids:
+                log.warning("curated alias target not found: %s %s", etype, ref)
+                continue
+            rows += [(ids[0], a, "curated") for a in aliases]
+    return pd.DataFrame(rows, columns=["entity_id", "alias", "kind"])
+
+
 def clean_aliases(al: pd.DataFrame, ents: pd.DataFrame, types: pd.Series) -> pd.DataFrame:
     """Drop aliases that would make matching ambiguous or unfair.
 
     1. empty, or nothing but a type word ("aeroport");
-    2. <= 2 characters unless a code (other-language fragments like "ri", "bd");
-    3. equal to the main label of a *different* entity of the same type, unless it is also this
-       entity's label ("China" as an alias of Taiwan; but both Romes keep "rome").
+    2. <= 2 characters unless a code or English (keeps UK/US; drops fragments like "ri");
+    3. equal to the main label of a *different*, more popular entity of the same type, unless it
+       is also this entity's label ("China" as an alias of Taiwan; both Romes keep "rome";
+       Kolkata keeps "Calcutta"). Curated aliases are always kept.
     The entity's display name is always kept as a label.
     """
     names = pd.DataFrame({
@@ -74,16 +96,25 @@ def clean_aliases(al: pd.DataFrame, ents: pd.DataFrame, types: pd.Series) -> pd.
     bare = pd.Series(
         [is_bare_affix(n, t) for n, t in zip(al["alias_norm"], al["type"])], index=al.index
     )
-    short = (al["alias_norm"].str.len() <= 2) & (al["kind"] != "code")
+    # 2-letter aliases: keep codes and English ones (UK, US, LA); drop other-language fragments
+    short = (al["alias_norm"].str.len() <= 2) & ~al["kind"].isin(["code", "label", "altlabel"])
     al = al[(al["alias_norm"] != "") & ~bare & ~short]
 
     is_label = al["kind"] == "label"
-    label_owners = al[is_label].groupby(["type", "alias_norm"])["entity_id"].agg(set)
+    pop = ents.set_index("id")["popularity"].fillna(0).to_dict()
+    # most popular owner of each (type, label): an alias equal to it is dropped from LESS popular
+    # entities only ("China" from Taiwan), never from more popular ones ("Calcutta" stays on
+    # Kolkata although a small US town is labelled Calcutta)
+    label_top = (
+        al[is_label].assign(p=lambda d: d["entity_id"].map(pop))
+        .groupby(["type", "alias_norm"])["p"].max().to_dict()
+    )
     own_labels = set(zip(al.loc[is_label, "entity_id"], al.loc[is_label, "alias_norm"]))
+    curated = al["kind"].isin(["curated", "manual"])
     keep = [
-        (eid, norm) in own_labels or eid in label_owners.get((t, norm), {eid}) or
-        (t, norm) not in label_owners.index
-        for eid, norm, t in zip(al["entity_id"], al["alias_norm"], al["type"])
+        cur or (eid, norm) in own_labels or (t, norm) not in label_top
+        or pop.get(eid, 0) >= label_top[(t, norm)]
+        for eid, norm, t, cur in zip(al["entity_id"], al["alias_norm"], al["type"], curated)
     ]
     dropped = len(al) - sum(keep)
     al = al[keep]
@@ -116,6 +147,7 @@ def main(allow_unreviewed_flags: bool = False, prune: bool = False) -> None:
     ents = merge_flags(ents, allow_unreviewed_flags)
 
     types = ents.set_index("id")["type"]
+    al = pd.concat([al, curated_aliases(ents)], ignore_index=True)
     al = clean_aliases(al[al["entity_id"].isin(types.index)].copy(), ents, types)
     ids = set(ents["id"])
     bad = ~(rel["a"].isin(ids) & rel["b"].isin(ids))

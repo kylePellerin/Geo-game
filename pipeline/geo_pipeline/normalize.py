@@ -1,6 +1,20 @@
-"""Text normalisation shared by alias loading and (later) the matcher. See PLAN §5 step 1.
+"""Text normalisation shared by alias loading and the matcher. See PLAN §5 step 1.
 
-The same function must be applied to aliases at load time and to player input at match time.
+The same rules run in Python (aliases, at load time) and TypeScript (player input, in
+app/lib/normalize.ts). Both are checked against tests/normalize_cases.yaml, so keep them in sync:
+any rule change here needs the same change there, plus a case in the YAML.
+
+Rules, in order:
+ 1. transliterate letters NFKD can't decompose (ß -> ss, ø -> o, ł -> l, curly quotes, dashes)
+ 2. NFKD; drop combining marks that follow Latin/Greek/Cyrillic letters (accents) but keep them
+    elsewhere (Indic vowel signs); NFC
+ 3. lowercase (then transliterate again)
+ 4. "&" -> " and "; apostrophes vanish (Côte d'Ivoire -> cote divoire)
+ 5. abbreviations st/ste/ft (optionally with ".") -> saint/sainte/fort
+ 6. periods vanish (D.C. -> dc, J.F.K. -> jfk)
+ 7. any other character that isn't a letter, digit, mark or space -> space
+ 8. collapse whitespace, trim, drop a leading "the "
+ 9. (normalize only) strip type affixes for the entity type, never to an empty string
 """
 
 from __future__ import annotations
@@ -22,7 +36,7 @@ TYPE_AFFIXES: dict[str, list[str]] = {
     "airport": [
         "international airport", "intl airport", "regional airport", "airport",
         "international", "internacional", "intl", "aeropuerto", "aeroporto", "aeroport",
-        "flughafen", "aerodrome",
+        "flughafen", "aerodrome", "air force base", "air base", "airfield",
     ],
     "national_park": ["national park", "np", "park"],
     "river": ["river", "rio", "riviere"],
@@ -33,15 +47,21 @@ TYPE_AFFIXES: dict[str, list[str]] = {
     "volcano": ["volcano", "volcan", "mount", "mt"],
 }
 
+# Suffix-only affixes: "Kuwait City" -> "kuwait", but "City of London" is left alone.
+TYPE_SUFFIXES: dict[str, list[str]] = {
+    "city": ["city"],
+}
+
 _LEADING_PREPOSITIONS = ["de la", "del", "de", "d", "di", "da", "do", "du", "of"]
 _AFFIX_WORDS = {
     t: {w for a in affixes for w in [a, *a.split()]} for t, affixes in TYPE_AFFIXES.items()
 }
 
+# (?<!\w)x(?!\w) rather than \b so the JS port (Unicode-aware lookarounds) behaves the same
 _ABBREV = [
-    (re.compile(r"\bst\b\.?"), "saint"),
-    (re.compile(r"\bste\b\.?"), "sainte"),
-    (re.compile(r"\bft\b\.?"), "fort"),
+    (re.compile(r"(?<!\w)st(?!\w)\.?"), "saint "),
+    (re.compile(r"(?<!\w)ste(?!\w)\.?"), "sainte "),
+    (re.compile(r"(?<!\w)ft(?!\w)\.?"), "fort "),
 ]
 
 
@@ -70,6 +90,7 @@ def basic_normalize(text: str) -> str:
     s = s.replace("'", "")
     for pattern, repl in _ABBREV:
         s = pattern.sub(repl, s)
+    s = s.replace(".", "")
     # punctuation -> space; keep letters, digits and (non-Latin) combining vowel signs
     s = "".join(
         c if (c.isalnum() or c.isspace() or _is_mark(c)) and c != "_" else " "
@@ -101,6 +122,9 @@ def normalize(text: str, entity_type: str | None = None) -> str:
                         s = s[len(prep) + 1 :]
                         break
             s = s.removeprefix("the ")
+    for suffix in TYPE_SUFFIXES.get(entity_type or "", []):
+        if s.endswith(" " + suffix):
+            s = s[: -len(suffix) - 1].strip()
     return s
 
 

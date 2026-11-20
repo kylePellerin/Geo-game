@@ -193,6 +193,27 @@ Pipeline for `match(raw_text, entity_type)`:
 6. Result categories for the UI: `valid`, `real_but_wrong` ("that's an airport, but not the busiest
    in its country"), `unrecognised`.
 
+Implementation (Phase 3, 2026-11-20): `app/lib/matcher.ts` (runs in the API), normaliser ported
+to `app/lib/normalize.ts` and kept identical to the Python one by shared golden cases
+(`pipeline/tests/normalize_cases.yaml`) plus a DB test comparing it with stored `alias_norm`.
+Decisions beyond the steps above:
+- **Ties ask, never guess.** Two differently-named places at the same edit distance
+  ("Nigera": Niger or Nigeria) give "did you mean" for the more popular one, unless one is
+  ≥10× more popular than every rival (log10 popularity gap ≥ 1: "Shangai" → Shanghai).
+- **Shadowed names ask.** An exact hit on an obscure place one edit from a far more famous one
+  ("Edinburg" Texas / Edinburgh) gives "did you mean Edinburgh?" with the exact hit as
+  `alternative`.
+- **Wrong type says so.** Input that is exactly a name of another type ("France" for a city)
+  returns unrecognised + `otherType`, unless a more popular place of the right type is within
+  reach ("Columbia" for a country → Colombia).
+- **Misspelt type words** are stripped on retry ("Heathrow Aiport").
+- **Short words** also get candidates by first letter + length, since swapped letters share few
+  trigrams ("Lodnon" → London).
+- **Confirm** (`confirm_entity_id`) is only honoured if the input is close to that entity, so it
+  can't be used to submit an arbitrary answer.
+- None of these rules looks at the valid set; validity is applied only after matching.
+- Curated everyday aliases (Britain, NYC, Rio...) live in `pipeline/data/aliases_curated.yaml`.
+
 Fixtures (`pipeline/tests/match_cases.yaml`): ≥100 cases incl. "Kathmandoo", "Reykavik", "JFK",
 "Heathrow airport", "Bombay", "Côte d'Ivoire"/"Ivory Coast", "Mt Everest", "the Amazon",
 "Yosemite NP", "St Petersburg", "DRC", "Czechia"/"Czech Republic". Build the matcher test-first.

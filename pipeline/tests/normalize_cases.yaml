@@ -1,0 +1,51 @@
+# Golden normalisation cases, checked by BOTH pipeline/tests/test_normalize.py (Python, used for
+# aliases at load time) and app/lib/normalize.test.ts (TypeScript, used for player input).
+# `type` is optional; without it only the type-agnostic rules apply.
+- {in: "Côte d'Ivoire", out: "cote divoire"}
+- {in: "Côte d’Ivoire", out: "cote divoire"}
+- {in: "  São   Tomé & Príncipe ", out: "sao tome and principe"}
+- {in: "St. Petersburg", out: "saint petersburg"}
+- {in: "St.Petersburg", out: "saint petersburg"}
+- {in: "St Lucia", out: "saint lucia"}
+- {in: "Ste-Foy", out: "sainte foy"}
+- {in: "Ft. Lauderdale", out: "fort lauderdale"}
+- {in: "1st Street", out: "1st street"}
+- {in: "Stockholm", out: "stockholm"}
+- {in: "The Gambia", out: "gambia"}
+- {in: "the Bahamas", out: "bahamas"}
+- {in: "Zürich", out: "zurich"}
+- {in: "Kraków", out: "krakow"}
+- {in: "Łódź", out: "lodz"}
+- {in: "Reykjavík", out: "reykjavik"}
+- {in: "Guinea-Bissau", out: "guinea bissau"}
+- {in: "Malmö", out: "malmo"}
+- {in: "Straße", out: "strasse"}
+- {in: "Washington, D.C.", out: "washington dc"}
+- {in: "Washington DC", out: "washington dc"}
+- {in: "J.F.K.", out: "jfk"}
+- {in: "U.S.A.", out: "usa"}
+- {in: "Bosnia & Herzegovina", out: "bosnia and herzegovina"}
+- {in: "Ho Chi Minh City", out: "ho chi minh city"}
+- {in: "Ελλάδα", out: "ελλαδα"}
+- {in: "Россия", out: "россия"}
+- {in: "मोल्डोवा", out: "मोल्डोवा"}
+- {in: "日本", out: "日本"}
+- {in: "O'Hare", out: "ohare"}
+- {in: "Heathrow Airport", type: airport, out: "heathrow"}
+- {in: "John F. Kennedy International Airport", type: airport, out: "john f kennedy"}
+- {in: "Aéroport de Nice Côte d'Azur", type: airport, out: "nice cote dazur"}
+- {in: "Aeropuerto Internacional de El Dorado", type: airport, out: "el dorado"}
+- {in: "Mt Everest", type: mountain, out: "everest"}
+- {in: "Mount Kilimanjaro", type: mountain, out: "kilimanjaro"}
+- {in: "Yosemite NP", type: national_park, out: "yosemite"}
+- {in: "Yosemite National Park", type: national_park, out: "yosemite"}
+- {in: "the Amazon River", type: river, out: "amazon"}
+- {in: "Lago di Garda", type: lake, out: "garda"}
+- {in: "Lake", type: lake, out: "lake"}
+- {in: "Lake Placid", type: city, out: "lake placid"}
+- {in: "Salt Lake City", type: city, out: "salt lake"}
+- {in: "Kuwait City", type: city, out: "kuwait"}
+- {in: "Mexico City", type: city, out: "mexico"}
+- {in: "City of London", type: city, out: "city of london"}
+- {in: "City", type: city, out: "city"}
+- {in: "De Kooy Airfield", type: city, out: "de kooy airfield"}

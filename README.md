@@ -67,3 +67,10 @@ make generate FROM=2027-01-01 DAYS=90
 
 Each puzzle question stores its frozen answer set plus generation stats (answer count, rarity
 category counts, per-answer category) in `puzzle_questions.stats`.
+
+## Answer matcher (Phase 3)
+
+`app/lib/matcher.ts` turns free text into an entity (`valid`, `real_but_wrong`, `did_you_mean`,
+`unrecognised`); see PLAN.md §5. Fixtures are in `pipeline/tests/match_cases.yaml` and run with
+`npm --prefix app test` (they need the local database; they're skipped if it isn't running).
+To fix a missed alias, add it to `pipeline/data/aliases_curated.yaml` and run `make load`.

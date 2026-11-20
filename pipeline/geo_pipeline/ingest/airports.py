@@ -31,6 +31,18 @@ AIRPORTS_URL = "https://davidmegginson.github.io/ourairports-data/airports.csv"
 TYPES = {"large_airport", "medium_airport"}
 
 
+def derived_airport_names(name: str, municipality: str) -> list[str]:
+    """Extra names players use: "London Heathrow Airport" -> "Heathrow Airport";
+    "Cam Ranh International Airport / Cam Ranh Air Base" -> both halves."""
+    parts = [p.strip() for p in name.replace(" – ", " / ").split(" / ") if p.strip()]
+    out = parts if len(parts) > 1 else []
+    town = (municipality or "").split(",")[0].split(" (")[0].strip()
+    for part in parts:
+        if town and part.lower().startswith(town.lower() + " ") and len(part) > len(town) + 4:
+            out.append(part[len(town) + 1:])
+    return list(dict.fromkeys(out))
+
+
 def main(refresh: bool = False) -> None:
     df = pd.read_csv(
         download(AIRPORTS_URL, RAW / "ourairports" / "airports.csv", refresh),
@@ -158,6 +170,8 @@ def main(refresh: bool = False) -> None:
             "sources": ["ourairports"] + (["wikidata"] if r.qid else []),
         })
         aliases.append((eid, r.name, "label"))
+        for derived in derived_airport_names(r.name, r.municipality):
+            aliases.append((eid, derived, "derived"))
         aliases.append((eid, r.iata_code, "code"))
         if attrs["icao"]:
             aliases.append((eid, attrs["icao"], "code"))
