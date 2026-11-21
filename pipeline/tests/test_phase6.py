@@ -1,5 +1,7 @@
 """Phase 6 helpers: country shapes, fact cards, derived landmark names."""
 
+import pytest
+
 from geo_pipeline.facts import fact
 from geo_pipeline.ingest.features import _to_unit, derived_names
 from geo_pipeline.ingest.shapes import crosses, mainland, outline_path, ring_area
@@ -78,3 +80,19 @@ def test_feature_questions_stay_broad():
             for v in values:
                 if "country" in name or "place" in name:
                     assert v["name"] in BROAD_COUNTRIES, f"{t.id}: {v['name']} is too specific"
+
+
+def test_worldmap_rasterise_and_biomes() -> None:
+    from geo_pipeline import worldmap as wm
+
+    # a 10°×10° square straddling the equator at lon 20..30
+    square = [[20.0, -5.0], [30.0, -5.0], [30.0, 5.0], [20.0, 5.0]]
+    cols, rows = round(360 / wm.CELL), round((wm.NORTH - wm.SOUTH) / wm.CELL)
+    land = wm.rasterise([square], cols, rows)
+    cells = [(c, r) for r in range(rows) for c in range(cols) if land[r][c]]
+    assert len(cells) == pytest.approx((10 / wm.CELL) ** 2, abs=10)
+    lons = [-180 + (c + 0.5) * wm.CELL for c, _ in cells]
+    assert 19 < min(lons) and max(lons) < 31
+    assert wm.biome(0, 25) == "d"  # Sahara
+    assert wm.biome(-40, 75) == "i"  # Greenland
+    assert wm.biome(100, 0) == "j"  # tropics

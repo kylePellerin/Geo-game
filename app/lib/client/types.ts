@@ -9,6 +9,8 @@ export interface Named {
   id: string;
   name: string;
   partOf?: string;
+  /** [lat, lon] of the player's own answer, for the map */
+  at?: [number, number];
 }
 
 export interface PlayState {

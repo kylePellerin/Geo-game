@@ -83,6 +83,10 @@ describe("hand-written questions", () => {
     const r = await submitAnswer(pool, { ...base, idx: 0, text: "France" }) as AnswerResult;
     expect(r.status).toBe("valid");
     expect(r.summary).toBeDefined();
+    // the player's own guess comes back with map coordinates; other players' answers don't
+    expect(r.entity?.at).toEqual([expect.any(Number), expect.any(Number)]);
+    expect(r.summary!.answers[0].entity.at).toEqual(r.entity?.at);
+    expect([...(r.summary!.commonAnswers ?? []), ...(r.summary!.rareAnswers ?? [])].some((a) => "at" in a)).toBe(false);
     await startQuestion(pool, { ...base, idx: 1 });
     const m = await submitAnswer(pool, {
       ...base, idx: 1, pairs: puzzle[1].pairs.map((p) => puzzle[1].rightOrder.indexOf(p.right)),

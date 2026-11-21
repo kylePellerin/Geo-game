@@ -9,7 +9,7 @@ import { assignPair, pairsComplete } from "@/lib/client/state";
 import type { Question, Summary } from "@/lib/client/types";
 import { TimerDisplay, useCountdown } from "./Timer";
 
-export const PIN_COLORS = ["#d9472b", "#335fa8", "#23806f", "#cf7414", "#7a4fa0", "#5d574b"];
+export const PIN_COLORS = ["#ff5a5f", "#2f74d0", "#1f9d6e", "#f08a00", "#8b4fe0", "#6e5f4b"];
 export const PIN_LETTERS = "ABCDEF";
 
 export function LeftItem({ item, n }: { item: { label?: string; image?: string }; n: number }) {

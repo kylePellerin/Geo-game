@@ -28,6 +28,8 @@ export interface MatchedEntity {
   type: string;
   /** set when the entity is a district of another city (Brooklyn -> New York City) */
   partOf?: string;
+  /** [lat, lon] where known: the guess is pinned on the map */
+  at?: [number, number];
 }
 
 export interface MatchResult {
@@ -95,14 +97,23 @@ interface Row {
   type: string;
   popularity: number | null;
   part_of: string | null;
+  lat: number | null;
+  lon: number | null;
 }
 
-const ENTITY_COLS = `e.id, e.name, e.type, e.popularity, e.attrs->>'part_of_city' AS part_of`;
+const ENTITY_COLS = `e.id, e.name, e.type, e.popularity, e.attrs->>'part_of_city' AS part_of, e.lat, e.lon`;
+
+/** Coordinates rounded to ~10 km: enough for a map pin. */
+export const pinAt = (lat: number, lon: number): [number, number] =>
+  [Math.round(lat * 10) / 10, Math.round(lon * 10) / 10];
 
 const sameName = (a: Row, b: Row) => normalize(a.name) === normalize(b.name);
 
 function toEntity(r: Row): MatchedEntity {
-  return { id: r.id, name: r.name, type: r.type, ...(r.part_of ? { partOf: r.part_of } : {}) };
+  return {
+    id: r.id, name: r.name, type: r.type, ...(r.part_of ? { partOf: r.part_of } : {}),
+    ...(r.lat !== null && r.lon !== null ? { at: pinAt(r.lat, r.lon) } : {}),
+  };
 }
 
 /** Pick the entity to report from a namesake group: a valid one if any, else the most popular. */

@@ -1,10 +1,10 @@
 "use client";
-/** Small shared pieces of the look: stamps, the compass mark, confetti, a counting number. */
+/** Small shared pieces of the look: tier badges, pixel sprites, confetti, a counting number. */
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { TIER_LABEL } from "@/lib/client/state";
 import type { Tier } from "@/lib/client/types";
 
-export const tierColor = (t?: Tier | "wrong") => (t && t !== "wrong" ? `var(--t-${t})` : "#8c8478");
+export const tierColor = (t?: Tier | "wrong") => (t && t !== "wrong" ? `var(--t-${t})` : "var(--t-wrong)");
 
 /** Rotation that's stable per key, so stamps don't wobble on every render. */
 export function tilt(key: string | number, spread = 9): string {
@@ -27,26 +27,91 @@ export function Stamp({ tier, points, label, big, round, slam, rotate, className
   );
 }
 
-export function Compass({ className }: { className?: string }) {
+/** Pixel art as an SVG: one char per pixel, runs merged into rects, crisp at any size. */
+export function PixelArt({ rows, palette, className, title }: {
+  rows: string[]; palette: Record<string, string>; className?: string; title?: string;
+}) {
+  const rects: React.ReactNode[] = [];
+  rows.forEach((row, y) => {
+    let x = 0;
+    while (x < row.length) {
+      const ch = row[x];
+      let n = 1;
+      while (row[x + n] === ch) n++;
+      if (ch !== "." && palette[ch]) rects.push(<rect key={`${x}-${y}`} x={x} y={y} width={n} height={1} fill={palette[ch]} />);
+      x += n;
+    }
+  });
   return (
-    <svg viewBox="0 0 40 40" className={className} aria-hidden="true">
-      <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" strokeWidth="2.5" opacity="0.5" />
-      <path d="M20 4 L25 20 L20 17 L15 20 Z" fill="#d9472b" />
-      <path d="M20 36 L15 20 L20 23 L25 20 Z" fill="#f4ecda" />
-      <circle cx="20" cy="20" r="2.6" fill="#0d1a29" stroke="#f4ecda" strokeWidth="1.2" />
+    <svg viewBox={`0 0 ${rows[0].length} ${rows.length}`} className={className} shapeRendering="crispEdges"
+         role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
+      {rects}
     </svg>
   );
 }
 
-/** A confetti burst of little paper scraps, for rare finds. */
+const GLOBE = [
+  "....kkkkk....",
+  "..kkbbggbkk..",
+  ".kbbgggbbbbk.",
+  ".kbggggbbgbk.",
+  "kbbbgggbbggbk",
+  "kbbbbgbbgggbk",
+  "kbbbbbbbgggbk",
+  "kbbggbbbbgbbk",
+  "kbgggggbbbbbk",
+  ".kbggggbbbbk.",
+  ".kbbgggbbbwk.",
+  "..kkbbbbbkk..",
+  "....kkkkk....",
+];
+const GLOBE_PAL = { k: "#140d1f", b: "#3b82f6", g: "#4ade80", w: "#bfe1ff" };
+
+export function Globe({ className }: { className?: string }) {
+  return <PixelArt rows={GLOBE} palette={GLOBE_PAL} className={`globe ${className ?? ""}`} />;
+}
+
+const PLANE_ICON = [
+  ".....kk.....",
+  ".....kwk....",
+  "kk....kwk...",
+  "kwk...kwwk..",
+  "kkwkkkkwwwkk",
+  "kwrrrrrrrwbk",
+  "kkwkkkkwwwkk",
+  "kwk...kwwk..",
+  "kk....kwk...",
+  ".....kwk....",
+  ".....kk.....",
+];
+export function PlaneIcon({ className }: { className?: string }) {
+  return <PixelArt rows={PLANE_ICON} palette={{ k: "#140d1f", w: "#fff7e0", r: "#ff5a5f", b: "#58a6ff" }} className={className} />;
+}
+
+const FLAG_ICON = [
+  "kkkkkkkk.",
+  "kryryryk.",
+  "kyryryrk.",
+  "kryryryk.",
+  "kkkkkkkk.",
+  "k........",
+  "k........",
+  "k........",
+  "kk.......",
+];
+export function FlagIcon({ className }: { className?: string }) {
+  return <PixelArt rows={FLAG_ICON} palette={{ k: "#140d1f", r: "#ff5a5f", y: "#fff7e0" }} className={className} />;
+}
+
+/** A burst of square pixel confetti, for rare finds. */
 export function Burst({ tier, count = 26 }: { tier: Tier; count?: number }) {
   const bits = useMemo(() => Array.from({ length: count }, (_, i) => {
     const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
     const dist = 140 + Math.random() * 220;
-    const colors = [tierColor(tier), "var(--gold)", "var(--paper)", "var(--sky)"];
+    const colors = [tierColor(tier), "var(--gold)", "var(--paper)", "var(--sky)", "var(--green)"];
     return {
       "--x": `${Math.cos(angle) * dist}px`, "--y": `${Math.sin(angle) * dist + 120}px`,
-      "--r": `${Math.random() * 720 - 360}deg`, "--c": colors[i % colors.length],
+      "--s": `${[6, 8, 10, 12][i % 4]}px`, "--c": colors[i % colors.length],
       animationDelay: `${Math.random() * 0.08}s`,
     } as CSSProperties;
   }), [tier, count]);

@@ -8,10 +8,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { api } from "@/lib/client/api";
 import { cachedSummaries, localResults, pruneCache, storeSummary } from "@/lib/client/cache";
+import { currentPins, pinFor, pinsFromSummaries, setPins, type MapPin } from "@/lib/client/flightlog";
 import { currentQuestion } from "@/lib/client/state";
 import type { Daily, DayQuestion, Question, StartResponse, Summary, Tier } from "@/lib/client/types";
 import { TIERS } from "@/lib/game/scoring";
-import { Compass, CountUp, Difficulty, tierColor } from "./Bits";
+import { CountUp, Difficulty, FlagIcon, Globe, PlaneIcon, tierColor } from "./Bits";
 import { EndScreen } from "./EndScreen";
 import { HowToPlay } from "./HowToPlay";
 import { MatchPlay } from "./MatchPlay";
@@ -127,6 +128,20 @@ export function Game() {
     })().catch((e: Error) => setError(e.message));
   }, [start]);
 
+  // every guess of the day as a pin on the map (fresh guesses are added by TextPlay as they land)
+  useEffect(() => {
+    const known: MapPin[] = pinsFromSummaries([...summaries.values()].sort((a, b) => a.idx - b.idx));
+    for (const [idx, s] of started) {
+      if (summaries.has(idx)) continue;
+      for (const a of s.answers) {
+        const p = pinFor(idx, a.entity, a.status === "valid");
+        if (p) known.push(p);
+      }
+    }
+    const keys = new Set(known.map((p) => p.key));
+    setPins([...currentPins().filter((p) => !keys.has(p.key)), ...known]);
+  }, [summaries, started]);
+
   const local = useMemo(
     () => daily && localResults(daily.date, daily.questions, summaries), [daily, summaries],
   );
@@ -135,7 +150,7 @@ export function Game() {
     return <Shell><div className="alert" role="alert">{error}</div></Shell>;
   }
   if (!daily || !view || !local) {
-    return <Shell><div className="loading"><Compass />Charting today&apos;s course…</div></Shell>;
+    return <Shell><div className="loading"><Globe />Fuelling the plane…</div></Shell>;
   }
 
   const total = daily.questions.reduce((s, q) => s + q.points, 0);
@@ -173,6 +188,10 @@ export function Game() {
         <span className="route-line" aria-hidden="true" />
         <span className="route-line-done" aria-hidden="true"
               style={{ width: `calc((100% - 2.8rem) * ${Math.min(doneCount, daily.questions.length) / daily.questions.length})` }} />
+        <span className="route-plane" aria-hidden="true"
+              style={{ left: `calc(1.4rem + (100% - 2.8rem) * ${Math.min(doneCount, daily.questions.length) / daily.questions.length})` }}>
+          <PlaneIcon />
+        </span>
         <ol>
           {daily.questions.map((q, i) => {
             const tier = q.play.state === "done" ? tierOf(summaries.get(q.idx)) : undefined;
@@ -194,7 +213,7 @@ export function Game() {
             <button type="button" className="stop stop-end" onClick={() => setView({ kind: "end" })}
                     data-state={cur === null ? "done" : "not_started"}
                     aria-current={view.kind === "end" ? "step" : undefined} aria-label="Results">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4h11l-1.5 3.5L16 11H7v10z" fill="currentColor" /></svg>
+              <FlagIcon />
             </button>
             <span className="stop-pts" aria-hidden="true">end</span>
           </li>
@@ -295,7 +314,7 @@ function Shell({ children, onHelp, date, total }: {
     <main className="page">
       <header className="masthead">
         <h1 className="wordmark" aria-label="Geo-rarity">
-          <span className="geo">Geo</span><Compass /><span className="rarity">rarity</span>
+          <Globe /><span className="geo">Geo</span><span className="rarity">rarity</span>
         </h1>
         <div className="masthead-right">
           {date && <div className="dateline">{dateline(date)}<br />daily puzzle</div>}

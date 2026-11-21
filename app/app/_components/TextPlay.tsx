@@ -6,8 +6,10 @@
  */
 import { useRef, useState, type FormEvent } from "react";
 import { api } from "@/lib/client/api";
+import { addGuess, pinFor } from "@/lib/client/flightlog";
 import { withArticle } from "@/lib/client/state";
 import type { AnswerResponse, GivenAnswer, Named, Question, Summary } from "@/lib/client/types";
+import { MiniMap } from "./MiniMap";
 import { TimerDisplay, useCountdown } from "./Timer";
 
 interface Suggestion { raw: string; options: Named[] }
@@ -30,6 +32,10 @@ export function TextPlay({ date, question, deadline, seconds, offsetMs, initial,
       const r = await api<AnswerResponse>("/api/answer", {
         date, idx: question.idx, text: raw, ...(confirm ? { confirm_entity_id: confirm.id } : {}),
       });
+      if ((r.status === "valid" || r.status === "real_but_wrong") && r.entity) {
+        const pin = pinFor(question.idx, r.entity, r.status === "valid");
+        if (pin) addGuess(pin);
+      }
       if (r.status === "valid" && r.summary) {
         onDone(r.summary);
         return;
@@ -93,6 +99,7 @@ export function TextPlay({ date, question, deadline, seconds, offsetMs, initial,
           Answer
         </button>
       </form>
+      <MiniMap />
       {suggestion && (
         <div className="dym" role="status">
           <span>“{suggestion.raw}”: did you mean</span>

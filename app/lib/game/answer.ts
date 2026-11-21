@@ -19,7 +19,7 @@
  *   is refreshed in the same transaction.
  */
 import type { Pool, PoolClient } from "pg";
-import { matchAnswer } from "../matcher";
+import { matchAnswer, pinAt } from "../matcher";
 import { normalize } from "../normalize";
 import { loadPuzzle, publicQuestions, type PublicQuestion, type PuzzleQuestion } from "./puzzle";
 import { matchPoints, ORDER_POINTS_PER_ITEM, scoreAnswer, type Tier } from "./scoring";
@@ -44,6 +44,9 @@ export interface NamedEntity {
   name: string;
 }
 
+/** A player's own answer: where known, its [lat, lon] so the client can fly the plane there. */
+export type AnsweredEntity = NamedEntity & { partOf?: string; at?: [number, number] };
+
 export interface PlayState {
   state: "not_started" | "playing" | "done";
   startedAt?: string;
@@ -52,7 +55,7 @@ export interface PlayState {
 }
 
 export interface GivenAnswer {
-  entity: NamedEntity & { partOf?: string };
+  entity: AnsweredEntity;
   status: "valid" | "real_but_wrong";
   points: number;
   tier?: Tier;
@@ -92,7 +95,7 @@ export interface StartResult {
 
 export interface AnswerResult {
   status: "valid" | "real_but_wrong" | "unrecognised" | "did_you_mean" | "duplicate";
-  entity?: NamedEntity & { partOf?: string };
+  entity?: AnsweredEntity;
   suggestion?: NamedEntity;
   alternative?: NamedEntity;
   otherType?: string;
@@ -227,8 +230,9 @@ export async function submitAnswer(db: Pool, input: {
     };
   }
 
-  const entity = { id: m.entity!.id, name: m.entity!.name,
-                   ...(m.entity!.partOf ? { partOf: m.entity!.partOf } : {}) };
+  const entity: AnsweredEntity = { id: m.entity!.id, name: m.entity!.name,
+                   ...(m.entity!.partOf ? { partOf: m.entity!.partOf } : {}),
+                   ...(m.entity!.at ? { at: m.entity!.at } : {}) };
   const client = await db.connect();
   try {
     await client.query("BEGIN");
@@ -460,15 +464,16 @@ async function givenAnswers(db: Db, playerId: string, q: PuzzleQuestion): Promis
   if (q.kind !== "free_text") return [];
   const { rows } = await db.query<{
     id: string; name: string; status: "valid" | "real_but_wrong"; points: number;
-    tier: Tier | null; share: number | null;
+    tier: Tier | null; share: number | null; lat: number | null; lon: number | null;
   }>(
-    `SELECT e.id, e.name, a.status, a.points, a.tier, a.share
+    `SELECT e.id, e.name, a.status, a.points, a.tier, a.share, e.lat, e.lon
      FROM answers a JOIN entities e ON e.id = a.matched_entity_id
      WHERE a.player_id = $1 AND a.date = $2 AND a.idx = $3 ORDER BY a.id`,
     [playerId, q.date, q.idx],
   );
   return rows.map((r) => ({
-    entity: { id: r.id, name: r.name }, status: r.status, points: r.points,
+    entity: { id: r.id, name: r.name, ...(r.lat !== null && r.lon !== null ? { at: pinAt(r.lat, r.lon) } : {}) },
+    status: r.status, points: r.points,
     ...(r.tier ? { tier: r.tier } : {}), ...(r.share !== null ? { share: r.share } : {}),
   }));
 }

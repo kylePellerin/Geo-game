@@ -1,4 +1,4 @@
-.PHONY: db db-down db-reset migrate psql test lint e2e data ingest popularity flags load facts report generate replace finalize rebuild-stats dev play
+.PHONY: worldmap db db-down db-reset migrate psql test lint e2e data ingest popularity flags load facts report generate replace finalize rebuild-stats dev play
 
 db:
 	docker compose up -d --wait db
@@ -48,6 +48,10 @@ popularity:
 
 flags:
 	$(PY) geo_pipeline.flags
+
+# Pixel world map for the game background (needs ingest.shapes + mountains/cities ingested)
+worldmap:
+	$(PY) geo_pipeline.worldmap
 
 # Until flags_tags.yaml is reviewed, load with: make load LOAD_ARGS=--allow-unreviewed-flags
 load:
