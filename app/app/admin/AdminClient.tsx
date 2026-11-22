@@ -278,6 +278,10 @@ function Builder({ date, idx, initial, today, families, types, continents, onClo
     initial?.pairs && initial.custom
       ? initial.pairs.map((p) => ({ left: { id: p.left, name: p.leftLabel, country: null }, rightLabel: p.rightLabel, category: p.category }))
       : ["well_known", "familiar", "obscure"].map((category) => ({ left: null, rightLabel: "", category })));
+  const [decoys, setDecoys] = useState<string[]>(() => {
+    const d = initial?.decoys ?? [];
+    return [d[0] ?? "", d[1] ?? ""];
+  });
   // ordering
   const [unit, setUnit] = useState(initial?.unit ?? "");
   const [direction, setDirection] = useState(initial?.direction ?? "desc");
@@ -312,7 +316,8 @@ function Builder({ date, idx, initial, today, families, types, continents, onClo
     const question = kind === "free_text"
       ? { kind, text, difficulty, entityType: etype, family, answerIds: answers.map((a) => a.id) }
       : kind === "match"
-        ? { kind, text, difficulty, display, pairs: pairs.map((p) => ({ left: p.left?.id ?? "", rightLabel: p.rightLabel, category: p.category })) }
+        ? { kind, text, difficulty, display, pairs: pairs.map((p) => ({ left: p.left?.id ?? "", rightLabel: p.rightLabel, category: p.category })),
+            decoys: decoys.filter((d) => d.trim()) }
         : { kind, text, difficulty, unit, direction, items: items.filter((it) => it.label.trim()).map((it) => ({ label: it.label, value: Number(it.value.replace(/[, ]/g, "")) })) };
     try {
       await post({ action: "save", date, idx, question });
@@ -459,7 +464,14 @@ function Builder({ date, idx, initial, today, families, types, continents, onClo
                 </select>
               </div>
             ))}
-            <p className="hint">Players see the matches shuffled (3 pairs; 4 also works). Make one of them a little obscure.</p>
+            <div className="pair-row">
+              <span>Options that match nothing</span>
+              {decoys.map((d, i) => (
+                <input key={i} className="admin-input" value={d} aria-label={`Extra option ${i + 1}`} placeholder="optional"
+                       onChange={(e) => setDecoys((ds) => ds.map((x, j) => j === i ? e.target.value : x))} />
+              ))}
+            </div>
+            <p className="hint">Players see the matches shuffled with the extra options (3 pairs; 4 also works). Make one of them a little obscure, and make the extras believable.</p>
           </>
         )}
 

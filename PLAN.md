@@ -30,8 +30,8 @@ Five tiers, named like the answer rarity categories in QUESTIONS.md §2 (revised
 
 ### Matching rounds
 
-Some questions are a **matching round** instead of free text: three items on the left, three on
-the right (four until 2026-11-22), the player pairs them up. Variants: flag ↔ country, capital ↔ country, city ↔ continent
+Some questions are a **matching round** instead of free text: three items on the left, five options on
+the right, two of which match nothing (four ↔ four until 2026-11-22), the player pairs them up. Variants: flag ↔ country, capital ↔ country, city ↔ continent
 (more later). Every player sees the same eight items, so rarity-by-share doesn't apply; instead
 each correct pair scores by how obscure its item is (rarity category of the left item, from
 popularity within the variant's pool):

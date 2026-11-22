@@ -252,7 +252,7 @@ export function Game() {
                   <span className="qnum">{String(position).padStart(2, "0")}</span>
                   <span className="family">{dq.family}</span>
                   <p>
-                    {dq.kind === "match" ? "Matching round: pair up three items."
+                    {dq.kind === "match" ? "Matching round: three items, five options."
                       : dq.kind === "order" ? "Ordering round: put five items in order."
                       : dq.difficulty >= 3 ? "The hard one. Dig deep." : "Ready when you are."}
                   </p>

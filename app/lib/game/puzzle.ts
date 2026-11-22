@@ -41,7 +41,10 @@ export interface PuzzleQuestion {
   prior: Map<string, number>;
   /** match: pairs in left display order, right ids in right display order */
   pairs: MatchPair[];
+  /** every right-hand option in display order: the pairs' answers plus decoys */
   rightOrder: string[];
+  /** right-hand options that match nothing (since 2026-11-22) */
+  decoys: { right: string; right_label: string }[];
   variant?: string;
   /** free text over countries: dependent territories are valid answers too */
   territories: boolean;
@@ -91,6 +94,7 @@ export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion
     entity_type: string; difficulty: number; template_id: string; valid_entity_ids: string[];
     payload: {
       variant?: string; pairs?: MatchPair[]; right_order?: string[]; items?: OrderItem[];
+      decoys?: { right: string; right_label: string }[];
       answer?: number[]; unit?: string; direction?: "asc" | "desc"; territories?: boolean;
     };
   }>(
@@ -121,6 +125,7 @@ export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion
       : new Map(),
     pairs: r.payload.pairs ?? [],
     rightOrder: r.payload.right_order ?? [],
+    decoys: r.payload.decoys ?? [],
     variant: r.payload.variant,
     territories: Boolean(r.payload.territories),
     items: r.payload.items ?? [],
@@ -147,7 +152,7 @@ export async function publicQuestions(db: Pool, puzzle: PuzzleQuestion[]): Promi
     };
     if (q.kind === "order") return { ...base, items: q.items.map((it, pos) => ({ pos, label: it.label })) };
     if (q.kind !== "match") return base;
-    const labelOf = new Map(q.pairs.map((p) => [p.right, p.right_label]));
+    const labelOf = new Map([...q.pairs, ...q.decoys].map((p) => [p.right, p.right_label]));
     const picture = imageKind(q.variant);
     return {
       ...base,

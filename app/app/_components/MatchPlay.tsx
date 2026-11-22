@@ -99,7 +99,7 @@ export function MatchPlay({ date, question, deadline, seconds, offsetMs, onDone,
         </div>
       </div>
       <div className="btn-row" style={{ justifyContent: "space-between" }}>
-        <p className="hint" style={{ margin: 0 }}>Tap an item, then its match. Rarer items are worth more.</p>
+        <p className="hint" style={{ margin: 0 }}>Tap an item, then its match.{right.length > left.length ? <> {right.length - left.length === 1 ? "One option matches" : `${right.length - left.length} options match`} nothing.</> : null} Rarer items are worth more.</p>
         <button type="button" className="btn" onClick={submit} disabled={over}>
           {pairsComplete(pairs) ? "Submit pairs" : "Submit anyway"}
         </button>

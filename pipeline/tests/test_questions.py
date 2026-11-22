@@ -168,8 +168,13 @@ def test_match_round_easy_and_medium_mix() -> None:
     assert sum(c in {"obscure", "rarest"} for c in cats) == 1
     for r in (easy, medium):
         assert len({i.right for i in r.items}) == 3
-        assert sorted(r.right_order) == sorted(i.right for i in r.items)
-        assert r.right_order != [i.right for i in r.items]  # never shown pre-aligned
+        # two extra options that match nothing, from the round's own categories where possible
+        assert len(r.decoys) == 2
+        assert not any(c.matches(d.right) for c in r.items for d in r.decoys)
+        assert sorted(r.right_order) == sorted([i.right for i in r.items] + [d.right for d in r.decoys])
+        assert r.right_order[:3] != [i.right for i in r.items]  # never shown pre-aligned
+    cats = {i.category for i in medium.items}
+    assert all(d.category in cats for d in medium.decoys)
 
 
 def test_match_round_avoids_recent_items_and_look_alike_flags() -> None:
@@ -251,3 +256,18 @@ def test_haversine() -> None:
 
     # Paris - London ~ 344 km
     assert 330 < haversine_km(48.8566, 2.3522, 51.5074, -0.1278) < 360
+
+
+def test_decoys_skip_alternative_answers() -> None:
+    import random
+
+    from geo_pipeline.matching import MatchItem, pick_decoys
+
+    # Stockholm hosted in 1912 and 1956: "1956" may not be a decoy beside it
+    sto = MatchItem("sto", "1912", "1912", "familiar", "SE", frozenset({"1912", "1956"}))
+    pool = [sto, MatchItem("mel", "1956", "1956", "familiar", "AU"),
+            MatchItem("rom", "1960", "1960", "familiar", "IT"),
+            MatchItem("tok", "1964", "1964", "familiar", "JP")]
+    for seed in range(10):
+        ds = pick_decoys(pool, [sto], random.Random(seed))
+        assert {d.right for d in ds} == {"1960", "1964"}

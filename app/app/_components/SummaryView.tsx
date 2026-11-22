@@ -106,6 +106,7 @@ function MatchSummary({ question, summary, fresh }: { question: Question; summar
   const right = question.right ?? [];
   const label = (pos?: number) => (pos === undefined || pos < 0 ? "nothing" : right.find((r) => r.pos === pos)?.label ?? "?");
   const left = question.left ?? [];
+  const decoys = right.filter((r) => !summary.solution?.includes(r.pos));
   return (
     <>
       <RoundStamp summary={summary} n={left.length} fresh={fresh} />
@@ -126,6 +127,9 @@ function MatchSummary({ question, summary, fresh }: { question: Question; summar
           );
         })}
       </div>
+      {decoys.length > 0 && (
+        <p className="hint">Matched nothing: {decoys.map((d) => d.label).join(" · ")}</p>
+      )}
     </>
   );
 }

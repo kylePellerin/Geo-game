@@ -129,6 +129,7 @@ export interface DayQuestionDetail {
   /** free text: every valid answer, most popular first */
   answers?: { id: string; name: string; country: string | null }[];
   pairs?: { left: string; leftLabel: string; rightLabel: string; category: string }[];
+  decoys?: string[];
   items?: { label: string; value: number }[];
   unit?: string; direction?: string; display?: string;
 }
@@ -144,6 +145,7 @@ export async function dayDetail(db: Pool, date: string): Promise<{
     template_id: string; entity_type: string; valid_entity_ids: string[];
     payload: {
       variant?: string; pairs?: { left: string; left_label?: string; right_label: string; category: string }[];
+      decoys?: { right: string; right_label: string }[];
       items?: { label: string; value: number }[]; unit?: string; direction?: string; answer?: number[];
     };
   }>(
@@ -166,7 +168,8 @@ export async function dayDetail(db: Pool, date: string): Promise<{
         pairs: (r.payload.pairs ?? []).map((p) => ({
           left: p.left, leftLabel: p.left_label ?? ents.get(p.left)?.name ?? p.left,
           rightLabel: p.right_label, category: p.category,
-        })) };
+        })),
+        decoys: (r.payload.decoys ?? []).map((d) => d.right_label) };
     }
     if (r.kind === "order") {
       const items = r.payload.items ?? [];
@@ -245,6 +248,8 @@ export interface CustomFreeText {
 export interface CustomMatch {
   kind: "match"; text: string; difficulty: number; display: Display;
   pairs: { left: string; rightLabel: string; category: string }[];
+  /** extra right-hand options that match nothing */
+  decoys?: string[];
 }
 export interface CustomOrder {
   kind: "order"; text: string; difficulty: number; unit: string; direction: "asc" | "desc";
@@ -303,17 +308,25 @@ export async function saveCustom(db: Pool, date: string, idx: number, q: CustomQ
       "SELECT id, type FROM entities WHERE id = ANY($1)", [pairs.map((p) => p.left)],
     )).rows;
     if (lefts.length !== n) throw new Error(`pick ${n} different left-hand items`);
+    const decoys = (q.decoys ?? []).map((d) => String(d).trim()).filter(Boolean);
+    if (decoys.length > 3) throw new Error("at most 3 options that match nothing");
+    if (new Set([...labels, ...decoys].map((l) => l.toLowerCase())).size !== n + decoys.length) {
+      throw new Error("every option on the right must be different");
+    }
     if (q.display !== "names" && lefts.some((l) => l.type !== "country")) {
       throw new Error("flags and outlines need countries on the left");
     }
     const rights = pairs.map((_, i) => `custom:${i}`);
+    const decoyIds = decoys.map((_, i) => `custom:d${i}`);
     const variant = q.display === "names" ? "custom_match" : DISPLAY_VARIANTS[q.display];
     row = ["custom_match", pairs.map((p) => p.left), "matching", lefts[0].type, "match",
       { n_pairs: n, author: "admin" },
       { variant, pairs: shuffled(pairs.map((p, i) => ({
           left: p.left, right: rights[i], right_label: labels[i],
           category: CATEGORIES.includes(p.category) ? p.category : "familiar",
-        }))), right_order: shuffled(rights) }];
+        }))),
+        decoys: decoys.map((d, i) => ({ right: decoyIds[i], right_label: d })),
+        right_order: shuffled([...rights, ...decoyIds]) }];
   } else if (q.kind === "order") {
     const items = (q.items ?? []).map((it, i) => ({
       id: it.id || `custom:${i}`, label: String(it.label).trim(), value: Number(it.value),

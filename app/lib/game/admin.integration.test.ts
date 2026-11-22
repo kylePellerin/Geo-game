@@ -62,6 +62,7 @@ describe("hand-written questions", () => {
     await saveCustom(pool, DAY, 1, {
       kind: "match", text: "Match each country to a word", difficulty: 2, display: "flags",
       pairs: ids.map((r, i) => ({ left: r.id, rightLabel: `word ${i}`, category: "familiar" })),
+      decoys: ["red herring", " ", "another"],
     }, TODAY);
     await saveCustom(pool, DAY, 2, {
       kind: "order", text: "Order these, largest first", difficulty: 2, unit: "km", direction: "desc",
@@ -73,6 +74,9 @@ describe("hand-written questions", () => {
     expect(puzzle.map((q) => q.kind)).toEqual(["free_text", "match", "order"]);
     const pub = await publicQuestions(pool, puzzle);
     expect(pub[1].left?.every((l) => l.image?.startsWith("/api/image/"))).toBe(true);
+    // 4 pairs + 2 options that match nothing (blank ones dropped)
+    expect(pub[1].right?.map((x) => x.label).sort()).toEqual(
+      ["another", "red herring", "word 0", "word 1", "word 2", "word 3"]);
     // the order round is never shown already sorted, and its answer is by value
     const order = puzzle[2];
     expect(order.items.map((it) => it.value)).not.toEqual([3, 2, 1]);
@@ -92,6 +96,7 @@ describe("hand-written questions", () => {
       ...base, idx: 1, pairs: puzzle[1].pairs.map((p) => puzzle[1].rightOrder.indexOf(p.right)),
     }) as QuestionSummary;
     expect(m.correct).toEqual([true, true, true, true]);
+    expect(m.solution?.every((s) => s >= 0 && s < 6)).toBe(true);
     await startQuestion(pool, { ...base, idx: 2 });
     const o = await submitAnswer(pool, { ...base, idx: 2, order: order.answer }) as QuestionSummary;
     expect(o.points).toBe(60);

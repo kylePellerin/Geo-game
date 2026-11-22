@@ -40,7 +40,7 @@ export function HowToPlay({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <p>
-          <b>Matching round</b> (question 4): pair up three items. Each correct pair scores{" "}
+          <b>Matching round</b> (question 4): pair up three items (two of the options match nothing). Each correct pair scores{" "}
           {MATCH_PAIR_POINTS.well_known}–{MATCH_PAIR_POINTS.rarest}, more for less well-known items.
         </p>
         <p><b>Ordering round</b> (some days): put five items in order, {ORDER_POINTS_PER_ITEM} points each in the right place.</p>

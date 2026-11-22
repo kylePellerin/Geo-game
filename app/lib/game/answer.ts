@@ -298,7 +298,7 @@ async function submitMatch(
   const pairs = input.pairs;
   const picked = (pairs ?? []).filter((p) => p !== -1);
   if (!Array.isArray(pairs) || pairs.length !== n ||
-      !pairs.every((p) => Number.isInteger(p) && p >= -1 && p < n) ||
+      !pairs.every((p) => Number.isInteger(p) && p >= -1 && p < q.rightOrder.length) ||
       new Set(picked).size !== picked.length) {
     throw new GameError("bad_pairs", `Pair each of the ${n} items with a different option (-1 = none)`);
   }

@@ -293,6 +293,7 @@ class MatchRound:
     difficulty: int
     items: list[MatchItem]
     right_order: list[str] = field(default_factory=list)
+    decoys: list[MatchItem] = field(default_factory=list)
 
     @property
     def answers(self) -> list[str]:
@@ -312,6 +313,7 @@ class MatchRound:
             "pairs": [{"left": i.left, "right": i.right, "right_label": i.right_label,
                        "category": i.category} for i in self.items],
             "right_order": self.right_order,
+            "decoys": [{"right": d.right, "right_label": d.right_label} for d in self.decoys],
         }
 
 
@@ -334,6 +336,9 @@ def _look_alike(a: MatchItem, b: MatchItem) -> bool:
 
 
 PAIRS = 3  # 4 felt long and the last pair was a freebie (playtest 2026-11-22): 3 harder pairs
+# Extra right-hand options that match nothing (2026-11-22): no pair is ever forced by
+# elimination, and a blind guess of all three is 1 in 60 instead of 1 in 6.
+DECOYS = 2
 
 
 def build_round(variant: MatchVariant, pool: list[MatchItem], difficulty: int,
@@ -373,8 +378,33 @@ def build_round(variant: MatchVariant, pool: list[MatchItem], difficulty: int,
                 taken += 1
         if len(chosen) == PAIRS:
             rng.shuffle(chosen)
-            right_order = [c.right for c in chosen]
-            while right_order == [c.right for c in chosen]:
+            decoys = pick_decoys(pool, chosen, rng)
+            right_order = [c.right for c in chosen] + [d.right for d in decoys]
+            while right_order[:PAIRS] == [c.right for c in chosen]:
                 rng.shuffle(right_order)  # never present the pairs already aligned
-            return MatchRound(variant, difficulty, chosen, right_order)
+            return MatchRound(variant, difficulty, chosen, right_order, decoys)
     return None
+
+
+def pick_decoys(pool: list[MatchItem], chosen: list[MatchItem], rng: random.Random,
+                n: int = DECOYS) -> list[MatchItem]:
+    """Right-hand options that match none of the chosen items: believable ones first (from the
+    same rarity categories as the round, so a hard round doesn't get "France" as a decoy)."""
+    cats = {c.category for c in chosen}
+    candidates = list(pool)
+    rng.shuffle(candidates)
+    candidates.sort(key=lambda i: i.category not in cats)  # stable: same-category first
+    out: list[MatchItem] = []
+    rights = {c.right for c in chosen}
+    labels = {c.right_label.lower() for c in chosen}
+    for d in candidates:
+        if len(out) >= n:
+            break
+        if d.right in rights or d.right_label.lower() in labels:
+            continue
+        if any(c.matches(d.right) for c in chosen):
+            continue
+        out.append(d)
+        rights.add(d.right)
+        labels.add(d.right_label.lower())
+    return out
