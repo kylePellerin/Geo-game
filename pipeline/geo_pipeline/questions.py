@@ -80,6 +80,9 @@ class Template:
     # Per-template override of TAIL_MIN, for questions whose answers are all famous by nature
     # (Olympic hosts) where rarity among players still separates common and rare answers.
     tail_min: int | None = None
+    # Country questions: do dependent territories (Greenland, Puerto Rico) count? Only where their
+    # data is as good as countries' and players would expect it (continent, population, letters).
+    territories: bool = False
 
     @property
     def universe_sql(self) -> str:
@@ -200,6 +203,13 @@ def compile_filter(t: Template, params: dict[str, dict[str, Any]]) -> tuple[str,
 DISTRICT_FILTER = (
     "AND NOT (e.type = 'city' AND (e.attrs ? 'part_of_city' OR e.id LIKE 'geonames:%%'))"
 )
+TERRITORY_FILTER = "AND NOT (e.type = 'country' AND coalesce((e.attrs->>'is_territory')::boolean, false))"
+
+
+def type_filters(t: Template) -> str:
+    """Entity-level exclusions every answer set and universe gets."""
+    return DISTRICT_FILTER + ("" if t.territories else " " + TERRITORY_FILTER)
+
 
 _universe_cache: dict[tuple[str, str, str], list[float]] = {}
 
@@ -211,13 +221,13 @@ def universe_popularity(cur, t: Template, params: dict | None = None) -> list[fl
     country", so US states are ranked against US states, not against every region in the world.
     """
     uni_sql, binds = compile_filter(Template(**{**t.__dict__, "filter": t.universe_sql}), params or {})
-    key = (t.entity_type, uni_sql, json.dumps(binds, sort_keys=True, default=str))
+    key = (t.entity_type + ("+t" if t.territories else ""), uni_sql, json.dumps(binds, sort_keys=True, default=str))
     if key not in _universe_cache:
         binds["etype"] = t.entity_type
         cur.execute(
             f"""SELECT coalesce(e.popularity, 0) FROM entities e
                 LEFT JOIN entities c ON c.id = e.country_id
-                WHERE e.type = %(etype)s AND ({uni_sql}) {DISTRICT_FILTER}""",
+                WHERE e.type = %(etype)s AND ({uni_sql}) {type_filters(t)}""",
             binds,
         )
         _universe_cache[key] = sorted(r[0] for r in cur.fetchall())
@@ -234,7 +244,7 @@ def evaluate(cur, cand: Candidate) -> Candidate:
     cur.execute(
         f"""SELECT e.id, coalesce(e.popularity, 0) FROM entities e
             LEFT JOIN entities c ON c.id = e.country_id
-            WHERE e.type = %(etype)s AND ({sql}) {DISTRICT_FILTER} ORDER BY e.id""",
+            WHERE e.type = %(etype)s AND ({sql}) {type_filters(cand.template)} ORDER BY e.id""",
         binds,
     )
     rows = cur.fetchall()

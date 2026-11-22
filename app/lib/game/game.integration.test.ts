@@ -235,8 +235,9 @@ describe("game API logic (needs the DB)", () => {
         if (q.kind === "match") {
           const pairs = q.pairs.map((p) => q.rightOrder.indexOf(p.right));
           if (rand() < 0.5) [pairs[0], pairs[1]] = [pairs[1], pairs[0]];
-          if (rand() < 0.3) [pairs[2], pairs[3]] = [pairs[3], pairs[2]];
-          if (rand() < 0.1) pairs[3] = -1;
+          const last = pairs.length - 1;
+          if (rand() < 0.3) [pairs[1], pairs[last]] = [pairs[last], pairs[1]];
+          if (rand() < 0.1) pairs[last] = -1;
           await submitAnswer(pool, { ...base, idx: q.idx, pairs });
           count("match");
           continue;

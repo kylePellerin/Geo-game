@@ -170,9 +170,10 @@ Generated purely from coordinates.
 - Name an airport with a runway longer than 4,000 m
 
 ### 3.12 Matching rounds (M) ⭐ visual switch-up, every day
-Four items ↔ four items, the player pairs them. Not rarity-scored (see PLAN.md §1). One per day,
-always slot 4. Since 2026-11-20 every round is "standard" difficulty (players found country ↔
-continent too easy): 1 well-known + 2 familiar + 1 obscure item, look-alike flags allowed.
+Three items ↔ three items, the player pairs them. Not rarity-scored (see PLAN.md §1). One per day,
+always slot 4. Every round is "standard" difficulty: since 2026-11-22 (playtest: "fewer, a little
+harder") 1 well-known + 1 familiar + 1 obscure-or-rarer item, look-alike flags allowed (was 4 pairs:
+1 well-known + 2 familiar + 1 obscure).
 Variants (`pipeline/geo_pipeline/matching.py`), flags most often:
 - **flags ↔ countries** · **capitals ↔ countries** · **big cities ↔ countries**
 - **cities ↔ continents** (countries ↔ continents removed: too easy)
@@ -181,6 +182,10 @@ Variants (`pipeline/geo_pipeline/matching.py`), flags most often:
   non-giveaways (Brazil–Portuguese, Netherlands–Dutch; not Poland–Polish)
 - **countries ↔ internet domain** (.jp, .de)
 - **countries ↔ highest mountain** (medium; peaks over 2,000 m)
+- Picture rounds (images drawn by us or public domain, served by position only):
+  **flags ↔ countries**, **flags ↔ capital cities** (2026-11-22), **outlines ↔ countries**,
+  **pixel locator maps ↔ countries** (2026-11-22: the country in red on a small pixel map of its
+  neighbourhood, from Natural Earth; tiny countries get a ring).
 - **Olympic host cities ↔ year** (medium)
 - (Easy rounds, 2 famous + 2 well-known, still exist in code for a future practice mode.)
 - No round may contain two items that could match the same right-hand item (e.g. Stockholm,

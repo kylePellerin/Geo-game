@@ -305,13 +305,14 @@ def write_day(cur, day: date, questions: list[Question]) -> None:
                    "order", json.dumps(q.payload()))
         elif isinstance(q, MatchRound):
             row = (day, idx, q.variant.id, "{}", q.text, q.answers, "matching",
-                   q.variant.left_type, q.difficulty, json.dumps({"n_pairs": 4}), "match",
+                   q.variant.left_type, q.difficulty, json.dumps({"n_pairs": len(q.items)}), "match",
                    json.dumps(q.payload()))
         else:
             row = (day, idx, q.template.id, json.dumps(q.params), q.text, q.answers, q.family,
                    q.template.entity_type, q.difficulty,
                    json.dumps({"n_answers": len(q.answers), "rarity": q.category_counts,
-                               "answer_rarity": q.categories}), "free_text", "{}")
+                               "answer_rarity": q.categories}), "free_text",
+                   json.dumps({"territories": True} if q.template.territories else {}))
         cur.execute(
             """INSERT INTO puzzle_questions (date, idx, template_id, params, question_text,
                    valid_entity_ids, family, entity_type, difficulty, stats, kind, payload)
@@ -372,7 +373,7 @@ def main() -> None:
             if a.print:
                 print(f"\n=== {day} ===")
                 for idx, q in enumerate(questions):
-                    size = ("4 pairs" if isinstance(q, MatchRound) else "5 items"
+                    size = (f"{len(q.items)} pairs" if isinstance(q, MatchRound) else "5 items"
                             if isinstance(q, OrderRound) else f"{len(q.answers)} answers")
                     print(f"{idx + 1}. [{q.family}/d{q.difficulty}] {q.text}  ({size})\n"
                           f"     {describe(cur, q)}")

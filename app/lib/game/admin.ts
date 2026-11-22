@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { promisify } from "node:util";
 import type { Pool } from "pg";
 import { normalize } from "../normalize";
+import { DISPLAY_VARIANTS, type Display, displayOf } from "./images";
 import { clearPuzzleCache } from "./puzzle";
 
 export const ADMIN_COOKIE = "gr_admin";
@@ -161,8 +162,7 @@ export async function dayDetail(db: Pool, date: string): Promise<{
       templateId: r.template_id, entityType: r.entity_type, custom: r.template_id.startsWith("custom_"),
     };
     if (r.kind === "match") {
-      return { ...base, display: r.payload.variant === "match_flag_country" ? "flags"
-        : r.payload.variant === "match_outline_country" ? "outlines" : "names",
+      return { ...base, display: displayOf(r.payload.variant),
         pairs: (r.payload.pairs ?? []).map((p) => ({
           left: p.left, leftLabel: p.left_label ?? ents.get(p.left)?.name ?? p.left,
           rightLabel: p.right_label, category: p.category,
@@ -243,7 +243,7 @@ export interface CustomFreeText {
   answerIds: string[];
 }
 export interface CustomMatch {
-  kind: "match"; text: string; difficulty: number; display: "names" | "flags" | "outlines";
+  kind: "match"; text: string; difficulty: number; display: Display;
   pairs: { left: string; rightLabel: string; category: string }[];
 }
 export interface CustomOrder {
@@ -295,21 +295,21 @@ export async function saveCustom(db: Pool, date: string, idx: number, q: CustomQ
            { n_answers: ok.length, author: "admin" }, {}];
   } else if (q.kind === "match") {
     const pairs = q.pairs ?? [];
-    if (pairs.length !== 4) throw new Error("a matching round has 4 pairs");
+    const n = pairs.length;
+    if (n < 3 || n > 4) throw new Error("a matching round has 3 or 4 pairs");
     const labels = pairs.map((p) => p.rightLabel.trim());
-    if (labels.some((l) => !l) || new Set(labels).size !== 4) throw new Error("4 different right-hand labels");
+    if (labels.some((l) => !l) || new Set(labels).size !== n) throw new Error(`${n} different right-hand labels`);
     const lefts = (await db.query<{ id: string; type: string }>(
       "SELECT id, type FROM entities WHERE id = ANY($1)", [pairs.map((p) => p.left)],
     )).rows;
-    if (lefts.length !== 4) throw new Error("pick 4 different left-hand items");
+    if (lefts.length !== n) throw new Error(`pick ${n} different left-hand items`);
     if (q.display !== "names" && lefts.some((l) => l.type !== "country")) {
       throw new Error("flags and outlines need countries on the left");
     }
     const rights = pairs.map((_, i) => `custom:${i}`);
-    const variant = q.display === "flags" ? "match_flag_country"
-      : q.display === "outlines" ? "match_outline_country" : "custom_match";
+    const variant = q.display === "names" ? "custom_match" : DISPLAY_VARIANTS[q.display];
     row = ["custom_match", pairs.map((p) => p.left), "matching", lefts[0].type, "match",
-      { n_pairs: 4, author: "admin" },
+      { n_pairs: n, author: "admin" },
       { variant, pairs: shuffled(pairs.map((p, i) => ({
           left: p.left, right: rights[i], right_label: labels[i],
           category: CATEGORIES.includes(p.category) ? p.category : "familiar",

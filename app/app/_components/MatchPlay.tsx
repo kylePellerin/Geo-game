@@ -12,11 +12,10 @@ import { TimerDisplay, useCountdown } from "./Timer";
 export const PIN_COLORS = ["#ff5a5f", "#2f74d0", "#1f9d6e", "#f08a00", "#8b4fe0", "#6e5f4b"];
 export const PIN_LETTERS = "ABCDEF";
 
-export function LeftItem({ item, n }: { item: { label?: string; image?: string }; n: number }) {
+export function LeftItem({ item, n }: { item: { label?: string; image?: string; picture?: string }; n: number }) {
   if (!item.image) return <span>{item.label}</span>;
-  const outline = item.image.includes("/outline/");
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={item.image} alt={`Picture ${n}`} className={outline ? "outline" : ""} />;
+  return <img src={item.image} alt={`Picture ${n}`} className={item.picture ?? ""} />;
 }
 
 export function Pin({ i, on = true }: { i: number | null; on?: boolean }) {

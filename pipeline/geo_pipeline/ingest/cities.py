@@ -65,7 +65,8 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 
 def name_distance_join(
-    df: pd.DataFrame, country_ids: set[str], refresh: bool, max_km: float = 20.0
+    df: pd.DataFrame, country_ids: set[str], refresh: bool, max_km: float = 20.0,
+    query_ids: set[str] | None = None,
 ) -> dict:
     """{df index: (qid, sitelinks)} for rows matching a Wikidata item by name within max_km.
 
@@ -73,7 +74,8 @@ def name_distance_join(
     """
     resolve = country_resolver(refresh)
     by_country: dict[str, dict[str, list[tuple[str, float, float, int]]]] = {}
-    for cid in sorted(country_ids):
+    # cities resolve to sovereign countries, so territories need no query of their own
+    for cid in sorted(query_ids if query_ids is not None else country_ids):
         rows = sparql(
             f"""SELECT DISTINCT ?item ?label ?coord ?sitelinks WHERE {{
   ?item wdt:P17 wd:{cid} ; wdt:P1082 ?pop ; wdt:P625 ?coord ; wikibase:sitelinks ?sitelinks .
@@ -86,7 +88,9 @@ def name_distance_join(
         for r in rows:
             q = qid(r["item"])
             m = re.match(r"Point\(([-\d.eE]+) ([-\d.eE]+)\)", r["coord"])
-            if not m or q in country_ids:
+            # sovereign country items (city-states) are never cities; a territory item can be
+            # (Hong Kong): it gets the Q…#city id below
+            if not m or q in (query_ids if query_ids is not None else country_ids):
                 continue
             lon, lat = float(m.group(1)), float(m.group(2))
             idx.setdefault(basic_normalize(r["label"]), []).append(
@@ -158,7 +162,9 @@ def main(refresh: bool = False) -> None:
     # populated place in cities15000 (Madrid: P1566=6359304, cities15000 row 3117735). Second join:
     # per-country Wikidata items with population, matched by name + distance. Take it when it is
     # better linked than the P1566 match. Country items (city-states) are never used for cities.
-    upgrades = name_distance_join(df, set(countries.id), refresh)
+    sovereign = {i for i, a in zip(countries.id, countries["attrs"])
+                 if not json.loads(a).get("is_territory")}
+    upgrades = name_distance_join(df, set(countries.id), refresh, query_ids=sovereign)
     n_up = 0
     for idx, (q2, sl2) in upgrades.items():
         if sl2 > df.at[idx, "sitelinks"] and q2 != df.at[idx, "qid"]:
@@ -195,6 +201,10 @@ def main(refresh: bool = False) -> None:
             skipped_cc[r.cc] = skipped_cc.get(r.cc, 0) + 1
             continue
         eid = r.qid or f"geonames:{r.geonameid}"
+        if eid in country_attrs:
+            # the city of a territory that shares its QID (Gibraltar, Macau): own id for the
+            # city facet, like city-states' regions (Q…#region)
+            eid = f"{eid}#city"
         wd = wde.get(r.qid) if r.qid else None
         attrs = {
             "geonames_id": int(r.geonameid),

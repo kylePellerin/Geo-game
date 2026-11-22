@@ -25,6 +25,18 @@ requirements change.
 - **Territories:** cities/airports in dependent territories (Puerto Rico, Hong Kong, Greenland,
   Aruba…) get `country_id` = sovereign country and keep `attrs.territory` = territory ISO code.
   Question templates must decide explicitly whether territories count ("a city in the USA").
+- **Territories as answers (2026-11-22, playtest: "Greenland didn't count"):** the 46 inhabited
+  dependent territories in mledoze (Greenland, Puerto Rico, Hong Kong, Faroe Islands, Bermuda…)
+  are also type `country` entities, with `attrs.un_status = "territory"`, `attrs.is_territory`
+  and `attrs.sovereign` (QID, from Wikidata P17; null for Western Sahara). Left out: Antarctica,
+  Bouvet, Heard & McDonald, US Minor Outlying Islands, French Southern Lands, British Indian Ocean
+  Territory, South Georgia (no permanent population). So every country question *recognises*
+  them, but a template only *accepts* them with `territories: true` (continent/region, population,
+  area, letters, languages, euro, map lines); the question then shows "Territories count too".
+  Elsewhere a territory answer is real-but-wrong with "X is a territory of Y, this one is countries
+  only". Territories are never in borders, matching or ordering rounds, and cities keep
+  `country_id` = sovereign. Where a territory's QID was also an island (Greenland Q223), the
+  island facet gets the id `Q…#island`, like city-states' `Q…#region`.
 - **Continents:** from mledoze region; Americas split into North America (incl. Central America
   and Caribbean) and South America. Russia and Türkiye are in Europe/Asia respectively, as mledoze
   has them; transcontinental membership is not modelled yet.

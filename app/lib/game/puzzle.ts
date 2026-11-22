@@ -3,9 +3,10 @@
  *  - PuzzleQuestion (server only): frozen valid set, priors, matching pairs.
  *  - PublicQuestion (sent to clients): question text and, for matching rounds, the items in
  *    display order. Valid sets and the correct pairing never leave the server; flag images are
- *    referenced by position (/api/flag/<date>/<idx>/<pos>), never by country.
+ *    referenced by position (/api/image/<date>/<idx>/<pos>), never by country.
  */
 import type { Pool } from "pg";
+import { type ImageKind, imageKind } from "./images";
 import { priorShares } from "./scoring";
 
 export interface MatchPair {
@@ -42,6 +43,8 @@ export interface PuzzleQuestion {
   pairs: MatchPair[];
   rightOrder: string[];
   variant?: string;
+  /** free text over countries: dependent territories are valid answers too */
+  territories: boolean;
   /** order: items in display order, the correct order (display positions), unit */
   items: OrderItem[];
   answer: number[];
@@ -55,7 +58,8 @@ export interface PublicQuestion {
   text: string;
   family: string;
   answerType: string;
-  left?: { pos: number; label?: string; image?: string }[];
+  hint?: string;
+  left?: { pos: number; label?: string; image?: string; picture?: ImageKind }[];
   right?: { pos: number; label: string }[];
   /** order: labels in display order */
   items?: { pos: number; label: string }[];
@@ -87,7 +91,7 @@ export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion
     entity_type: string; difficulty: number; template_id: string; valid_entity_ids: string[];
     payload: {
       variant?: string; pairs?: MatchPair[]; right_order?: string[]; items?: OrderItem[];
-      answer?: number[]; unit?: string; direction?: "asc" | "desc";
+      answer?: number[]; unit?: string; direction?: "asc" | "desc"; territories?: boolean;
     };
   }>(
     `SELECT idx, kind, question_text, family, entity_type, difficulty, template_id,
@@ -118,6 +122,7 @@ export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion
     pairs: r.payload.pairs ?? [],
     rightOrder: r.payload.right_order ?? [],
     variant: r.payload.variant,
+    territories: Boolean(r.payload.territories),
     items: r.payload.items ?? [],
     answer: r.payload.answer ?? [],
     unit: r.payload.unit ?? "",
@@ -138,16 +143,16 @@ export async function publicQuestions(db: Pool, puzzle: PuzzleQuestion[]): Promi
     const base = {
       idx: q.idx, kind: q.kind, text: q.text,
       family: FAMILY_LABELS[q.family] ?? q.family, answerType: q.entityType,
+      ...(q.territories ? { hint: "Territories (like Puerto Rico) count too" } : {}),
     };
     if (q.kind === "order") return { ...base, items: q.items.map((it, pos) => ({ pos, label: it.label })) };
     if (q.kind !== "match") return base;
     const labelOf = new Map(q.pairs.map((p) => [p.right, p.right_label]));
-    const imageRoute = q.variant === "match_flag_country" ? "flag"
-      : q.variant === "match_outline_country" ? "outline" : null;
+    const picture = imageKind(q.variant);
     return {
       ...base,
-      left: q.pairs.map((p, pos) => imageRoute
-        ? { pos, image: `/api/${imageRoute}/${q.date}/${q.idx}/${pos}` }
+      left: q.pairs.map((p, pos) => picture
+        ? { pos, image: `/api/image/${q.date}/${q.idx}/${pos}`, picture }
         : { pos, label: p.left_label ?? names.get(p.left) ?? p.left }),
       right: q.rightOrder.map((r, pos) => ({ pos, label: labelOf.get(r) ?? r })),
     };

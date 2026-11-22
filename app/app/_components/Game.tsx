@@ -12,7 +12,7 @@ import { currentPins, pinFor, pinsFromSummaries, setPins, type MapPin } from "@/
 import { currentQuestion } from "@/lib/client/state";
 import type { Daily, DayQuestion, Question, StartResponse, Summary, Tier } from "@/lib/client/types";
 import { TIERS } from "@/lib/game/scoring";
-import { CountUp, Difficulty, FlagIcon, Globe, PlaneIcon, tierColor } from "./Bits";
+import { CountUp, Difficulty, FlagIcon, Globe, PlaneIcon, roundTier, tierColor } from "./Bits";
 import { EndScreen } from "./EndScreen";
 import { HowToPlay } from "./HowToPlay";
 import { MatchPlay } from "./MatchPlay";
@@ -34,8 +34,11 @@ async function reconcileIdentity(): Promise<void> {
 
 type View = { kind: "question"; idx: number } | { kind: "end" };
 
-function tierOf(s: Summary | undefined): Tier | undefined {
-  return s?.answers.find((a) => a.status === "valid")?.tier;
+/** Route-bar colour of a finished question: same rule as its result stamp. */
+function tierOf(s: Summary | undefined): Tier | "wrong" | undefined {
+  if (!s) return undefined;
+  if (s.correct) return roundTier(s.correct.filter(Boolean).length, s.correct.length);
+  return s.answers.find((a) => a.status === "valid")?.tier ?? "wrong";
 }
 
 function dateline(date: string): string {
@@ -249,7 +252,7 @@ export function Game() {
                   <span className="qnum">{String(position).padStart(2, "0")}</span>
                   <span className="family">{dq.family}</span>
                   <p>
-                    {dq.kind === "match" ? "Matching round: pair up four items."
+                    {dq.kind === "match" ? "Matching round: pair up three items."
                       : dq.kind === "order" ? "Ordering round: put five items in order."
                       : dq.difficulty >= 3 ? "The hard one. Dig deep." : "Ready when you are."}
                   </p>

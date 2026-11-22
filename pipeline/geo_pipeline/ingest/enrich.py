@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from collections import defaultdict
 from datetime import date
 
@@ -229,27 +230,29 @@ def enrich_cities(games: list[dict], refresh: bool) -> None:
     # Districts: GeoNames lists NYC boroughs, Chinese urban districts etc. as cities. A city whose
     # Wikidata P131 (located in) is another city entity is marked part_of_city and left out of
     # city questions (Queens -> New York City, Bao'an -> Shenzhen).
-    qids_all = sorted(i for i in ids if i.startswith("Q"))
+    # Wikidata QID -> our id ("Q1410#city": Gibraltar the city shares the territory's QID)
+    eid_of = {i.split("#")[0]: i for i in ids if re.fullmatch(r"Q\d+(#city)?", i)}
+    qids_all = sorted(eid_of)
     n_districts = 0
     for i, batch in enumerate(chunks(qids_all, 1000)):
         values = " ".join(f"wd:{q}" for q in batch)
         for r in sparql(f"SELECT ?city ?in WHERE {{ VALUES ?city {{ {values} }} ?city wdt:P131 ?in }}",
                         f"city-p131-{i:03d}", refresh):
             parent = qid(r["in"])
-            child = qid(r["city"])
+            child = eid_of.get(qid(r["city"]), qid(r["city"]))
             if parent in ids and parent != child and "part_of_city" not in extra[child]:
                 extra[child]["part_of_city"] = parent
                 n_districts += 1
     log.info("cities marked as districts of another city: %d", n_districts)
 
     # Rivers a city lies on (P206, classified as river).
-    qids = sorted(i for i in ids if i.startswith("Q"))
+    qids = qids_all
     city_water: dict[str, set[str]] = defaultdict(set)
     for i, batch in enumerate(chunks(qids, 1000)):
         values = " ".join(f"wd:{q}" for q in batch)
         for r in sparql(f"SELECT ?city ?w WHERE {{ VALUES ?city {{ {values} }} ?city wdt:P206 ?w }}",
                         f"city-water-{i:03d}", refresh):
-            city_water[qid(r["city"])].add(qid(r["w"]))
+            city_water[eid_of.get(qid(r["city"]), qid(r["city"]))].add(qid(r["w"]))
     waters = sorted(set().union(*city_water.values()) if city_water else set())
     rivers: dict[str, str] = {}
     for i, batch in enumerate(chunks(waters, 500)):

@@ -42,7 +42,11 @@ export function TextPlay({ date, question, deadline, seconds, offsetMs, initial,
       }
       if (r.status === "real_but_wrong") {
         setTried((t) => [...t, { entity: r.entity!, status: "real_but_wrong", points: 0 }]);
-        setNote(<><b>{r.entity!.name}</b>{r.entity!.partOf ? ` (${r.entity!.partOf})` : ""} doesn&apos;t fit. Try again!</>);
+        const e = r.entity!;
+        // territories are only "not countries" where the question doesn't accept them (no hint)
+        setNote(e.territoryOf && !question.hint
+          ? <><b>{e.name}</b> is a territory{e.territoryOf !== "no country" ? <> of {e.territoryOf}</> : null}, and this one is countries only. Try again!</>
+          : <><b>{e.name}</b>{e.partOf ? ` (${e.partOf})` : ""} doesn&apos;t fit. Try again!</>);
         shake();
       } else if (r.status === "duplicate") {
         setNote(<>You already tried <b>{r.entity?.name}</b>.</>);
@@ -89,6 +93,7 @@ export function TextPlay({ date, question, deadline, seconds, offsetMs, initial,
     <div className="card">
       {head(<TimerDisplay ms={left} seconds={seconds} />)}
       <h2 className="question-text">{question.text}</h2>
+      {question.hint && <p className="question-hint">{question.hint}</p>}
       <form className="answer-form" onSubmit={onSubmit}>
         <label htmlFor="answer" className="sr-only">Answer</label>
         <input id="answer" ref={input} className="answer-input" value={text}

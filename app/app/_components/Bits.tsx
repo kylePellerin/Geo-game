@@ -6,6 +6,12 @@ import type { Tier } from "@/lib/client/types";
 
 export const tierColor = (t?: Tier | "wrong") => (t && t !== "wrong" ? `var(--t-${t})` : "var(--t-wrong)");
 
+/** One colour per finished question, the same on the route bar, the result banner and the end
+ * screen. Rounds (matching/ordering) colour by how many were right; all right = rarest. */
+export function roundTier(right: number, n: number): Tier | "wrong" {
+  return right === n ? "rarest" : right >= n / 2 ? "familiar" : right > 0 ? "famous" : "wrong";
+}
+
 /** Rotation that's stable per key, so stamps don't wobble on every render. */
 export function tilt(key: string | number, spread = 9): string {
   let h = 0;
@@ -124,7 +130,7 @@ export function Burst({ tier, count = 26 }: { tier: Tier; count?: number }) {
 }
 
 /** A number that counts up to its value when it changes. */
-export function CountUp({ value, ms = 700 }: { value: number; ms?: number }) {
+export function CountUp({ value, ms = 450 }: { value: number; ms?: number }) {
   const [shown, setShown] = useState(value);
   const from = useRef(value);
   useEffect(() => {

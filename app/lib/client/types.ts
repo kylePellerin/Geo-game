@@ -9,6 +9,8 @@ export interface Named {
   id: string;
   name: string;
   partOf?: string;
+  /** set for dependent territories (Greenland: "Denmark"; Western Sahara: "no country") */
+  territoryOf?: string;
   /** [lat, lon] of the player's own answer, for the map */
   at?: [number, number];
 }
@@ -28,7 +30,7 @@ export interface DayQuestion {
   difficulty: number;
   text?: string;
   answerType?: string;
-  left?: { pos: number; label?: string; image?: string }[];
+  left?: { pos: number; label?: string; image?: string; picture?: "flag" | "outline" | "map" }[];
   right?: { pos: number; label: string }[];
   items?: { pos: number; label: string }[];
   play: PlayState;
@@ -42,7 +44,9 @@ export interface Question {
   text: string;
   family: string;
   answerType: string;
-  left?: { pos: number; label?: string; image?: string }[];
+  /** e.g. "Territories (like Puerto Rico) count too" */
+  hint?: string;
+  left?: { pos: number; label?: string; image?: string; picture?: "flag" | "outline" | "map" }[];
   right?: { pos: number; label: string }[];
   items?: { pos: number; label: string }[];
 }

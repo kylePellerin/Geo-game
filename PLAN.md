@@ -30,23 +30,23 @@ Five tiers, named like the answer rarity categories in QUESTIONS.md §2 (revised
 
 ### Matching rounds
 
-Some questions are a **matching round** instead of free text: four items on the left, four on the
-right, the player pairs them up. Variants: flag ↔ country, capital ↔ country, city ↔ continent
+Some questions are a **matching round** instead of free text: three items on the left, three on
+the right (four until 2026-11-22), the player pairs them up. Variants: flag ↔ country, capital ↔ country, city ↔ continent
 (more later). Every player sees the same eight items, so rarity-by-share doesn't apply; instead
 each correct pair scores by how obscure its item is (rarity category of the left item, from
 popularity within the variant's pool):
 
 | Item category | Points per correct pair |
 |---|---|
-| Famous | 10 |
-| Well known | 15 |
-| Familiar | 25 |
-| Obscure | 35 |
-| Rarest | 40 |
+| Famous | 15 |
+| Well known | 20 |
+| Familiar | 35 |
+| Obscure | 45 |
+| Rarest | 55 |
 
-Max ~100 per round. The correct mapping stays on the server; the client gets the items in shuffled
+~100 for a standard round of three (2026-11-22; was 10/15/25/35/40 with four pairs). The correct mapping stays on the server; the client gets the items in shuffled
 order. Generated rounds mix categories by difficulty (easy: mostly famous/well-known; medium: one
-or two familiar/obscure). Right-hand items are always distinct (e.g. four different continents).
+or two familiar/obscure). Right-hand items are always distinct (e.g. three different continents).
 
 ## 2. Data model (Postgres)
 

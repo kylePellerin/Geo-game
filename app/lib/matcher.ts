@@ -28,6 +28,8 @@ export interface MatchedEntity {
   type: string;
   /** set when the entity is a district of another city (Brooklyn -> New York City) */
   partOf?: string;
+  /** dependent territories (Greenland -> Denmark): only valid where the question opts in */
+  territoryOf?: string;
   /** [lat, lon] where known: the guess is pinned on the map */
   at?: [number, number];
 }
@@ -97,11 +99,15 @@ interface Row {
   type: string;
   popularity: number | null;
   part_of: string | null;
+  territory_of: string | null;
   lat: number | null;
   lon: number | null;
 }
 
-const ENTITY_COLS = `e.id, e.name, e.type, e.popularity, e.attrs->>'part_of_city' AS part_of, e.lat, e.lon`;
+const ENTITY_COLS = `e.id, e.name, e.type, e.popularity, e.attrs->>'part_of_city' AS part_of,
+  CASE WHEN e.attrs->>'un_status' = 'territory'
+       THEN coalesce((SELECT s.name FROM entities s WHERE s.id = e.attrs->>'sovereign'), 'no country')
+  END AS territory_of, e.lat, e.lon`;
 
 /** Coordinates rounded to ~10 km: enough for a map pin. */
 export const pinAt = (lat: number, lon: number): [number, number] =>
@@ -112,6 +118,7 @@ const sameName = (a: Row, b: Row) => normalize(a.name) === normalize(b.name);
 function toEntity(r: Row): MatchedEntity {
   return {
     id: r.id, name: r.name, type: r.type, ...(r.part_of ? { partOf: r.part_of } : {}),
+    ...(r.territory_of ? { territoryOf: r.territory_of } : {}),
     ...(r.lat !== null && r.lon !== null ? { at: pinAt(r.lat, r.lon) } : {}),
   };
 }

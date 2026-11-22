@@ -109,7 +109,7 @@ def fact(etype: str, name: str, a: dict, country: str | None, names: dict[str, s
 
 def main() -> None:
     with connect() as conn, conn.cursor() as cur:
-        cur.execute("SELECT id, name FROM entities WHERE type = 'country'")
+        cur.execute("SELECT id, name FROM entities WHERE type = 'country' AND attrs->>'un_status' IS DISTINCT FROM 'territory'")
         names = dict(cur.fetchall())
         cur.execute(
             """SELECT an.name, k.name FROM relations r JOIN entities an ON an.id = r.b

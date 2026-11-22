@@ -3,6 +3,7 @@
 # north/south/east/west = extent of the mainland group (overseas territories left out).
 
 - id: country_crossed_by_line
+  territories: true
   family: map_surprises
   kind: membership
   entity_type: country
@@ -36,6 +37,7 @@
     END
 
 - id: country_further_north_than
+  territories: true
   family: map_surprises
   kind: threshold
   entity_type: country

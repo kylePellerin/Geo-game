@@ -46,7 +46,7 @@ describe("blending observed shares with the prior", () => {
 
 describe("matching rounds", () => {
   it("scores by the rarity of each correctly matched item", () => {
-    expect(matchPoints([{ category: "famous" }, { category: "obscure" }])).toBe(45);
+    expect(matchPoints([{ category: "famous" }, { category: "obscure" }])).toBe(60);
     expect(matchPoints([])).toBe(0);
   });
 });

@@ -272,12 +272,12 @@ function Builder({ date, idx, initial, today, families, types, continents, onClo
   const [continent, setContinent] = useState("");
   const [country, setCountry] = useState<Ent | null>(null);
   // matching
-  const [display, setDisplay] = useState<"names" | "flags" | "outlines">(
-    (initial?.display as "names" | "flags" | "outlines") ?? "names");
+  const [display, setDisplay] = useState<"names" | "flags" | "outlines" | "maps">(
+    (initial?.display as "names" | "flags" | "outlines" | "maps") ?? "names");
   const [pairs, setPairs] = useState<{ left: Ent | null; rightLabel: string; category: string }[]>(
     initial?.pairs && initial.custom
       ? initial.pairs.map((p) => ({ left: { id: p.left, name: p.leftLabel, country: null }, rightLabel: p.rightLabel, category: p.category }))
-      : ["well_known", "familiar", "familiar", "obscure"].map((category) => ({ left: null, rightLabel: "", category })));
+      : ["well_known", "familiar", "obscure"].map((category) => ({ left: null, rightLabel: "", category })));
   // ordering
   const [unit, setUnit] = useState(initial?.unit ?? "");
   const [direction, setDirection] = useState(initial?.direction ?? "desc");
@@ -371,7 +371,7 @@ function Builder({ date, idx, initial, today, families, types, continents, onClo
             <label className="field">
               <span>Left side shows</span>
               <select value={display} onChange={(e) => setDisplay(e.target.value as typeof display)}>
-                <option value="names">names</option><option value="flags">flags (countries)</option><option value="outlines">outlines (countries)</option>
+                <option value="names">names</option><option value="flags">flags (countries)</option><option value="outlines">outlines (countries)</option><option value="maps">pixel maps (countries)</option>
               </select>
             </label>
           )}
@@ -454,12 +454,12 @@ function Builder({ date, idx, initial, today, families, types, continents, onClo
                        onChange={(e) => setPairs((ps) => ps.map((x, j) => j === i ? { ...x, rightLabel: e.target.value } : x))} />
                 <select className="admin-input" value={p.category} aria-label={`Rarity ${i + 1}`}
                         onChange={(e) => setPairs((ps) => ps.map((x, j) => j === i ? { ...x, category: e.target.value } : x))}>
-                  <option value="famous">famous (10)</option><option value="well_known">well known (15)</option>
-                  <option value="familiar">familiar (25)</option><option value="obscure">obscure (35)</option><option value="rarest">rarest (40)</option>
+                  <option value="famous">famous (15)</option><option value="well_known">well known (20)</option>
+                  <option value="familiar">familiar (35)</option><option value="obscure">obscure (45)</option><option value="rarest">rarest (55)</option>
                 </select>
               </div>
             ))}
-            <p className="hint">Players see the four matches shuffled. Make one of them a little obscure.</p>
+            <p className="hint">Players see the matches shuffled (3 pairs; 4 also works). Make one of them a little obscure.</p>
           </>
         )}
 

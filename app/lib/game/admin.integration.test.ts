@@ -72,7 +72,7 @@ describe("hand-written questions", () => {
     const puzzle = (await loadPuzzle(pool, DAY))!;
     expect(puzzle.map((q) => q.kind)).toEqual(["free_text", "match", "order"]);
     const pub = await publicQuestions(pool, puzzle);
-    expect(pub[1].left?.every((l) => l.image?.startsWith("/api/flag/"))).toBe(true);
+    expect(pub[1].left?.every((l) => l.image?.startsWith("/api/image/"))).toBe(true);
     // the order round is never shown already sorted, and its answer is by value
     const order = puzzle[2];
     expect(order.items.map((it) => it.value)).not.toEqual([3, 2, 1]);

@@ -45,7 +45,7 @@ export interface NamedEntity {
 }
 
 /** A player's own answer: where known, its [lat, lon] so the client can fly the plane there. */
-export type AnsweredEntity = NamedEntity & { partOf?: string; at?: [number, number] };
+export type AnsweredEntity = NamedEntity & { partOf?: string; territoryOf?: string; at?: [number, number] };
 
 export interface PlayState {
   state: "not_started" | "playing" | "done";
@@ -232,6 +232,7 @@ export async function submitAnswer(db: Pool, input: {
 
   const entity: AnsweredEntity = { id: m.entity!.id, name: m.entity!.name,
                    ...(m.entity!.partOf ? { partOf: m.entity!.partOf } : {}),
+                   ...(m.entity!.territoryOf ? { territoryOf: m.entity!.territoryOf } : {}),
                    ...(m.entity!.at ? { at: m.entity!.at } : {}) };
   const client = await db.connect();
   try {

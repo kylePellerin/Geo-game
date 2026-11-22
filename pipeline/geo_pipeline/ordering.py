@@ -58,14 +58,14 @@ VARIANTS = [
         text="Order these countries by area, largest first",
         entity_type="country", unit="km²", min_ratio=1.15,
         pool_sql="""SELECT id, name, (attrs->>'area_km2')::float, coalesce(popularity, 0), NULL, NULL
-                    FROM entities WHERE type = 'country' AND attrs ? 'area_km2'""",
+                    FROM entities WHERE type = 'country' AND attrs->>'un_status' IS DISTINCT FROM 'territory' AND attrs ? 'area_km2'""",
     ),
     OrderVariant(
         id="order_country_population",
         text="Order these countries by population, largest first",
         entity_type="country", unit="people", min_ratio=1.15,
         pool_sql="""SELECT id, name, (attrs->>'population')::float, coalesce(popularity, 0), NULL, NULL
-                    FROM entities WHERE type = 'country' AND attrs ? 'population'""",
+                    FROM entities WHERE type = 'country' AND attrs->>'un_status' IS DISTINCT FROM 'territory' AND attrs ? 'population'""",
     ),
     OrderVariant(
         id="order_city_distance",
@@ -83,7 +83,7 @@ VARIANTS = [
         entity_type="country", unit="m", min_ratio=None, min_abs=250,
         pool_sql="""SELECT id, name, (attrs->'highest_point'->>'elevation_m')::float,
                            coalesce(popularity, 0), NULL, NULL
-                    FROM entities WHERE type = 'country'
+                    FROM entities WHERE type = 'country' AND attrs->>'un_status' IS DISTINCT FROM 'territory'
                     AND attrs->'highest_point'->>'elevation_m' IS NOT NULL""",
     ),
     OrderVariant(

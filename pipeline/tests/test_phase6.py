@@ -96,3 +96,22 @@ def test_worldmap_rasterise_and_biomes() -> None:
     assert wm.biome(0, 25) == "d"  # Sahara
     assert wm.biome(-40, 75) == "i"  # Greenland
     assert wm.biome(100, 0) == "j"  # tropics
+
+
+def test_locator_window_and_raster() -> None:
+    from geo_pipeline.locators import COLS, ROWS, draw, raster, window
+
+    # a 10x10 degree square "country" at the equator, and a neighbour to its east
+    shape = {"west": 0.0, "east": 10.0, "south": -5.0, "north": 5.0}
+    west, north, cl, ca = window(shape)
+    assert west < 0 and west + cl * COLS > 10 and north > 5 and north - ca * ROWS < -5
+    sq = [[[0, -5], [10, -5], [10, 5], [0, 5], [0, -5]]]
+    nb = [[[10, -5], [20, -5], [20, 5], [10, 5], [10, -5]]]
+    nb2 = [[[20, -5], [30, -5], [30, 5], [20, 5], [20, -5]]]
+    feats = [(0, sq, (0, -5, 10, 5)), (1, nb, (10, -5, 20, 5)), (2, nb2, (20, -5, 30, 5))]
+    rows, n = draw(raster(feats, west, north, cl, ca), 0)
+    assert len(rows) == ROWS and all(len(r) == COLS for r in rows)
+    assert n > 20
+    flat = "".join(rows)
+    # neighbours in green with a border line between them, sea and coast around
+    assert "k" in flat and "l" in flat and "." in flat and "," in flat

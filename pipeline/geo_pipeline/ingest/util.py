@@ -85,8 +85,12 @@ def country_resolver(refresh: bool = False):
     from geo_pipeline.common import qid, sparql
 
     countries = pd.read_parquet(OUT / "country_entities.parquet")
-    iso2_to_country = {json.loads(a)["iso2"]: i for i, a in zip(countries.id, countries["attrs"])}
-    ids = set(countries.id)
+    # territories (also type "country") resolve to their sovereign, as before they were entities
+    iso2_to_country = {
+        a["iso2"]: i for i, a in zip(countries.id, countries["attrs"].map(json.loads))
+        if not a.get("is_territory")
+    }
+    ids = set(iso2_to_country.values())
     territory_sov: dict[str, str] = dict(TERRITORY_SOVEREIGN)
     for r in sparql(
         "SELECT ?iso2 ?sov WHERE { ?item wdt:P297 ?iso2 ; wdt:P17 ?sov . }",

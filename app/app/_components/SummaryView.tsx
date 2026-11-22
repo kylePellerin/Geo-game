@@ -2,7 +2,7 @@
 /** What the player sees after a question ends: their stamp, the reveal and a fact card. */
 import { formatShare, formatValue } from "@/lib/client/state";
 import type { Question, Summary } from "@/lib/client/types";
-import { Burst, Stamp, tilt } from "./Bits";
+import { Burst, roundTier, Stamp, tilt } from "./Bits";
 import { LeftItem, Pin } from "./MatchPlay";
 import { ends } from "./OrderPlay";
 
@@ -87,7 +87,7 @@ function TextSummary({ summary, fresh }: { summary: Summary; fresh: boolean }) {
 
 function RoundStamp({ summary, n, fresh }: { summary: Summary; n: number; fresh: boolean }) {
   const right = summary.correct?.filter(Boolean).length ?? 0;
-  const tier = right === n ? "rarest" : right >= n / 2 ? "familiar" : right > 0 ? "famous" : "wrong";
+  const tier = roundTier(right, n);
   return (
     <div className="result-banner">
       <Stamp tier={tier} label={`${right} / ${n}`} points={summary.points} big slam={fresh} rotate="-6deg" />

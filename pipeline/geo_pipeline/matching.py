@@ -1,10 +1,10 @@
-"""Matching rounds (PLAN.md §1, QUESTIONS.md §3.12): pair four left items with four right items.
+"""Matching rounds (PLAN.md §1, QUESTIONS.md §3.12): pair three left items with three right items.
 
 Variants are defined here rather than in YAML because they pick items per day instead of filtering
 a fixed answer set. Each variant has a pool (SQL), how to read the right-hand item, and the pool's
 popularity ranking gives every left item a rarity category (which sets its points per pair).
 
-Stored in puzzle_questions with kind='match': valid_entity_ids = the four left ids (in display
+Stored in puzzle_questions with kind='match': valid_entity_ids = the left ids (in display
 order); payload = {"variant", "pairs": [{"left", "right", "right_label", "category"}],
 "right_order": [...shuffled right ids/labels]}. The client gets left items and right_order only.
 """
@@ -65,7 +65,7 @@ VARIANTS = [
         left_type="country",
         weight=3.0,
         pool_sql="""SELECT e.id, e.id, e.name, coalesce(e.popularity, 0), e.attrs->>'iso2', NULL
-                    FROM entities e WHERE e.type = 'country' AND e.attrs ? 'flag'""",
+                    FROM entities e WHERE e.type = 'country' AND e.attrs->>'un_status' IS DISTINCT FROM 'territory' AND e.attrs ? 'flag'""",
     ),
     MatchVariant(
         id="match_capital_country",
@@ -119,12 +119,12 @@ VARIANTS = [
                                -- any other adjective from the country name (Surinamese dollar)
                                '^' || left(regexp_replace(c.name, '[^A-Za-z]', '', 'g'), 4)
                                || '[a-z]*\\s+', '', 'i') AS bare) b
-                    WHERE c.type = 'country'
+                    WHERE c.type = 'country' AND c.attrs->>'un_status' IS DISTINCT FROM 'territory'
                     -- still names the country after stripping ("New Taiwan dollar"): skip
                     AND NOT EXISTS (SELECT 1 FROM regexp_split_to_table(unaccent(c.name), '[^A-Za-z]+') w
                                     WHERE length(w) >= 4 AND unaccent(bare) ~* ('\\m' || left(w, 3)))
                     AND jsonb_array_length(c.attrs->'currencies') = 1
-                    AND (SELECT count(*) FROM entities o WHERE o.type = 'country'
+                    AND (SELECT count(*) FROM entities o WHERE o.type = 'country' AND o.attrs->>'un_status' IS DISTINCT FROM 'territory'
                          AND o.attrs->'currencies' ? (c.attrs->'currencies'->>0)) = 1""",
     ),
     MatchVariant(
@@ -133,7 +133,7 @@ VARIANTS = [
         left_type="country",
         pool_sql=f"""SELECT c.id, c.attrs->'languages'->>0, c.attrs->'languages'->>0,
                            coalesce(c.popularity, 0), c.attrs->>'iso2', NULL
-                    FROM entities c WHERE c.type = 'country'
+                    FROM entities c WHERE c.type = 'country' AND c.attrs->>'un_status' IS DISTINCT FROM 'territory'
                     AND jsonb_array_length(c.attrs->'languages') = 1
                     -- skip giveaways (Hungary/Hungarian); keep Brazil/Portuguese, Austria/German
                     AND NOT {_giveaway("c.attrs->'languages'->>0")}""",
@@ -144,8 +144,8 @@ VARIANTS = [
         left_type="country",
         pool_sql=f"""SELECT c.id, c.attrs->>'demonym', c.attrs->>'demonym',
                            coalesce(c.popularity, 0), c.attrs->>'iso2', NULL
-                    FROM entities c WHERE c.type = 'country' AND c.attrs ? 'demonym'
-                    AND (SELECT count(*) FROM entities o WHERE o.type = 'country'
+                    FROM entities c WHERE c.type = 'country' AND c.attrs->>'un_status' IS DISTINCT FROM 'territory' AND c.attrs ? 'demonym'
+                    AND (SELECT count(*) FROM entities o WHERE o.type = 'country' AND o.attrs->>'un_status' IS DISTINCT FROM 'territory'
                          AND o.attrs->>'demonym' = c.attrs->>'demonym') = 1
                     -- only the fun ones (Dutch, Monegasque, Burkinabe), not Spain/Spanish
                     AND NOT {_giveaway("c.attrs->>'demonym'")}""",
@@ -156,7 +156,7 @@ VARIANTS = [
         left_type="country",
         pool_sql="""SELECT c.id, c.attrs->>'tld', c.attrs->>'tld',
                            coalesce(c.popularity, 0), c.attrs->>'iso2', NULL
-                    FROM entities c WHERE c.type = 'country' AND c.attrs ? 'tld'""",
+                    FROM entities c WHERE c.type = 'country' AND c.attrs->>'un_status' IS DISTINCT FROM 'territory' AND c.attrs ? 'tld'""",
     ),
     MatchVariant(
         id="match_country_mountain",
@@ -165,7 +165,7 @@ VARIANTS = [
         difficulties=(2,),
         pool_sql="""SELECT c.id, c.attrs->'highest_point'->>'id', c.attrs->'highest_point'->>'name',
                            coalesce(c.popularity, 0), c.attrs->>'iso2', NULL
-                    FROM entities c WHERE c.type = 'country'
+                    FROM entities c WHERE c.type = 'country' AND c.attrs->>'un_status' IS DISTINCT FROM 'territory'
                     AND c.attrs->'highest_point'->>'name' !~ '^Q[0-9]+$'
                     AND (c.attrs->'highest_point'->>'elevation_m')::float >= 2000""",
     ),
@@ -176,8 +176,30 @@ VARIANTS = [
         weight=2.0,
         # outlines too small to recognise (Luxembourg-sized and below) are left out
         pool_sql="""SELECT e.id, e.id, e.name, coalesce(e.popularity, 0), e.attrs->>'iso2', NULL
-                    FROM entities e WHERE e.type = 'country'
+                    FROM entities e WHERE e.type = 'country' AND e.attrs->>'un_status' IS DISTINCT FROM 'territory'
                     AND coalesce((e.attrs->'shape'->>'outline_ok')::boolean, false)""",
+    ),
+    MatchVariant(
+        id="match_map_country",
+        text="Match each country highlighted in red to its name",
+        left_type="country",
+        weight=2.0,
+        # pixel locator maps (geo_pipeline.locators) exist for every country with a shape
+        pool_sql="""SELECT e.id, e.id, e.name, coalesce(e.popularity, 0), e.attrs->>'iso2', NULL
+                    FROM entities e WHERE e.type = 'country' AND e.attrs->>'un_status' IS DISTINCT FROM 'territory'
+                    AND e.attrs ? 'shape'""",
+    ),
+    MatchVariant(
+        id="match_flag_capital",
+        text="Match each flag to its capital city",
+        left_type="country",
+        weight=1.5,
+        # one capital only, and not named like the country (Singapore, Kuwait City)
+        pool_sql=f"""SELECT c.id, lower(c.attrs->'capital_names'->>0), c.attrs->'capital_names'->>0,
+                            coalesce(c.popularity, 0), c.attrs->>'iso2', NULL
+                     FROM entities c WHERE c.type = 'country' AND c.attrs->>'un_status' IS DISTINCT FROM 'territory'
+                     AND c.attrs ? 'flag' AND jsonb_array_length(c.attrs->'capital_names') = 1
+                     AND NOT {_giveaway("c.attrs->'capital_names'->>0")}""",
     ),
     MatchVariant(
         id="match_region_country",
@@ -191,7 +213,7 @@ VARIANTS = [
                     AND NOT ({_names_country("e.name")})
                     -- names that echo another country (Papua -> Papua New Guinea?) are ambiguous
                     AND NOT EXISTS (SELECT 1 FROM entities k, regexp_split_to_table(unaccent(k.name), '[^A-Za-z]+') w
-                                    WHERE k.type = 'country' AND length(w) >= 5
+                                    WHERE k.type = 'country' AND k.attrs->>'un_status' IS DISTINCT FROM 'territory' AND length(w) >= 5
                                     AND unaccent(e.name) ILIKE '%%' || w || '%%')
                     -- city-regions (Moscow, Berlin, Hong Kong) would be trivial city questions
                     AND NOT EXISTS (SELECT 1 FROM entities ci WHERE ci.type = 'city' AND ci.name = e.name)
@@ -231,7 +253,7 @@ VARIANTS = [
                     LATERAL (SELECT r.b, an.name FROM relations r JOIN entities an ON an.id = r.b
                              WHERE r.a = c.id AND r.rel = 'has_national_animal'
                              ORDER BY (r.attrs->>'official')::boolean DESC, an.name LIMIT 1) first
-                    WHERE c.type = 'country'""",
+                    WHERE c.type = 'country' AND c.attrs->>'un_status' IS DISTINCT FROM 'territory'""",
     ),
     MatchVariant(
         id="match_olympic_city_year",
@@ -311,22 +333,25 @@ def _look_alike(a: MatchItem, b: MatchItem) -> bool:
     return any(a.iso2 in g and b.iso2 in g for g in SIMILAR_FLAGS)
 
 
+PAIRS = 3  # 4 felt long and the last pair was a freebie (playtest 2026-11-22): 3 harder pairs
+
+
 def build_round(variant: MatchVariant, pool: list[MatchItem], difficulty: int,
                 rng: random.Random, recently_used: set[str]) -> MatchRound | None:
-    """Pick 4 items. Easy (1): 2 famous + 2 well known. Standard (2, every daily round since
-    2026-11-20, "country to continent is too easy"): 1 well known + 2 familiar + 1 obscure or
-    rarer, and look-alike flags are allowed."""
+    """Pick PAIRS items. Easy (1): famous + well known. Standard (2, every daily round): one
+    well-known anchor, one familiar, one obscure or rarer (2026-11-22: "a little harder", was
+    1 well known + 2 familiar + 1 obscure of 4). Look-alike flags are allowed."""
     fresh = [i for i in pool if i.left not in recently_used]
     famous = [i for i in fresh if i.category == "famous"]
     well_known = [i for i in fresh if i.category == "well_known"]
     familiar = [i for i in fresh if i.category == "familiar"]
     rare = [i for i in fresh if i.category in ("obscure", "rarest")]
     if difficulty == 1:
-        want = [(famous, 2), (well_known, 2)]
-    elif len(rare) >= 1 and len(familiar) >= 2:
-        want = [(well_known or famous, 1), (familiar, 2), (rare, 1)]
+        want = [(famous, 2), (well_known, 1)]
+    elif len(rare) >= 1 and len(familiar) >= 1:
+        want = [(well_known or famous, 1), (familiar, 1), (rare, 1)]
     else:  # small pools (Olympic hosts): whatever isn't famous
-        want = [(well_known, 1), ([i for i in fresh if i.category in HARDER_CATEGORIES], 3)]
+        want = [(well_known, 1), ([i for i in fresh if i.category in HARDER_CATEGORIES], 2)]
     for _attempt in range(50):
         chosen: list[MatchItem] = []
         for group, n in want:
@@ -341,12 +366,12 @@ def build_round(variant: MatchVariant, pool: list[MatchItem], difficulty: int,
                     continue
                 if any(c.left == item.left for c in chosen):
                     continue
-                if (difficulty == 1 and variant.id == "match_flag_country"
+                if (difficulty == 1 and variant.id in ("match_flag_country", "match_flag_capital")
                         and any(_look_alike(c, item) for c in chosen)):
                     continue
                 chosen.append(item)
                 taken += 1
-        if len(chosen) == 4:
+        if len(chosen) == PAIRS:
             rng.shuffle(chosen)
             right_order = [c.right for c in chosen]
             while right_order == [c.right for c in chosen]:

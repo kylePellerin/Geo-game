@@ -23,6 +23,7 @@ notability filter that drops the long tail nobody will type.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -256,6 +257,8 @@ def _to_unit(v: float, unit: str, attr: str) -> float | None:
 def main(refresh: bool = False) -> None:
     countries = pd.read_parquet(OUT / "country_entities.parquet")
     country_ids = set(countries.id)
+    territory_ids = {i for i, a in zip(countries.id, countries["attrs"])
+                     if json.loads(a).get("is_territory")}
     # ids the core ingests already own (country, city, airport): those keep the plain QID
     taken: set[str] = set()
     for t in ("country", "city", "airport"):
@@ -317,9 +320,14 @@ def main(refresh: bool = False) -> None:
                 # city-states (Hamburg, Prague, Vienna) are also first-level regions: give the
                 # region facet its own id so "Name a German state" still accepts Hamburg.
                 # Other overlaps (a city that is also an island/landmark) stay a city.
-                if etype != "region":
+                # Territories (Greenland, Guam, Bermuda) are countries now, but players still
+                # mean the island in "Name an island...": the island facet gets its own id too.
+                if etype == "region":
+                    eid = f"{q}#region"
+                elif etype == "island" and q in territory_ids:
+                    eid = f"{q}#island"
+                else:
                     continue
-                eid = f"{q}#region"
             cs = [REALM_TO_COUNTRY.get(c, c) for c in d["countries"]]
             cs = [c for c in dict.fromkeys(cs) if c in country_ids]
             if etype in ("landmark", "island", "region") and not cs:

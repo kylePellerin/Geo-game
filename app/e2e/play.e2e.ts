@@ -110,7 +110,7 @@ test("play a whole day", async ({ page }) => {
         await expect(imgs).toHaveCount(labels.length);
         for (const img of await imgs.all()) {
           await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBeGreaterThan(0);
-          expect(await img.getAttribute("src")).toMatch(/^\/api\/flag\/[\d-]+\/\d\/\d$/);
+          expect(await img.getAttribute("src")).toMatch(/^\/api\/image\/[\d-]+\/\d\/\d$/);
         }
       }
       for (const [n, label] of labels.entries()) {

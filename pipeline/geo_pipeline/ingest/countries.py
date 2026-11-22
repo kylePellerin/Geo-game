@@ -1,7 +1,10 @@
 """Countries: mledoze/countries + Wikidata + World Bank population.
 
 Output: out/country_{entities,aliases,relations}.parquet
-Country set (POLICY.md): UN members + observers (Vatican, Palestine) + allowlist (Kosovo, Taiwan).
+Country set (POLICY.md): UN members + observers (Vatican, Palestine) + allowlist (Kosovo, Taiwan),
+plus inhabited dependent territories (Greenland, Puerto Rico, Hong Kong...) as type "country" with
+attrs.is_territory and attrs.sovereign. Question templates only accept territories when they opt in
+(`territories: true`); everywhere else a territory is recognised but not a valid answer.
 """
 
 from __future__ import annotations
@@ -21,7 +24,12 @@ from geo_pipeline.common import (
     sparql,
     wikidata_entities,
 )
-from geo_pipeline.ingest.util import wikidata_aliases, write_outputs
+from geo_pipeline.ingest.util import (
+    REALM_TO_COUNTRY,
+    TERRITORY_SOVEREIGN,
+    wikidata_aliases,
+    write_outputs,
+)
 
 MLEDOZE_URL = "https://raw.githubusercontent.com/mledoze/countries/master/countries.json"
 WB_POP_URL = (
@@ -34,6 +42,8 @@ OBSERVERS = {"VAT", "PSE"}
 ALLOWLIST = {"UNK", "TWN"}
 # mledoze cca3 -> World Bank code where they differ
 WB_CODE = {"UNK": "XKX"}
+# Territories left out: uninhabited or only research/military staff.
+NOT_TERRITORIES = {"ATA", "BVT", "HMD", "UMI", "ATF", "IOT", "SGS"}
 
 # Where several Wikidata items share an ISO code, pin the one players mean.
 QID_OVERRIDES = {"NL": "Q55"}  # Netherlands (country), not Kingdom of the Netherlands (Q29999)
@@ -52,10 +62,12 @@ def main(refresh: bool = False) -> None:
     raw = json.loads(
         download(MLEDOZE_URL, RAW / "mledoze" / "countries.json", refresh).read_text("utf-8")
     )
-    countries = [
-        c for c in raw if c["unMember"] or c["cca3"] in OBSERVERS | ALLOWLIST
-    ]
-    log.info("country set: %d", len(countries))
+    def is_country(c: dict) -> bool:
+        return bool(c["unMember"]) or c["cca3"] in OBSERVERS | ALLOWLIST
+
+    countries = [c for c in raw if is_country(c) or c["cca3"] not in NOT_TERRITORIES]
+    log.info("country set: %d (%d territories)", len(countries),
+             sum(not is_country(c) for c in countries))
 
     # --- Wikidata: QID by ISO alpha-2, plus driving side, capitals, population fallback
     fields = """
@@ -102,6 +114,15 @@ def main(refresh: bool = False) -> None:
         )
     }
 
+    # sovereign of each territory: Wikidata P17 (realms mapped to the country players mean)
+    sovereign_of: dict[str, str] = dict(TERRITORY_SOVEREIGN)
+    for r in sparql(
+        "SELECT ?iso2 ?sov WHERE { ?item wdt:P297 ?iso2 ; wdt:P17 ?sov . }",
+        "iso2-sovereign", refresh,
+    ):
+        s = qid(r["sov"])
+        sovereign_of.setdefault(r["iso2"], REALM_TO_COUNTRY.get(s, s))
+
     # --- World Bank population (most recent value)
     wb = json.loads(
         download(WB_POP_URL, RAW / "worldbank" / "SP.POP.TOTL.json", refresh).read_text("utf-8")
@@ -131,6 +152,7 @@ def main(refresh: bool = False) -> None:
             else "mixed" if wd["drive"] else None
         )
         lat, lon = (c.get("latlng") or [None, None])[:2]
+        territory = not is_country(c)
         attrs = {
             "iso2": c["cca2"], "iso3": c["cca3"] if c["cca3"] != "UNK" else "XKX",
             "official_name": c["name"]["official"],
@@ -139,8 +161,10 @@ def main(refresh: bool = False) -> None:
             "un_member": bool(c["unMember"]) and c["cca3"] != "VAT",
             "un_status": (
                 "member" if c["unMember"] and c["cca3"] != "VAT"
-                else "observer" if c["cca3"] in OBSERVERS else "non_member"
+                else "observer" if c["cca3"] in OBSERVERS
+                else "territory" if territory else "non_member"
             ),
+            "is_territory": territory,
             "landlocked": bool(c["landlocked"]),
             "island_nation": q in islands,
             "area_km2": c.get("area"),
@@ -189,11 +213,13 @@ def main(refresh: bool = False) -> None:
         e["attrs"]["enwiki"] = enwiki.get(e["id"])
 
     # borders (symmetric in source; keep only pairs inside our country set)
+    sov_cca3 = {c["cca3"]: cca3_to_qid[c["cca3"]] for c in countries if is_country(c)}
+    # (territories left out: borders questions are about sovereign countries)
     seen = set()
-    for c in countries:
+    for c in filter(is_country, countries):
         a = cca3_to_qid[c["cca3"]]
         for b3 in c.get("borders", []):
-            if (b := cca3_to_qid.get(b3)) and (a, b) not in seen:
+            if (b := sov_cca3.get(b3)) and (a, b) not in seen:
                 seen.add((a, b))
                 relations.append({"a": a, "rel": "borders", "b": b, "attrs": {}})
     asym = [(a, b) for a, b in seen if (b, a) not in seen]
@@ -201,6 +227,13 @@ def main(refresh: bool = False) -> None:
         # e.g. mledoze lists India as bordering Sri Lanka (no land border): keep only mutual pairs
         log.warning("dropping one-way borders: %s", asym)
         relations = [r for r in relations if (r["b"], r["a"]) in seen]
+
+    # a territory's sovereign must be one of our sovereign countries (Western Sahara has none)
+    sovereigns = {e["id"] for e in entities if not e["attrs"]["is_territory"]}
+    for e in entities:
+        if e["attrs"]["is_territory"]:
+            s = sovereign_of.get(e["attrs"]["iso2"])
+            e["attrs"]["sovereign"] = s if s in sovereigns and s != e["id"] else None
 
     write_outputs("country", entities, aliases, relations)
     pd.Series(cca3_to_qid).to_json(OUT / "country_cca3_to_qid.json")

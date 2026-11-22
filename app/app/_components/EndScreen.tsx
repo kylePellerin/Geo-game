@@ -9,7 +9,8 @@ import { api } from "@/lib/client/api";
 import { cachedResults, storeResults } from "@/lib/client/cache";
 import { untilNextPuzzle } from "@/lib/client/state";
 import type { DayResults } from "@/lib/client/types";
-import { CountUp, Stamp, tilt } from "./Bits";
+import { Atlas } from "./Atlas";
+import { CountUp, roundTier, Stamp, tilt } from "./Bits";
 
 type QResult = DayResults["questions"][number];
 
@@ -18,7 +19,7 @@ function QuestionStamp({ q }: { q: QResult }) {
   if (q.state === "not_started") return <Stamp tier="wrong" label="—" round rotate={rot} />;
   if (q.pairCount !== undefined) {
     const right = q.correctPairs ?? 0;
-    const tier = right === q.pairCount ? "rarest" : right >= q.pairCount / 2 ? "familiar" : right > 0 ? "famous" : "wrong";
+    const tier = roundTier(right, q.pairCount);
     return <Stamp tier={tier} label={`${right}/${q.pairCount}`} points={q.points} round rotate={rot} />;
   }
   const valid = q.answers.find((a) => a.status === "valid");
@@ -71,7 +72,7 @@ export function EndScreen({ date, local, remaining, onResume }: {
           <h2 id="results-title">{res.finished ? "Today's results" : "Results so far"}</h2>
         </div>
         <div className="total">
-          <CountUp value={finalChanged ? res.finalTotal! : res.total} ms={1100} />
+          <CountUp value={finalChanged ? res.finalTotal! : res.total} ms={750} />
           <small>points</small>
         </div>
       </div>
@@ -87,7 +88,7 @@ export function EndScreen({ date, local, remaining, onResume }: {
         {res.questions.map((q, i) => {
           const valid = q.answers.find((a) => a.status === "valid");
           return (
-            <div key={q.idx} className="stamp-cell" style={{ "--d": `${0.1 * i}s` } as React.CSSProperties}>
+            <div key={q.idx} className="stamp-cell" style={{ "--d": `${0.07 * i}s` } as React.CSSProperties}>
               <QuestionStamp q={q} />
               <div className="a">
                 {q.state === "not_started" ? "Not played"
@@ -109,6 +110,7 @@ export function EndScreen({ date, local, remaining, onResume }: {
 
       {res.finished && (
         <>
+          <Atlas />
           {res.shareText
             ? <pre className="telegram">{res.shareText}</pre>
             : <div className="telegram"><div className="skeleton" style={{ width: "60%" }} /></div>}

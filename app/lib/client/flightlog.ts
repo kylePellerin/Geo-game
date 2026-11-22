@@ -10,7 +10,13 @@ export interface MapPin {
   lon: number;
   ok: boolean;
   label: string;
+  /** second line on the end-of-day map: "Q2 · Familiar +50" */
+  detail?: string;
 }
+
+const TIER_LABEL: Record<string, string> = {
+  famous: "Famous", well_known: "Well known", familiar: "Familiar", obscure: "Obscure", rarest: "Rarest",
+};
 
 type Listener = (event: { pins: MapPin[]; fresh?: MapPin }) => void;
 
@@ -29,7 +35,8 @@ export function currentPins(): MapPin[] {
 
 /** Replace every pin (e.g. after loading the day); no flight. */
 export function setPins(next: MapPin[]): void {
-  const same = next.length === pins.length && next.every((p, i) => p.key === pins[i].key);
+  const same = next.length === pins.length
+    && next.every((p, i) => p.key === pins[i].key && p.detail === pins[i].detail);
   if (same) return;
   pins = next;
   listeners.forEach((fn) => fn({ pins }));
@@ -52,7 +59,11 @@ export function pinsFromSummaries(summaries: Iterable<Summary>): MapPin[] {
   for (const s of summaries) {
     for (const a of s.answers) {
       const p = pinFor(s.idx, a.entity, a.status === "valid");
-      if (p) out.push(p);
+      if (!p) continue;
+      p.detail = a.status === "valid"
+        ? `Q${s.idx + 1} · ${TIER_LABEL[a.tier ?? ""] ?? "Right"} +${a.points}`
+        : `Q${s.idx + 1} · not this one`;
+      out.push(p);
     }
   }
   return out;

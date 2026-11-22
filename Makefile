@@ -40,6 +40,7 @@ ingest:
 	$(PY) geo_pipeline.ingest.airports $(ARGS)
 	$(PY) geo_pipeline.ingest.enrich $(ARGS)
 	$(PY) geo_pipeline.ingest.shapes $(ARGS)
+	$(PY) geo_pipeline.locators
 	$(PY) geo_pipeline.ingest.features $(ARGS)
 	$(PY) geo_pipeline.ingest.symbols $(ARGS)
 
