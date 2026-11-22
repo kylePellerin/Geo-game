@@ -209,7 +209,7 @@ export async function resolveNames(db: Pool, type: string, lines: string[]) {
     `SELECT DISTINCT ON (a.alias_norm) a.alias_norm AS norm, e.id, e.name, c.name AS country
      FROM aliases a JOIN entities e ON e.id = a.entity_id LEFT JOIN entities c ON c.id = e.country_id
      WHERE e.type = $1 AND a.alias_norm = ANY($2)
-     ORDER BY a.alias_norm, (a.kind = 'name') DESC, e.popularity DESC NULLS LAST`,
+     ORDER BY a.alias_norm, (a.kind = 'label') DESC, e.popularity DESC NULLS LAST`,
     [type, norms],
   );
   const byNorm = new Map(rows.map((r) => [r.norm, r]));

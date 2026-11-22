@@ -9,8 +9,10 @@ import { api } from "@/lib/client/api";
 import { cachedResults, storeResults } from "@/lib/client/cache";
 import { untilNextPuzzle } from "@/lib/client/state";
 import type { DayResults } from "@/lib/client/types";
+import Link from "next/link";
 import { Atlas } from "./Atlas";
 import { CountUp, roundTier, Stamp, tilt } from "./Bits";
+import { Leaderboard } from "./Leaderboard";
 
 type QResult = DayResults["questions"][number];
 
@@ -111,6 +113,8 @@ export function EndScreen({ date, local, remaining, onResume }: {
       {res.finished && (
         <>
           <Atlas />
+          <Leaderboard date={date} limit={5} refreshKey={res.total} />
+          <p className="fine" style={{ textAlign: "right" }}><Link href="/stats">Your stats, streak and full leaderboard →</Link></p>
           {res.shareText
             ? <pre className="telegram">{res.shareText}</pre>
             : <div className="telegram"><div className="skeleton" style={{ width: "60%" }} /></div>}

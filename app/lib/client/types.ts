@@ -123,3 +123,39 @@ export interface ApiError {
   error: string;
   message: string;
 }
+
+export interface PlayerStatsView {
+  gamesPlayed: number;
+  currentStreak: number;
+  maxStreak: number;
+  bestScore: number | null;
+  bestScoreDate: string | null;
+  average: number;
+  hundredPointAnswers: number;
+  rarestAnswer: { name: string; share: number; date: string | null } | null;
+  histogram: { from: number; n: number }[];
+  bestFamily: { family: string; n: number; avg: number } | null;
+  worstFamily: { family: string; n: number; avg: number } | null;
+  todayPercentile: number | null;
+}
+
+export interface StatsResponse {
+  /** the player's leaderboard name */
+  name: string;
+  stats: PlayerStatsView | null;
+}
+
+export interface LeaderRow { rank: number; name: string; points: number; you: boolean }
+export interface LeaderboardResponse {
+  date: string;
+  players: number;
+  final: boolean;
+  top: LeaderRow[];
+  you: LeaderRow | null;
+}
+
+export interface PracticeNext {
+  question: Question;
+  seconds: number;
+  difficulty: number;
+}

@@ -4,7 +4,13 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-psql_db() { docker compose exec -T -e PGOPTIONS="-c client_min_messages=warning" db psql -U geo_game -d geo_game -v ON_ERROR_STOP=1 -q "$@"; }
+# Local database by default. With DATABASE_URL set (e.g. Supabase, see DEPLOY.md) the same psql in
+# the local db container connects to that URL instead.
+if [[ -n "${DATABASE_URL:-}" ]]; then
+  psql_db() { docker compose exec -T -e PGOPTIONS="-c client_min_messages=warning" db psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q "$@"; }
+else
+  psql_db() { docker compose exec -T -e PGOPTIONS="-c client_min_messages=warning" db psql -U geo_game -d geo_game -v ON_ERROR_STOP=1 -q "$@"; }
+fi
 
 psql_db -c "CREATE TABLE IF NOT EXISTS schema_migrations (
   filename text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())"

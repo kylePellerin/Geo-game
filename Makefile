@@ -1,4 +1,4 @@
-.PHONY: worldmap db db-down db-reset migrate psql test lint e2e data ingest popularity flags load facts report generate replace finalize rebuild-stats dev play
+.PHONY: worldmap db db-down db-reset migrate psql test lint e2e data ingest popularity flags load facts report generate replace finalize rebuild-stats practice dev play
 
 db:
 	docker compose up -d --wait db
@@ -69,13 +69,17 @@ facts:
 replace:
 	$(PY) geo_pipeline.replace_question --date $(DATE) --idx $(IDX)
 
-data: ingest popularity load facts report
+data: ingest popularity load facts practice report
 
 # Generate puzzles (FROM defaults to tomorrow UTC). Add GEN_ARGS="--print" to see them,
 # "--dry-run" to not write, "--replace" to regenerate unreviewed, unanswered future dates.
 DAYS ?= 30
 generate:
 	$(PY) geo_pipeline.generate_puzzles --days $(DAYS) $(if $(FROM),--from $(FROM)) $(GEN_ARGS)
+
+# Practice pool (never scored): all passing free-text questions + some rounds; re-run after `load`
+practice:
+	$(PY) geo_pipeline.generate_practice
 
 # ---- game (Phase 4)
 dev:

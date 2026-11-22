@@ -26,8 +26,21 @@ export function databaseUrl(): string {
 
 let pool: Pool | null = null;
 
+/**
+ * Deployed settings (DEPLOY.md):
+ * - DATABASE_POOL_MAX: connections per server instance (serverless: keep it small, e.g. 3, and
+ *   use the provider's pooler URL).
+ * - DATABASE_CA: the database's CA certificate (PEM) to verify TLS against.
+ */
 export function getPool(): Pool {
-  pool ??= new Pool({ connectionString: databaseUrl(), max: 20, connectionTimeoutMillis: 5000 });
+  const ca = process.env.DATABASE_CA?.replace(/\\n/g, "\n");
+  pool ??= new Pool({
+    connectionString: databaseUrl(),
+    max: Number(process.env.DATABASE_POOL_MAX) || 20,
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 10_000,
+    ...(ca ? { ssl: { ca, rejectUnauthorized: true } } : {}),
+  });
   return pool;
 }
 

@@ -46,5 +46,6 @@ Notes:
 - Airport data: OurAirports (public domain).
 - Data from Wikidata (CC0) and Wikimedia pageview statistics.
 - Flag images: flag-icons by Panayiotis Lipiridis, MIT licence.
+- QR codes: node-qrcode by Ryan Day, MIT licence (software, credited on the credits page).
 - World map: Made with Natural Earth (public domain; credit appreciated).
 - Fonts: Pixelify Sans, Silkscreen and VT323 (SIL Open Font License 1.1, via Google Fonts).

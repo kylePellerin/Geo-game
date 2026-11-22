@@ -85,32 +85,27 @@ export function clearPuzzleCache(): void {
   cache.clear();
 }
 
-/** All questions for a date (cached: puzzles are frozen once generated). */
-export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion[] | null> {
-  const hit = cache.get(date);
-  if (hit) return hit;
-  const { rows } = await db.query<{
-    idx: number; kind: QuestionKind; question_text: string; family: string;
-    entity_type: string; difficulty: number; template_id: string; valid_entity_ids: string[];
-    payload: {
-      variant?: string; pairs?: MatchPair[]; right_order?: string[]; items?: OrderItem[];
-      decoys?: { right: string; right_label: string }[];
-      answer?: number[]; unit?: string; direction?: "asc" | "desc"; territories?: boolean;
-    };
-  }>(
-    `SELECT idx, kind, question_text, family, entity_type, difficulty, template_id,
-            valid_entity_ids, payload
-     FROM puzzle_questions WHERE date = $1 ORDER BY idx`,
-    [date],
-  );
-  if (!rows.length) return null;
+/** A puzzle_questions / practice_questions row as stored. */
+export interface QuestionRow {
+  idx: number; kind: QuestionKind; question_text: string; family: string;
+  entity_type: string; difficulty: number; template_id: string; valid_entity_ids: string[];
+  payload: {
+    variant?: string; pairs?: MatchPair[]; right_order?: string[]; items?: OrderItem[];
+    decoys?: { right: string; right_label: string }[];
+    answer?: number[]; unit?: string; direction?: "asc" | "desc"; territories?: boolean;
+    answer_rarity?: Record<string, string>;
+  };
+}
+
+/** Rows -> questions (with the popularity prior of each free-text answer set). */
+export async function toQuestions(db: Pool, date: string, rows: QuestionRow[]): Promise<PuzzleQuestion[]> {
   const freeIds = rows.filter((r) => r.kind === "free_text").flatMap((r) => r.valid_entity_ids);
   const pops = await db.query<{ id: string; popularity: number | null }>(
     "SELECT id, popularity FROM entities WHERE id = ANY($1)",
     [freeIds],
   );
   const popOf = new Map(pops.rows.map((r) => [r.id, r.popularity ?? 0]));
-  const questions = rows.map((r): PuzzleQuestion => ({
+  return rows.map((r): PuzzleQuestion => ({
     date,
     idx: r.idx,
     kind: r.kind,
@@ -133,6 +128,20 @@ export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion
     unit: r.payload.unit ?? "",
     direction: r.payload.direction ?? "desc",
   }));
+}
+
+/** All questions for a date (cached: puzzles are frozen once generated). */
+export async function loadPuzzle(db: Pool, date: string): Promise<PuzzleQuestion[] | null> {
+  const hit = cache.get(date);
+  if (hit) return hit;
+  const { rows } = await db.query<QuestionRow>(
+    `SELECT idx, kind, question_text, family, entity_type, difficulty, template_id,
+            valid_entity_ids, payload
+     FROM puzzle_questions WHERE date = $1 ORDER BY idx`,
+    [date],
+  );
+  if (!rows.length) return null;
+  const questions = await toQuestions(db, date, rows);
   cache.set(date, questions);
   return questions;
 }

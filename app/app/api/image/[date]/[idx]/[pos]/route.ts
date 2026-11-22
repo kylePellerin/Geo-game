@@ -1,12 +1,13 @@
 /**
  * GET /api/image/:date/:idx/:pos → the picture (flag, outline or locator map) at display position
- * `pos` of a picture matching round. The URL names a position, never a country.
+ * `pos` of a picture matching round (date "practice": idx is a practice question id). The URL names a position, never a country.
  */
 import { NextResponse, type NextRequest } from "next/server";
 import { getPool } from "@/lib/db";
 import { gameToday, isIsoDate } from "@/lib/game/http";
 import { countryImage, imageKind } from "@/lib/game/images";
-import { loadPuzzle } from "@/lib/game/puzzle";
+import { loadPractice, PRACTICE } from "@/lib/game/practice";
+import { loadPuzzle, type PuzzleQuestion } from "@/lib/game/puzzle";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +16,13 @@ export async function GET(
 ) {
   const { date, idx, pos } = await ctx.params;
   const notFound = () => new NextResponse("Not found", { status: 404 });
-  if (!isIsoDate(date) || date > gameToday()) return notFound();
-  const q = (await loadPuzzle(getPool(), date))?.find((x) => x.idx === Number(idx));
+  let q: PuzzleQuestion | undefined;
+  if (date === PRACTICE) {
+    q = (await loadPractice(getPool(), Number(idx)).catch(() => null))?.q;
+  } else {
+    if (!isIsoDate(date) || date > gameToday()) return notFound();
+    q = (await loadPuzzle(getPool(), date))?.find((x) => x.idx === Number(idx));
+  }
   const kind = imageKind(q?.variant);
   const pair = kind ? q!.pairs[Number(pos)] : undefined;
   if (!kind || !pair) return notFound();

@@ -6,7 +6,8 @@ import { moveItem } from "@/lib/client/state";
 import type { Question, Summary } from "@/lib/client/types";
 import { TimerDisplay, useCountdown } from "./Timer";
 
-export function OrderPlay({ date, question, deadline, seconds, offsetMs, onDone, head }: {
+export function OrderPlay({ date, question, deadline, seconds, offsetMs, onDone, head, answerUrl = "/api/answer" }: {
+  answerUrl?: string;
   date: string; question: Question; deadline: string; seconds: number; offsetMs: number;
   onDone: (s: Summary) => void; head: (timer: React.ReactNode) => React.ReactNode;
 }) {
@@ -22,7 +23,7 @@ export function OrderPlay({ date, question, deadline, seconds, offsetMs, onDone,
     if (sent.current) return;
     sent.current = true;
     try {
-      onDone(await api<Summary>("/api/answer", { date, idx: question.idx, order: orderRef.current }));
+      onDone(await api<Summary>(answerUrl, { date, idx: question.idx, order: orderRef.current }));
     } catch (e) {
       sent.current = false;
       setError((e as Error).message);

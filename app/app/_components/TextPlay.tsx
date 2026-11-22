@@ -14,7 +14,9 @@ import { TimerDisplay, useCountdown } from "./Timer";
 
 interface Suggestion { raw: string; options: Named[] }
 
-export function TextPlay({ date, question, deadline, seconds, offsetMs, initial, onEnd, onDone, head }: {
+export function TextPlay({ date, question, deadline, seconds, offsetMs, initial, onEnd, onDone, head, answerUrl = "/api/answer" }: {
+  /** practice mode posts elsewhere (same body and responses) */
+  answerUrl?: string;
   date: string; question: Question; deadline: string; seconds: number; offsetMs: number;
   initial: GivenAnswer[]; onEnd: () => void; onDone: (s: Summary) => void;
   head: (timer: React.ReactNode) => React.ReactNode;
@@ -29,7 +31,7 @@ export function TextPlay({ date, question, deadline, seconds, offsetMs, initial,
 
   async function send(raw: string, confirm?: Named) {
     try {
-      const r = await api<AnswerResponse>("/api/answer", {
+      const r = await api<AnswerResponse>(answerUrl, {
         date, idx: question.idx, text: raw, ...(confirm ? { confirm_entity_id: confirm.id } : {}),
       });
       if ((r.status === "valid" || r.status === "real_but_wrong") && r.entity) {

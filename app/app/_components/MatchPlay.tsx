@@ -27,7 +27,8 @@ export function Pin({ i, on = true }: { i: number | null; on?: boolean }) {
   );
 }
 
-export function MatchPlay({ date, question, deadline, seconds, offsetMs, onDone, head }: {
+export function MatchPlay({ date, question, deadline, seconds, offsetMs, onDone, head, answerUrl = "/api/answer" }: {
+  answerUrl?: string;
   date: string; question: Question; deadline: string; seconds: number; offsetMs: number;
   onDone: (s: Summary) => void; head: (timer: React.ReactNode) => React.ReactNode;
 }) {
@@ -44,7 +45,7 @@ export function MatchPlay({ date, question, deadline, seconds, offsetMs, onDone,
     if (sent.current) return;
     sent.current = true;
     try {
-      onDone(await api<Summary>("/api/answer", {
+      onDone(await api<Summary>(answerUrl, {
         date, idx: question.idx, pairs: pairsRef.current.map((p) => p ?? -1),
       }));
     } catch (e) {

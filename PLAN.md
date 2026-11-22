@@ -399,6 +399,14 @@ Implemented (Phase 6, 2026-11-20):
 
 **Phase 7 — Retention.** Stats page, transfer code and optional account upgrade (§10), daily
 leaderboard, endless/practice mode, deploy (Vercel + Supabase).
+*Built 2026-11-22:* stats page (`/stats`), transfer code + QR with history merge (`/claim`),
+delete-my-data and privacy note (`/privacy`), credits page, daily leaderboard (generated names like
+"Brave Albatross 42": no nicknames, so nothing to moderate) on the end screen and stats page,
+practice mode (`/practice`, pool from `make practice`, stateless and never stored), deploy prep
+(DEPLOY.md: Vercel cron for finalize, pool/SSL settings, migrations against `DATABASE_URL`, gated
+GitHub Action for generation). Aliases deduplicated per (entity, normalised spelling) to fit the
+Supabase free tier (584 → 266 MB). Not done: optional account (needs Supabase Auth on the user's
+project), the actual deploy (needs the user's accounts).
 
 ## 10. Player stats (no account needed)
 

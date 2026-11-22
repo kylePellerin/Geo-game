@@ -21,6 +21,10 @@ from geo_pipeline.db import connect
 from geo_pipeline.normalize import is_bare_affix, normalize
 
 FLAGS_FILE = PIPELINE_DIR / "flags_tags.yaml"
+# Which alias kind to keep when several spell the same thing for one entity (first wins).
+KIND_PRIORITY = {k: i for i, k in enumerate(
+    ["manual", "curated", "label", "official", "altlabel", "code", "enwiki", "geonames", "native",
+     "derived", "keyword", "lang"])}
 
 
 def read_all(kind: str) -> pd.DataFrame:
@@ -119,7 +123,11 @@ def clean_aliases(al: pd.DataFrame, ents: pd.DataFrame, types: pd.Series) -> pd.
     dropped = len(al) - sum(keep)
     al = al[keep]
     log.info("alias cleaning: dropped %d aliases that clash with another entity's label", dropped)
-    return al.drop(columns="type").drop_duplicates(["entity_id", "alias_norm", "kind"])
+    # One row per (entity, normalised spelling): the matcher only looks at alias_norm, and the same
+    # name in 18 languages ("Paris") was ~45% of the table. Keep the most meaningful kind.
+    rank = al["kind"].map(lambda k: KIND_PRIORITY.get(k.split(":")[0], len(KIND_PRIORITY)))
+    al = al.assign(_r=rank).sort_values(["entity_id", "alias_norm", "_r"], kind="stable")
+    return al.drop(columns=["type", "_r"]).drop_duplicates(["entity_id", "alias_norm"])
 
 
 def main(allow_unreviewed_flags: bool = False, prune: bool = False) -> None:

@@ -12,7 +12,8 @@ import { currentPins, pinFor, pinsFromSummaries, setPins, type MapPin } from "@/
 import { currentQuestion } from "@/lib/client/state";
 import type { Daily, DayQuestion, Question, StartResponse, Summary, Tier } from "@/lib/client/types";
 import { TIERS } from "@/lib/game/scoring";
-import { CountUp, Difficulty, FlagIcon, Globe, PlaneIcon, roundTier, tierColor } from "./Bits";
+import { Difficulty, FlagIcon, Globe, PlaneIcon, roundTier, tierColor } from "./Bits";
+import { Shell } from "./Shell";
 import { EndScreen } from "./EndScreen";
 import { HowToPlay } from "./HowToPlay";
 import { MatchPlay } from "./MatchPlay";
@@ -150,10 +151,10 @@ export function Game() {
   );
 
   if (error && !daily) {
-    return <Shell><div className="alert" role="alert">{error}</div></Shell>;
+    return <Shell here="play"><div className="alert" role="alert">{error}</div></Shell>;
   }
   if (!daily || !view || !local) {
-    return <Shell><div className="loading"><Globe />Fuelling the plane…</div></Shell>;
+    return <Shell here="play"><div className="loading"><Globe />Fuelling the plane…</div></Shell>;
   }
 
   const total = daily.questions.reduce((s, q) => s + q.points, 0);
@@ -186,7 +187,7 @@ export function Game() {
   );
 
   return (
-    <Shell onHelp={() => setRules(true)} date={daily.date} total={total}>
+    <Shell here="play" onHelp={() => setRules(true)} dateline={<>{dateline(daily.date)}<br />daily puzzle</>} total={total}>
       <nav className="route" aria-label="Questions">
         <span className="route-line" aria-hidden="true" />
         <span className="route-line-done" aria-hidden="true"
@@ -307,30 +308,5 @@ export function Game() {
 
       {rules && <HowToPlay onClose={() => setRules(false)} />}
     </Shell>
-  );
-}
-
-function Shell({ children, onHelp, date, total }: {
-  children: ReactNode; onHelp?: () => void; date?: string; total?: number;
-}) {
-  return (
-    <main className="page">
-      <header className="masthead">
-        <h1 className="wordmark" aria-label="Geo-rarity">
-          <Globe /><span className="geo">Geo</span><span className="rarity">rarity</span>
-        </h1>
-        <div className="masthead-right">
-          {date && <div className="dateline">{dateline(date)}<br />daily puzzle</div>}
-          {total !== undefined && (
-            <div className="scorebox" aria-label={`${total} points`}>
-              <b><CountUp value={total} /></b><small>points</small>
-            </div>
-          )}
-          {onHelp && <button type="button" className="icon-btn" onClick={onHelp} aria-label="How to play">?</button>}
-        </div>
-      </header>
-      {children}
-      <footer className="footer">Same six questions for everyone, every day · new puzzle at 00:00 UTC</footer>
-    </main>
   );
 }

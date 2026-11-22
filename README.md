@@ -28,6 +28,7 @@ make db        # start Postgres and apply any new migrations
 make migrate   # apply new migrations only
 make db-reset  # wipe local data and rebuild the schema
 make psql      # open a psql shell
+make practice  # rebuild the practice-mode question pool (after `make load`)
 make test
 make lint
 npm --prefix app run dev
@@ -87,3 +88,7 @@ make rebuild-stats                        # rebuild all player stats from answer
 Endpoints: `GET /api/daily`, `POST /api/answer`, `GET /api/results/:date`, `GET /api/stats`,
 `POST /api/identity/reconcile`, `GET /api/flag/:date/:idx/:pos`. See PLAN.md §7. The 500-player
 simulation is `app/lib/game/game.integration.test.ts` (runs with `make test`, needs the DB).
+
+## Deploying
+
+See [DEPLOY.md](DEPLOY.md) (Vercel + Supabase).
