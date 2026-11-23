@@ -21,8 +21,8 @@ export const TIERS: { tier: Tier; above: number; points: number; label: string }
 ];
 
 export const MATCH_PAIR_POINTS: Record<Tier, number> = {
-  // 3 pairs since 2026-11-22: a standard round (well known + familiar + obscure) is still ~100
-  famous: 15, well_known: 20, familiar: 35, obscure: 45, rarest: 55,
+  // 4 pairs (again since 2026-11-23): a standard round (well known + 2 familiar + obscure) is ~100
+  famous: 10, well_known: 15, familiar: 25, obscure: 35, rarest: 40,
 };
 
 /** Ordering rounds: points per item in the right position (5 items → 100). */

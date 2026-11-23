@@ -146,13 +146,18 @@ describe("practice", () => {
                      ORDER BY e.popularity DESC NULLS LAST LIMIT 1) e ON true
        WHERE p.kind = 'free_text' AND p.template_id = 'country_in_continent' LIMIT 1`,
     )).rows[0];
-    const before = (await pool.query("SELECT count(*)::int AS n FROM answers")).rows[0].n;
+    // nothing stored: look only for this test's own texts (other test files insert answers in parallel)
+    const word = `Atlantis ${randomUUID().slice(0, 8)}`;
+    const stored = async () => (await pool.query(
+      "SELECT count(*)::int AS n FROM answers WHERE raw_text = ANY($1)", [[row.name, word]],
+    )).rows[0].n as number;
+    const before = await stored();
     const r = await answerPractice(pool, { idx: row.id, text: row.name }) as AnswerResult;
     expect(r.status).toBe("valid");
     expect(r.tier).toBeDefined();
     expect(r.summary?.commonAnswers?.length).toBeGreaterThan(0);
-    expect((await answerPractice(pool, { idx: row.id, text: "Atlantis" }) as AnswerResult).status).toBe("unrecognised");
-    expect((await pool.query("SELECT count(*)::int AS n FROM answers")).rows[0].n).toBe(before); // nothing stored
+    expect((await answerPractice(pool, { idx: row.id, text: word }) as AnswerResult).status).toBe("unrecognised");
+    expect(await stored()).toBe(before);
 
     const m = await nextPractice(pool, "match", []);
     expect(m!.question.right!.length).toBeGreaterThan(m!.question.left!.length); // extra options

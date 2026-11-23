@@ -170,12 +170,11 @@ Generated purely from coordinates.
 - Name an airport with a runway longer than 4,000 m
 
 ### 3.12 Matching rounds (M) ⭐ visual switch-up, every day
-Three items ↔ five options (two match nothing, since 2026-11-22: no pair is forced by elimination,
-a blind guess is 1 in 60), the player pairs them. The extra options come from the same pool and,
+Four items ↔ six options (two match nothing, since 2026-11-22: no pair is forced by elimination,
+a blind guess is 1 in 360), the player pairs them. The extra options come from the same pool and,
 where possible, the same rarity categories as the round, and never match a shown item (alts count). Not rarity-scored (see PLAN.md §1). One per day,
-always slot 4. Every round is "standard" difficulty: since 2026-11-22 (playtest: "fewer, a little
-harder") 1 well-known + 1 familiar + 1 obscure-or-rarer item, look-alike flags allowed (was 4 pairs:
-1 well-known + 2 familiar + 1 obscure).
+always slot 4. Every round is "standard" difficulty: 1 well-known + 2 familiar + 1 obscure-or-rarer item,
+look-alike flags allowed (2026-11-22 tried 3 items ↔ 5 options; back to 4 ↔ 6 on 2026-11-23).
 Variants (`pipeline/geo_pipeline/matching.py`), flags most often:
 - **flags ↔ countries** · **capitals ↔ countries** · **big cities ↔ countries**
 - **cities ↔ continents** (countries ↔ continents removed: too easy)

@@ -160,19 +160,19 @@ def test_match_round_easy_and_medium_mix() -> None:
 
     v = VARIANTS[0]
     easy = build_round(v, _match_pool(), 1, random.Random(1), set())
-    assert sorted(i.category for i in easy.items) == ["famous", "famous", "well_known"]
+    assert sorted(i.category for i in easy.items) == ["famous", "famous", "well_known", "well_known"]
     medium = build_round(v, _match_pool(), 2, random.Random(1), set())
-    # standard daily round (2026-11-22): 3 pairs, 1 well known + 1 familiar + 1 obscure/rarest
+    # standard daily round (2026-11-23): 4 pairs, 1 well known + 2 familiar + 1 obscure/rarest
     cats = sorted(i.category for i in medium.items)
-    assert cats.count("familiar") == 1 and cats.count("well_known") == 1
+    assert cats.count("familiar") == 2 and cats.count("well_known") == 1
     assert sum(c in {"obscure", "rarest"} for c in cats) == 1
     for r in (easy, medium):
-        assert len({i.right for i in r.items}) == 3
+        assert len({i.right for i in r.items}) == 4
         # two extra options that match nothing, from the round's own categories where possible
         assert len(r.decoys) == 2
         assert not any(c.matches(d.right) for c in r.items for d in r.decoys)
         assert sorted(r.right_order) == sorted([i.right for i in r.items] + [d.right for d in r.decoys])
-        assert r.right_order[:3] != [i.right for i in r.items]  # never shown pre-aligned
+        assert r.right_order[:4] != [i.right for i in r.items]  # never shown pre-aligned
     cats = {i.category for i in medium.items}
     assert all(d.category in cats for d in medium.decoys)
 

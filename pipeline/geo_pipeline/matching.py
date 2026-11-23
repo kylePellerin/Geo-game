@@ -335,28 +335,28 @@ def _look_alike(a: MatchItem, b: MatchItem) -> bool:
     return any(a.iso2 in g and b.iso2 in g for g in SIMILAR_FLAGS)
 
 
-PAIRS = 3  # 4 felt long and the last pair was a freebie (playtest 2026-11-22): 3 harder pairs
+PAIRS = 4  # back to 4 on 2026-11-23 (3 felt too short); the decoys stop the last pair being free
 # Extra right-hand options that match nothing (2026-11-22): no pair is ever forced by
-# elimination, and a blind guess of all three is 1 in 60 instead of 1 in 6.
+# elimination, and a blind guess of all four is 1 in 360 instead of 1 in 24.
 DECOYS = 2
 
 
 def build_round(variant: MatchVariant, pool: list[MatchItem], difficulty: int,
                 rng: random.Random, recently_used: set[str]) -> MatchRound | None:
-    """Pick PAIRS items. Easy (1): famous + well known. Standard (2, every daily round): one
-    well-known anchor, one familiar, one obscure or rarer (2026-11-22: "a little harder", was
-    1 well known + 2 familiar + 1 obscure of 4). Look-alike flags are allowed."""
+    """Pick PAIRS items. Easy (1): 2 famous + 2 well known. Standard (2, every daily round): one
+    well-known anchor, two familiar, one obscure or rarer, plus DECOYS extra options (4 + 2 since
+    2026-11-23; 3 + 2 on 2026-11-22). Look-alike flags are allowed."""
     fresh = [i for i in pool if i.left not in recently_used]
     famous = [i for i in fresh if i.category == "famous"]
     well_known = [i for i in fresh if i.category == "well_known"]
     familiar = [i for i in fresh if i.category == "familiar"]
     rare = [i for i in fresh if i.category in ("obscure", "rarest")]
     if difficulty == 1:
-        want = [(famous, 2), (well_known, 1)]
-    elif len(rare) >= 1 and len(familiar) >= 1:
-        want = [(well_known or famous, 1), (familiar, 1), (rare, 1)]
+        want = [(famous, 2), (well_known, 2)]
+    elif len(rare) >= 1 and len(familiar) >= 2:
+        want = [(well_known or famous, 1), (familiar, 2), (rare, 1)]
     else:  # small pools (Olympic hosts): whatever isn't famous
-        want = [(well_known, 1), ([i for i in fresh if i.category in HARDER_CATEGORIES], 2)]
+        want = [(well_known, 1), ([i for i in fresh if i.category in HARDER_CATEGORIES], 3)]
     for _attempt in range(50):
         chosen: list[MatchItem] = []
         for group, n in want:
