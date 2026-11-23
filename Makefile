@@ -1,4 +1,4 @@
-.PHONY: worldmap db db-down db-reset migrate psql test lint e2e data ingest popularity flags load facts report generate replace finalize rebuild-stats practice dev play
+.PHONY: worldmap db db-down db-reset migrate push-db psql test lint e2e data ingest popularity flags load facts report generate replace finalize rebuild-stats practice dev play
 
 db:
 	docker compose up -d --wait db
@@ -6,6 +6,10 @@ db:
 
 migrate:
 	./db/migrate.sh
+
+# Copy the game content (not player data) to the hosted database: make push-db DATABASE_URL=...
+push-db:
+	./db/push.sh
 
 db-down:
 	docker compose down

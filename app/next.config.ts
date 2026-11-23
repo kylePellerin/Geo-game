@@ -10,6 +10,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // The image route reads these at runtime by computed path (lib/game/images.ts), which file
+  // tracing can't see: without this, picture rounds would 404 on Vercel.
+  outputFileTracingIncludes: {
+    "/api/image/**": ["./data/outlines.json", "./data/locators.json", "./node_modules/flag-icons/flags/4x3/*.svg"],
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

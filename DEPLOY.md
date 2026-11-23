@@ -23,7 +23,17 @@ Supabase database.
 
 ## 2. Schema and data (from the dev container)
 
-Use the session pooler URL for all of these:
+**Quickest: copy your local database.** One command creates the schema on Supabase and copies
+everything the game needs (places, aliases, puzzles, practice pool, fact cards) from your local
+database, but no players or answers, so the hosted game starts fresh:
+
+```sh
+make push-db DATABASE_URL='postgresql://postgres.<ref>:<password>@<host>:5432/postgres'
+```
+
+It refuses to run once the hosted game has players (so it can't replace live puzzles).
+
+**Or build it from the pipeline output** with the session pooler URL:
 
 ```sh
 export DATABASE_URL='postgresql://postgres.<ref>:<password>@<host>:5432/postgres'
